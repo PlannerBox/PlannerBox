@@ -14,7 +14,7 @@ const config = (configService: ConfigService): PostgresConnectionOptions => ({
     password: configService.get('DATABASE_PASSWORD'),
     database: configService.get('DATABASE_NAME'),
     entities: [__dirname + './../../**/*.entity{.ts,.js}'],
-    synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
+    synchronize: configService.get('DATABASE_SYNCHRONIZE'),
     schema: process.env.DATABASE_SCHEMA,
     migrationsRun: true,
     migrationsTableName: '_migrations',

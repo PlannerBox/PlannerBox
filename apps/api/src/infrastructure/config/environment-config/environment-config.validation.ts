@@ -9,9 +9,6 @@ enum Environment {
 }
 
 class EnvironmentVariables {
-  @IsEnum(Environment)
-  NODE_ENV: Environment;
-
   @IsString()
   DATABASE_HOST: string;
   @IsNumber()
@@ -33,8 +30,9 @@ export function validate(config: Record<string, unknown>) {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validatedConfig, { skipMissingProperties: false });
-
+  
   if (errors.length > 0) {
+    console.log(config);
     throw new Error(errors.toString());
   }
   return validatedConfig;
