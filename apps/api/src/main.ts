@@ -18,8 +18,8 @@ async function bootstrap() {
   if (env !== 'production') {
     const config = new DocumentBuilder()
       .addBearerAuth()
-      .setTitle('Clean Architecture Nestjs')
-      .setDescription('Plannerbox routes')
+      .setTitle('Plannerbox API')
+      .setDescription('Plannerbox API description for developers')
       .setVersion('1.0')
       .build();
     const document = SwaggerModule.createDocument(app, config, {

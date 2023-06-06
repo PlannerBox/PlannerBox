@@ -41,7 +41,7 @@ $ pnpm run test:cov
 
 ## More
 
-Swagger available on [localhost:3000/swagger](localhost:3000/swagger)
+Swagger available on [http://localhost:3000/swagger](http://localhost:3000/swagger)
 ## License
 
 Nest is [MIT licensed](LICENSE).
