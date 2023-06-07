@@ -42,6 +42,10 @@ $ pnpm run test:cov
 ## More
 
 Swagger available on [http://localhost:3000/swagger](http://localhost:3000/swagger)
+
+Import entities from database with TypeORM model generator
+npx typeorm-model-generator -h localhost -d plannerbox -u postgres -x postgres -e postgres -o .\src\infrastructure\ -s public
+
 ## License
 
 Nest is [MIT licensed](LICENSE).
