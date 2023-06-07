@@ -1,24 +1,18 @@
-import { ConfigService } from '@nestjs/config';
-import * as dotenv from 'dotenv';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-/*
-if (process.env.NODE_ENV === 'local') {
-    dotenv.config({ path: './env/local.env' });
-}*/
+require('dotenv').config({ path: './env/.env' });
 
-const config = (configService: ConfigService): PostgresConnectionOptions => ({
+const config = (): PostgresConnectionOptions => ({
     type: 'postgres',
-    host: configService.get('DATABASE_HOST'),
-    port: configService.get('DATABASE_PORT'),
-    username: configService.get('DATABASE_USER'),
-    password: configService.get('DATABASE_PASSWORD'),
-    database: configService.get('DATABASE_NAME'),
+    host: process.env.DATABASE_HOST,
+    port: +process.env.DATABASE_PORT,
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
     entities: [__dirname + './../../**/*.entity{.ts,.js}'],
     synchronize: false,
-    schema: configService.get('DATABASE_SCHEMA'),
+    schema: process.env.DATABASE_SCHEMA,
     migrationsRun: true,
-    migrationsTableName: '_migrations',
-    migrations: ['database/migrations/**/*{.ts,.js}'],
+    uuidExtension : 'pgcrypto'
 });
 
 export default config;
