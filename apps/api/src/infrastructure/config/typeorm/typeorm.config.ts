@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import * as dotenv from 'dotenv';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 /*
 if (process.env.NODE_ENV === 'local') {

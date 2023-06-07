@@ -6,7 +6,12 @@
     "build": {
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_API_HOST"]
+      "env": [
+        "NEXT_PUBLIC_API_HOST",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DB"
+      ]
     },
     "test": {
       "outputs": ["coverage/**"],
