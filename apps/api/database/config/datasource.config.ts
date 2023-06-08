@@ -10,7 +10,7 @@ export function getConfig() {
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         schema: process.env.DATABASE_SCHEMA,
-        entities: [__dirname + '/../../src/infrastructure/entities/*.entity.ts'],
+        entities: [__dirname + '/../../src/infrastructure/entities/*.ts'],
         migrations: [__dirname + '/../migrations/*.ts'],
         migrationsTableName: '_MigrationHistory',
         uuidExtension: 'pgcrypto'
