@@ -10,19 +10,19 @@ enum Environment {
 
 class EnvironmentVariables {
   @IsString()
-  DATABASE_HOST: string;
+  POSTGRES_HOST: string;
   @IsNumber()
-  DATABASE_PORT: number;
+  POSTGRES_PORT: number;
   @IsString()
-  DATABASE_USER: string;
+  POSTGRES_USER: string;
   @IsString()
-  DATABASE_PASSWORD: string;
+  POSTGRES_PASSWORD: string;
   @IsString()
-  DATABASE_NAME: string;
+  POSTGRES_DB: string;
   @IsString()
-  DATABASE_SCHEMA: string;
+  POSTGRES_SCHEMA: string;
   @IsBoolean()
-  DATABASE_SYNCHRONIZE: boolean;
+  POSTGRES_SYNCHRONIZE: boolean;
 }
 
 export function validate(config: Record<string, unknown>) {
