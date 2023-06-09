@@ -8,9 +8,13 @@
       "dependsOn": ["^build"],
       "env": [
         "NEXT_PUBLIC_API_HOST",
+        "POSTGRES_HOST",
+        "POSTGRES_PORT",
         "POSTGRES_USER",
         "POSTGRES_PASSWORD",
-        "POSTGRES_DB"
+        "POSTGRES_DB",
+        "POSTGRES_SCHEMA",
+        "POSTGRES_SYNCHRONIZE"
       ]
     },
     "test": {

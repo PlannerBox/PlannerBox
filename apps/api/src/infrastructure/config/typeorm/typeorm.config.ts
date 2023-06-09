@@ -1,16 +1,15 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-require('dotenv').config({ path: './env/.env' });
 
 const config = (): PostgresConnectionOptions => ({
     type: 'postgres',
-    host: process.env.DATABASE_HOST,
-    port: +process.env.DATABASE_PORT,
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    host: process.env.POSTGRES_HOST,
+    port: +process.env.POSTGRES_PORT,
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
     entities: [__dirname + './../../**/*.entity{.ts,.js}'],
     synchronize: false,
-    schema: process.env.DATABASE_SCHEMA,
+    schema: process.env.POSTGRES_SCHEMA,
     migrationsRun: true,
     uuidExtension : 'pgcrypto'
 });
