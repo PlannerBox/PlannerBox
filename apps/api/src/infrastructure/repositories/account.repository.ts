@@ -12,7 +12,7 @@ export class AccountRepository implements IAccountRepository {
         private readonly accountEntityRepository: Repository<Account>
     ) {}
 
-    async getUserByUsername(username: string): Promise<AccountM> {
+    async getAccountByUsername(username: string): Promise<AccountM> {
         const accountEntity: Account = await this.accountEntityRepository.findOne({
             where: {
                 username: username,
