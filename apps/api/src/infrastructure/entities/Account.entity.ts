@@ -6,13 +6,13 @@ import { Teacher } from "./Teacher.entity";
 @Index("Account_pkey", ["id"], { unique: true })
 @Entity("Account", { schema: "public" })
 export class Account {
-  @Column("character varying", { primary: true, name: "id", length: 50 })
+  @Column("character varying", { primary: true, name: "id", length: 255 })
   id: string;
 
   @Column("character varying", { name: "username", length: 255 })
   username: string;
 
-  @Column("character varying", { name: "password", length: 50 })
+  @Column("character varying", { name: "password", length: 255 })
   password: string;
 
   @Column("character varying", {
@@ -29,7 +29,7 @@ export class Account {
   email: string;
 
   @Column("date", { name: "birth", nullable: true })
-  birth: string | null;
+  birthDate: Date | null;
 
   @Column("character varying", {
     name: "birthPlace",
@@ -37,6 +37,12 @@ export class Account {
     length: 50,
   })
   birthPlace: string | null;
+
+  @Column({ nullable: true })
+  lastLogin?: Date;
+
+  @Column('varchar', { nullable: true })
+  hashRefreshToken: string;
 
   @OneToMany(() => Admin, (admin) => admin.account)
   admins: Admin[];

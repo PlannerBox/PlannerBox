@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 import { LoggingInterceptor } from './infrastructure/common/interceptors/logger.interceptor';
 import { LoggerService } from './infrastructure/logger/logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -8,6 +9,8 @@ async function bootstrap() {
   const env = process.env.NODE_ENV;
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
+  
   // base routing
   app.setGlobalPrefix('api');
 
