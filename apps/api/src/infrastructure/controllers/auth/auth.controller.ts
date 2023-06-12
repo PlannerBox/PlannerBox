@@ -11,6 +11,8 @@ import { LoginUseCases } from "src/usecases/auth/login.usecases";
 import { LogoutUseCases } from "src/usecases/auth/logout.usecases";
 import { IsAuthPresenter } from "./auth.presenter";
 import { AuthLoginDto } from "./authDto.class";
+import { AuthSignInDto } from "./authSignInDto.class";
+import { SignInUseCases } from "src/usecases/auth/signIn.usecases";
 
 @Controller('auth')
 @ApiTags('auth')
@@ -28,6 +30,8 @@ export class AuthController {
     private readonly logoutUsecaseProxy: UseCaseProxy<LogoutUseCases>,
     @Inject(UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY)
     private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
+    @Inject(UsecasesProxyModule.SIGNIN_USECASES_PROXY)
+    private readonly signInUsecaseProxy: UseCaseProxy<SignInUseCases>
   ) {}
 
   @Post('login')
@@ -38,6 +42,17 @@ export class AuthController {
     const refreshTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtRefreshToken(auth.username);
     request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
     return 'Login successful';
+  }
+
+  @Post('signin')
+  @ApiBody({ type: AuthSignInDto })
+  @ApiOperation({ description: 'signin' })
+  async signin(@Body() newAccount: AuthSignInDto, @Req() request: any) {
+    const account = await this.signInUsecaseProxy.getInstance().signIn(newAccount);
+    const accessTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtToken(account.username);
+    const refreshTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtRefreshToken(account.username);
+    request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
+    return 'Signin successful';
   }
 
   @Post('logout')

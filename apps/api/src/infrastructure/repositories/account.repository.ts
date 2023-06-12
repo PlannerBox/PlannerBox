@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { AccountM } from "src/domain/models/account";
+import { AccountM, AccountWithoutPassword } from "src/domain/models/account";
 import { IAccountRepository } from "src/domain/repositories/accountRepository.interface";
 import { Account } from "../entities/Account.entity";
 import { Repository } from "typeorm";
@@ -44,6 +44,14 @@ export class AccountRepository implements IAccountRepository {
           );
     }
 
+    async createAccount(account: AccountM): Promise<AccountWithoutPassword> {
+        const accountEntity = this.toAccountEntity(account);
+        const createdAccountEntity = await this.accountEntityRepository.save(accountEntity);
+        const createdAccount = this.toAccount(createdAccountEntity);
+        const { password, ...info } = createdAccount;
+        return info;
+    }
+    
     private toAccount(accountEntity: Account): AccountM {
         return {
             id: accountEntity.id,
@@ -60,12 +68,14 @@ export class AccountRepository implements IAccountRepository {
     }
 
     private toAccountEntity(account: AccountM): Account {
-        const accountEntity: Account = new Account();
-
+        const accountEntity = new Account();
         accountEntity.username = account.username;
         accountEntity.password = account.password;
-        accountEntity.lastLogin = account.lastLogin;
-
+        accountEntity.firstname = account.firstname;
+        accountEntity.lastname = account.lastname;
+        accountEntity.email = account.email;
+        accountEntity.birthDate = account.birthDate;
+        accountEntity.birthPlace = account.birthPlace;
         return accountEntity;
     }
 }
