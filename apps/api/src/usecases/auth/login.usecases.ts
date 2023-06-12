@@ -34,7 +34,7 @@ export class LoginUseCases {
       }
     
       async validateUserForLocalStragtegy(username: string, pass: string) {
-        const user = await this.accountRepository.getUserByUsername(username);
+        const user = await this.accountRepository.getAccountByUsername(username);
         if (!user) {
           return null;
         }
@@ -48,7 +48,7 @@ export class LoginUseCases {
       }
     
       async validateUserForJWTStragtegy(username: string) {
-        const user = await this.accountRepository.getUserByUsername(username);
+        const user = await this.accountRepository.getAccountByUsername(username);
         if (!user) {
           return null;
         }
@@ -65,7 +65,7 @@ export class LoginUseCases {
       }
     
       async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
-        const user = await this.accountRepository.getUserByUsername(username);
+        const user = await this.accountRepository.getAccountByUsername(username);
         if (!user) {
           return null;
         }
