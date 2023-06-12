@@ -1,4 +1,4 @@
-import { Column, Entity, Index, OneToMany } from "typeorm";
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Admin } from "./Admin.entity";
 import { Student } from "./Student.entity";
 import { Teacher } from "./Teacher.entity";
@@ -6,7 +6,7 @@ import { Teacher } from "./Teacher.entity";
 @Index("Account_pkey", ["id"], { unique: true })
 @Entity("Account", { schema: "public" })
 export class Account {
-  @Column("character varying", { primary: true, name: "id", length: 255 })
+  @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
   @Column("character varying", { name: "username", length: 255 })
