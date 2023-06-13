@@ -35,6 +35,8 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @UseGuards(LoginGuard)
+  @ApiBearerAuth()
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Req() request: any) {
