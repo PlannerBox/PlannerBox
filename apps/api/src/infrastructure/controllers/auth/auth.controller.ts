@@ -11,8 +11,8 @@ import { LoginUseCases } from "src/usecases/auth/login.usecases";
 import { LogoutUseCases } from "src/usecases/auth/logout.usecases";
 import { IsAuthPresenter } from "./auth.presenter";
 import { AuthLoginDto } from "./authDto.class";
-import { AuthSignInDto } from "./authSignInDto.class";
-import { SignInUseCases } from "src/usecases/auth/signIn.usecases";
+import { AuthSignUpDto } from "./authSignUpDto.class";
+import { SignUpUseCases } from "src/usecases/auth/signUp.usecases";
 
 @Controller('auth')
 @ApiTags('auth')
@@ -30,8 +30,8 @@ export class AuthController {
     private readonly logoutUsecaseProxy: UseCaseProxy<LogoutUseCases>,
     @Inject(UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY)
     private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
-    @Inject(UsecasesProxyModule.SIGNIN_USECASES_PROXY)
-    private readonly signInUsecaseProxy: UseCaseProxy<SignInUseCases>
+    @Inject(UsecasesProxyModule.SIGNUP_USECASES_PROXY)
+    private readonly signUpUsecaseProxy: UseCaseProxy<SignUpUseCases>
   ) {}
 
   @Post('login')
@@ -46,15 +46,15 @@ export class AuthController {
     return 'Login successful';
   }
 
-  @Post('signin')
-  @ApiBody({ type: AuthSignInDto })
-  @ApiOperation({ description: 'signin' })
-  async signin(@Body() newAccount: AuthSignInDto, @Req() request: any) {
-    const account = await this.signInUsecaseProxy.getInstance().signIn(newAccount);
+  @Post('signup')
+  @ApiBody({ type: AuthSignUpDto })
+  @ApiOperation({ description: 'signup' })
+  async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
+    const account = await this.signUpUsecaseProxy.getInstance().signUp(newAccount);
     const accessTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtToken(account.username);
     const refreshTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtRefreshToken(account.username);
     request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
-    return 'Signin successful';
+    return 'Signup successful';
   }
 
   @Post('logout')
