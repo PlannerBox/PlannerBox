@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { LoggingInterceptor } from './infrastructure/common/interceptors/logger.interceptor';
 import { LoggerService } from './infrastructure/logger/logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
@@ -17,6 +18,9 @@ async function bootstrap() {
   // interceptors config
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
 
+  // pipes
+  app.useGlobalPipes(new ValidationPipe());
+  
   // swagger config
   if (env !== 'production') {
     const config = new DocumentBuilder()
