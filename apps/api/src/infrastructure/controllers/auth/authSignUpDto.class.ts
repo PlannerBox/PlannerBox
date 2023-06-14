@@ -16,9 +16,6 @@ export class AuthSignUpDto {
     readonly lastname: string;
     
     @ApiProperty({ required: true })
-    readonly email: string;
-
-    @ApiProperty({ required: true })
     readonly birthDate: Date;
 
     @ApiProperty({ required: true })

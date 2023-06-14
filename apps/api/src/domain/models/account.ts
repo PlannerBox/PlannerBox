@@ -3,7 +3,6 @@ export class AccountWithoutPassword {
     username: string;
     firstname: string;
     lastname: string;
-    email: string;
     birthDate: Date;
     birthPlace: string;
     lastLogin?: Date;
