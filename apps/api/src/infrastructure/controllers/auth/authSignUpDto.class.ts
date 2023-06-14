@@ -6,7 +6,7 @@ export class AuthSignUpDto {
     readonly username: string;
 
     @ApiProperty({ required: true })
-    @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/, {message: 'password too weak'})
+    @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})(?!.*(.)\1{2,})/, {message: 'password too weak'})
     readonly password: string;
 
     @ApiProperty({ required: true })
