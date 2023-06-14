@@ -9,7 +9,7 @@ export class Account {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
-  @Column("character varying", { name: "username", length: 255 })
+  @Column("character varying", { unique: true, name: "username", length: 255 })
   username: string;
 
   @Column("character varying", { name: "password", length: 255 })
@@ -24,9 +24,6 @@ export class Account {
 
   @Column("character varying", { name: "lastname", nullable: true, length: 50 })
   lastname: string | null;
-
-  @Column("character varying", { name: "email", length: 255 })
-  email: string;
 
   @Column("date", { name: "birth", nullable: true })
   birthDate: Date | null;

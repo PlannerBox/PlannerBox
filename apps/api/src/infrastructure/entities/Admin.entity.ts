@@ -1,10 +1,10 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Account } from "./Account.entity";
 
 @Index("Admin_pkey", ["id"], { unique: true })
 @Entity("Admin", { schema: "public" })
 export class Admin {
-  @Column("character varying", { primary: true, name: "id", length: 50 })
+  @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
   @ManyToOne(() => Account, (account) => account.admins)

@@ -20,7 +20,6 @@ export class SignUpUseCases {
             username: authSignUpDto.username,
             firstname: authSignUpDto.firstname,
             lastname: authSignUpDto.lastname,
-            email: authSignUpDto.email,
             birthDate: authSignUpDto.birthDate,
             birthPlace: authSignUpDto.birthPlace,
         }

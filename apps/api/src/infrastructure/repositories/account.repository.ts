@@ -59,7 +59,6 @@ export class AccountRepository implements IAccountRepository {
             password: accountEntity.password,
             firstname: accountEntity.firstname,
             lastname: accountEntity.lastname,
-            email: accountEntity.email,
             birthDate: accountEntity.birthDate,
             birthPlace: accountEntity.birthPlace,
             lastLogin: accountEntity.lastLogin,
@@ -73,7 +72,6 @@ export class AccountRepository implements IAccountRepository {
         accountEntity.password = account.password;
         accountEntity.firstname = account.firstname;
         accountEntity.lastname = account.lastname;
-        accountEntity.email = account.email;
         accountEntity.birthDate = account.birthDate;
         accountEntity.birthPlace = account.birthPlace;
         return accountEntity;
