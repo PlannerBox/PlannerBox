@@ -1,0 +1,44 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 356px;
+
+  .title {
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .details {
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 400;
+  }
+
+  .inputs {
+    margin: var(--spacing-32) 0;
+
+    & > * {
+      margin-bottom: var(--spacing-24);
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    & > * {
+      margin-bottom: var(--spacing-16);
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
