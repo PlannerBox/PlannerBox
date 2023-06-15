@@ -1,18 +1,18 @@
 import { Controller, Inject, Post, UseGuards, Body, Get, Req } from "@nestjs/common";
 import { ApiTags, ApiResponse, ApiExtraModels, ApiBearerAuth, ApiBody, ApiOperation } from "@nestjs/swagger";
-import { JwtAuthGuard } from "src/infrastructure/common/guards/jwtAuth.guard";
-import JwtRefreshGuard from "src/infrastructure/common/guards/jwtRefresh.guard";
-import { LoginGuard } from "src/infrastructure/common/guards/login.guard";
-import { ApiResponseType } from "src/infrastructure/common/swagger/response.decorator";
-import { UseCaseProxy } from "src/infrastructure/usecases-proxy/usecases-proxy";
-import { UsecasesProxyModule } from "src/infrastructure/usecases-proxy/usecases-proxy.module";
-import { IsAuthenticatedUseCases } from "src/usecases/auth/isAuthenticated.usecases";
-import { LoginUseCases } from "src/usecases/auth/login.usecases";
-import { LogoutUseCases } from "src/usecases/auth/logout.usecases";
+import { IsAuthenticatedUseCases } from "../../../usecases/auth/isAuthenticated.usecases";
+import { LoginUseCases } from "../../../usecases/auth/login.usecases";
+import { LogoutUseCases } from "../../../usecases/auth/logout.usecases";
+import { SignUpUseCases } from "../../../usecases/auth/signUp.usecases";
+import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
+import JwtRefreshGuard from "../../common/guards/jwtRefresh.guard";
+import { LoginGuard } from "../../common/guards/login.guard";
+import { ApiResponseType } from "../../common/swagger/response.decorator";
+import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
+import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { IsAuthPresenter } from "./auth.presenter";
 import { AuthLoginDto } from "./authDto.class";
 import { AuthSignUpDto } from "./authSignUpDto.class";
-import { SignUpUseCases } from "src/usecases/auth/signUp.usecases";
 
 @Controller('auth')
 @ApiTags('auth')

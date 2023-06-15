@@ -1,5 +1,6 @@
-import { AccountM, AccountWithoutPassword } from "src/domain/models/account";
-import { IAccountRepository } from "src/domain/repositories/accountRepository.interface";
+import { AccountWithoutPassword, AccountM } from "../../domain/models/account";
+import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
+
 
 export class IsAuthenticatedUseCases {
     constructor(private readonly accountRepo: IAccountRepository) {}

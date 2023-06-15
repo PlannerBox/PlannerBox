@@ -1,10 +1,10 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
-import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
-import { LoginUseCases } from 'src/usecases/auth/login.usecases';
-import { LoggerService } from 'src/infrastructure/logger/logger.service';
+import { LoginUseCases } from '../../../usecases/auth/login.usecases';
+import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
+import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
+import { LoggerService } from '../../logger/logger.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

@@ -1,7 +1,7 @@
-import { IBcryptService } from "src/domain/adapters/bcrypt.interface";
-import { AccountM, AccountWithoutPassword } from "src/domain/models/account";
-import { IAccountRepository } from "src/domain/repositories/accountRepository.interface";
-import { AuthSignUpDto } from "src/infrastructure/controllers/auth/authSignUpDto.class";
+import { IBcryptService } from "../../domain/adapters/bcrypt.interface";
+import { AccountWithoutPassword, AccountM } from "../../domain/models/account";
+import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
+import { AuthSignUpDto } from "../../infrastructure/controllers/auth/authSignUpDto.class";
 
 export class SignUpUseCases {
     constructor(

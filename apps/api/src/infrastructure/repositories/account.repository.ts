@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { AccountM, AccountWithoutPassword } from "src/domain/models/account";
-import { IAccountRepository } from "src/domain/repositories/accountRepository.interface";
+import { AccountM, AccountWithoutPassword } from "../../domain/models/account";
+import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { Account } from "../entities/Account.entity";
 import { Repository } from "typeorm";
 

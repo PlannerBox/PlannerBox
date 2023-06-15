@@ -4,8 +4,6 @@ import { LoggerModule } from '../logger/logger.module';
 
 import { RepositoriesModule } from '../repositories/repositories.module';
 
-
-
 import { EnvironmentConfigModule } from '../config/environment-config/environment-config.module';
 import { UseCaseProxy } from './usecases-proxy';
 import { JwtModule } from '../services/jwt/jwt.module';
@@ -15,10 +13,11 @@ import { JwtTokenService } from '../services/jwt/jwt.service';
 import { EnvironmentConfigService } from '../config/environment-config/environment-config.service';
 import { AccountRepository } from '../repositories/account.repository';
 import { BcryptService } from '../services/bcrypt/bcrypt.service';
-import { LoginUseCases } from 'src/usecases/auth/login.usecases';
-import { IsAuthenticatedUseCases } from 'src/usecases/auth/isAuthenticated.usecases';
-import { LogoutUseCases } from 'src/usecases/auth/logout.usecases';
-import { SignUpUseCases } from 'src/usecases/auth/signUp.usecases';
+import { IsAuthenticatedUseCases } from '../../usecases/auth/isAuthenticated.usecases';
+import { LoginUseCases } from '../../usecases/auth/login.usecases';
+import { LogoutUseCases } from '../../usecases/auth/logout.usecases';
+import { SignUpUseCases } from '../../usecases/auth/signUp.usecases';
+
 
 @Module({
   imports: [LoggerModule, JwtModule, BcryptModule, EnvironmentConfigModule, RepositoriesModule],

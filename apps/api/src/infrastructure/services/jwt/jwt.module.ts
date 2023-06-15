@@ -6,7 +6,7 @@ import { JwtTokenService } from './jwt.service';
   imports: [
     Jwt.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '24h' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
     }),
   ],
   providers: [JwtTokenService],
