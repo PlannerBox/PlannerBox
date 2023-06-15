@@ -13,7 +13,7 @@ WORKDIR /app
 
 COPY --chown=node:node pnpm-lock.yaml ./
 
-RUN pnpm fetch --prod
+RUN pnpm install --dev
 
 COPY --chown=node:node . .
 RUN pnpm install

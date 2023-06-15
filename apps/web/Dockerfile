@@ -29,7 +29,11 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install
 
+FROM installer AS development
+RUN pnpm run dev
+
 # Build the project
+FROM installer AS build
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
@@ -42,7 +46,7 @@ COPY turbo.json turbo.json
 
 RUN pnpm turbo run build --filter=web...
 
-FROM base AS runner
+FROM base AS production
 WORKDIR /app
 
 # Don't run production as root
@@ -50,13 +54,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/web/next.config.js .
-COPY --from=installer /app/apps/web/package.json .
+COPY --from=build /app/apps/web/next.config.js .
+COPY --from=build /app/apps/web/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=build --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=build --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=build --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 CMD node apps/web/server.js
