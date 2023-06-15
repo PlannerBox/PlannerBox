@@ -34,7 +34,7 @@ export class LoginUseCases {
         return cookie;
       }
     
-      async validateUserForLocalStragtegy(username: string, pass: string) {
+      async validateUserForLocalStrategy(username: string, pass: string) {
         const user = await this.accountRepository.getAccountByUsername(username);
         if (!user) {
           return null;
@@ -48,7 +48,7 @@ export class LoginUseCases {
         return null;
       }
     
-      async validateUserForJWTStragtegy(username: string) {
+      async validateUserForJWTStrategy(username: string) {
         const user = await this.accountRepository.getAccountByUsername(username);
         if (!user) {
           return null;

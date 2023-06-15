@@ -40,13 +40,4 @@ export class Account {
 
   @Column('varchar', { nullable: true })
   hashRefreshToken: string;
-
-  @OneToMany(() => Admin, (admin) => admin.account)
-  admins: Admin[];
-
-  @OneToMany(() => Student, (student) => student.account)
-  students: Student[];
-
-  @OneToMany(() => Teacher, (teacher) => teacher.account)
-  teachers: Teacher[];
 }

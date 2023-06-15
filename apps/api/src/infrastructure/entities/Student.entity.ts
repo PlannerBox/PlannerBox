@@ -2,7 +2,7 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Account } from "./Account.entity";
@@ -13,7 +13,7 @@ export class Student {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: number;
 
-  @ManyToOne(() => Account, (account) => account.students)
+  @OneToOne(() => Account)
   @JoinColumn([{ name: "accountId", referencedColumnName: "id" }])
   account: Account;
 }

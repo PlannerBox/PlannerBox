@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Account } from "./Account.entity";
 
 @Index("Admin_pkey", ["id"], { unique: true })
@@ -7,7 +7,7 @@ export class Admin {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
-  @ManyToOne(() => Account, (account) => account.admins)
+  @OneToOne(() => Account)
   @JoinColumn([{ name: "accountId", referencedColumnName: "id" }])
   account: Account;
 }
