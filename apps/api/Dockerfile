@@ -44,7 +44,7 @@ COPY --chown=node:node . .
 
 RUN npm i -g @nestjs/cli
 RUN pnpm i --prod
-RUN pnpm turbo run build --filter=api... --docker
+RUN pnpm turbo run build --filter=api...
 
 USER node
 
