@@ -13,11 +13,22 @@
   .details {
     font-size: 14px;
     line-height: 22px;
-    font-weight: 400;
+    margin-bottom: var(--spacing-32);
+  }
+
+  .error {
+    width: 100%;
+    margin-bottom: var(--spacing-16);
+
+    & > div > div > div {
+      text-align: left;
+      font-size: 14px;
+      line-height: 22px;
+    }
   }
 
   .inputs {
-    margin: var(--spacing-32) 0;
+    margin-bottom: var(--spacing-32);
 
     & > * {
       margin-bottom: var(--spacing-24);
