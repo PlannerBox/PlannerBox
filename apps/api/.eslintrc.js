@@ -1,4 +1,6 @@
 module.exports = {
+  root: true,
+  extends: ['eslint-config-custom'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: 'tsconfig.json',
