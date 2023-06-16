@@ -11,11 +11,15 @@ RUN apk add build-base gcompat curl && \
 RUN mv /root/.local/share/pnpm/pnpm /usr/bin/
 WORKDIR /app
 
+RUN npm i -g @nestjs/cli
+RUN npm i -g turbo
+
 COPY --chown=node:node pnpm-lock.yaml ./
-
-RUN pnpm install --dev
-
+COPY --chown=node:node package.json ./
 COPY --chown=node:node . .
+
+RUN turbo prune --scope=api --docker
+
 RUN pnpm install
 
 USER node
@@ -35,10 +39,8 @@ RUN npm i -g turbo
 WORKDIR /app
 
 COPY --chown=node:node pnpm-lock.yaml ./
-
+COPY --chown=node:node package.json ./
 COPY --chown=node:node . .
-
-ENV NODE_ENV production
 
 RUN npm i -g @nestjs/cli
 RUN pnpm i --prod

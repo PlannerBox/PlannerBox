@@ -14,6 +14,8 @@ services:
       - 3000:3000
     depends_on:
       - api
+    environment:
+      - NODE_ENV=production
   api:
     container_name: plannerbox-api
     build:
@@ -28,6 +30,8 @@ services:
     depends_on:
       - db
     command: npx nest start --watch
+    environment:
+      - NODE_ENV=production
   db:
     container_name: plannerbox-db
     image: postgres
@@ -37,6 +41,7 @@ services:
     env_file:
       - .env
     environment:
+      - NODE_ENV=production
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
