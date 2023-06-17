@@ -1,5 +1,5 @@
 import { DataSourceOptions } from 'typeorm';
-require('dotenv').config({ path: './env/.env' });
+require('dotenv').config({ path: __dirname + '/../../../../.env' });
 
 export function getConfig() {
     return {
