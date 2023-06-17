@@ -1,17 +1,17 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
 import { LoggingInterceptor } from './infrastructure/common/interceptors/logger.interceptor';
 import { LoggerService } from './infrastructure/logger/logger.service';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
   const app = await NestFactory.create(AppModule);
 
   app.use(cookieParser());
-  
+
   // base routing
   app.setGlobalPrefix('api');
 
@@ -20,10 +20,6 @@ async function bootstrap() {
 
   // pipes
   app.useGlobalPipes(new ValidationPipe());
-  
-  // port config
-  await app.listen(3000);
-  LoggerService.log(`Application is running on: ${await app.getUrl()}`);
 
   // swagger config
   if (env !== 'production') {
@@ -37,7 +33,9 @@ async function bootstrap() {
       deepScanRoutes: true,
     });
     SwaggerModule.setup('swagger', app, document);
-    LoggerService.log(`Swagger is running on: ${await app.getUrl()}/api/swagger`);
+    LoggerService.log(
+      `Swagger is running on: ${await app.getUrl()}/api/swagger`,
+    );
   }
 }
 bootstrap();
