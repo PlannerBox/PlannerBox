@@ -13,8 +13,8 @@ export class StagiairePresenter {
 
   constructor(stagiaire: StagiaireM) {
     this.id = stagiaire.id;
-    this.firstName = stagiaire.firstname,
-    this.lastName = stagiaire.lastname,
-    this.createdAt = stagiaire.createdAt
+    (this.firstName = stagiaire.firstname),
+      (this.lastName = stagiaire.lastname),
+      (this.createdAt = stagiaire.createdAt);
   }
 }

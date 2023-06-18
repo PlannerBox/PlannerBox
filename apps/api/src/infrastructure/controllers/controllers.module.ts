@@ -4,8 +4,6 @@ import { UsecasesProxyModule } from '../usecases-proxy/usecases-proxy.module';
 
 @Module({
   imports: [UsecasesProxyModule.register()],
-    controllers: [
-        StagiaireController
-    ],
+  controllers: [StagiaireController],
 })
 export class ControllersModule {}
