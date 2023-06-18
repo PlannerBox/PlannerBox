@@ -40,7 +40,9 @@ WORKDIR /app
 
 COPY --chown=node:node pnpm-lock.yaml ./
 COPY --chown=node:node package.json ./
-COPY --chown=node:node . .
+COPY --chown=node:node . ./
+COPY --chown=node:node ./apps/api/tsconfig.json ./tsconfig.json
+COPY --chown=node:node ./apps/api/tsconfig.build.json ./tsconfig.build.json
 
 RUN npm i -g @nestjs/cli
 RUN pnpm i --prod
