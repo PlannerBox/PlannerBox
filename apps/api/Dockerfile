@@ -16,14 +16,14 @@ RUN npm i -g turbo
 
 COPY --chown=node:node pnpm-lock.yaml ./
 COPY --chown=node:node package.json ./
-COPY --chown=node:node . .
+COPY --chown=node:node . ./
+COPY --chown=node:node ./apps/api/tsconfig.json ./tsconfig.json
 
 RUN turbo prune --scope=api --docker
 
 RUN pnpm install
 
 USER node
-
 CMD [ "nest", "start:dev" ]
 
 ###################
