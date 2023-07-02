@@ -200,6 +200,8 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
+  packages/api-client: {}
+
   packages/eslint-config-custom:
     dependencies:
       eslint-config-next:

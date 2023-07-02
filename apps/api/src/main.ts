@@ -21,6 +21,10 @@ async function bootstrap() {
   // pipes
   app.useGlobalPipes(new ValidationPipe());
   
+  // port config
+  await app.listen(3000);
+  LoggerService.log(`Application is running on: ${await app.getUrl()}`);
+
   // swagger config
   if (env !== 'production') {
     const config = new DocumentBuilder()
@@ -33,10 +37,7 @@ async function bootstrap() {
       deepScanRoutes: true,
     });
     SwaggerModule.setup('swagger', app, document);
+    LoggerService.log(`Swagger is running on: ${await app.getUrl()}/api/swagger`);
   }
-
-  await app.listen(3000);
-
-  LoggerService.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

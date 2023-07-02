@@ -23,30 +23,18 @@ import { SignUpUseCases } from '../../usecases/auth/signUp.usecases';
   imports: [LoggerModule, JwtModule, BcryptModule, EnvironmentConfigModule, RepositoriesModule],
 })
 export class UsecasesProxyModule {
-<<<<<<< HEAD
-  // Stagiaire UseCases
-  static GET_STAGIAIRES_USECASES_PROXY = 'GetStagiairesUsecasesProxy';
-=======
   
   // Auth
   static LOGIN_USECASES_PROXY = 'LoginUseCasesProxy';
   static IS_AUTHENTICATED_USECASES_PROXY = 'IsAuthenticatedUseCasesProxy';
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
->>>>>>> 43d1c57 (PB-22 - Feature/back authentication (#1))
 
   static register(): DynamicModule {
     return {
       module: UsecasesProxyModule,
       providers: [
         {
-<<<<<<< HEAD
-          inject: [StagiaireRepository],
-          provide: UsecasesProxyModule.GET_STAGIAIRES_USECASES_PROXY,
-          useFactory: (todoRepository: StagiaireRepository) =>
-            new UseCaseProxy(new GetStagiairesUseCases(todoRepository)),
-        },
-=======
           inject: [LoggerService, JwtTokenService, EnvironmentConfigService, AccountRepository, BcryptService],
           provide: UsecasesProxyModule.LOGIN_USECASES_PROXY,
           useFactory: (
@@ -78,9 +66,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY,
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
->>>>>>> 43d1c57 (PB-22 - Feature/back authentication (#1))
-      ],
-      exports: [UsecasesProxyModule.GET_STAGIAIRES_USECASES_PROXY],
+      ]
     };
   }
 }
