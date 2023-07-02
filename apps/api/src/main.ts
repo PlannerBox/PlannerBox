@@ -33,9 +33,8 @@ async function bootstrap() {
       deepScanRoutes: true,
     });
     SwaggerModule.setup('swagger', app, document);
-    LoggerService.log(
-      `Swagger is running on: ${await app.getUrl()}/api/swagger`,
-    );
   }
+  await app.listen(3000);
+  LoggerService.log(`App is running on: ${await app.getUrl()}`);
 }
 bootstrap();
