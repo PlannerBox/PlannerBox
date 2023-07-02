@@ -29,5 +29,7 @@ async function bootstrap() {
   }
 
   await app.listen(3000);
+
+  LoggerService.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

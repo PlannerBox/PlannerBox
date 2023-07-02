@@ -16,14 +16,19 @@ RUN npm i -g turbo
 
 COPY --chown=node:node pnpm-lock.yaml ./
 COPY --chown=node:node package.json ./
-COPY --chown=node:node . .
+COPY --chown=node:node . ./
+COPY --chown=node:node ./apps/api/tsconfig.json ./tsconfig.json
 
 RUN turbo prune --scope=api --docker
 
+# To Fix Permissions for Packages
+RUN pnpm config set unsafe-perm true
+
 RUN pnpm install
 
-USER node
+RUN chown -R node:node /app
 
+USER node
 CMD [ "nest", "start:dev" ]
 
 ###################
@@ -40,7 +45,9 @@ WORKDIR /app
 
 COPY --chown=node:node pnpm-lock.yaml ./
 COPY --chown=node:node package.json ./
-COPY --chown=node:node . .
+COPY --chown=node:node . ./
+COPY --chown=node:node ./apps/api/tsconfig.json ./tsconfig.json
+COPY --chown=node:node ./apps/api/tsconfig.build.json ./tsconfig.build.json
 
 RUN npm i -g @nestjs/cli
 RUN pnpm i --prod

@@ -16,5 +16,6 @@
     "skipLibCheck": true,
     "strict": true
   },
+  "files": ["base.json", "nextjs.json", "react-library.json", "nestjs.json"],
   "exclude": ["node_modules"]
 }
