@@ -21,7 +21,12 @@ COPY --chown=node:node ./apps/api/tsconfig.json ./tsconfig.json
 
 RUN turbo prune --scope=api --docker
 
+# To Fix Permissions for Packages
+RUN pnpm config set unsafe-perm true
+
 RUN pnpm install
+
+RUN chown -R node:node /app
 
 USER node
 CMD [ "nest", "start:dev" ]
