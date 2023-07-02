@@ -35,6 +35,7 @@ services:
   db:
     container_name: plannerbox-db
     image: postgres
+    user: postgres
     restart: always
     ports:
       - '${POSTGRES_PORT}:5432'
