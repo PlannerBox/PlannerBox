@@ -66,7 +66,7 @@ export class AuthController {
     return 'Logout successful';
   }
 
-  @Get('is_authenticated')
+  @Get('is-authenticated')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'is_authenticated' })
@@ -85,5 +85,13 @@ export class AuthController {
     const accessTokenCookie = await this.loginUsecaseProxy.getInstance().getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return 'Refresh successful';
+  }
+
+  @Post('reset-password')
+  @ApiBearerAuth()
+  @ApiOperation({ description: 'reset password' })
+  async resetPassword(@Body() mail: string) {
+    return mail+"12";
+    // return 'Reset password successful';
   }
 }
