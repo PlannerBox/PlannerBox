@@ -24,6 +24,7 @@
     "migration:revert": "npx typeorm-ts-node-commonjs --dataSource database/config/migration.config.ts migration:revert"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.4.1",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.4.1",
@@ -37,6 +38,9 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "cross-var": "^1.1.0",
+    "handlebars": "^4.7.7",
+    "nodemailer": "^6.9.3",
+    "nodemon": "^2.0.22",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.11.0",
