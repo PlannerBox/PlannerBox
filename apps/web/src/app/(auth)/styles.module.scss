@@ -1,8 +1,9 @@
-.layout {
+.content {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: var(--spacing-64);
+  min-height: 100vh;
 
   .logo {
     margin-bottom: var(--spacing-48);
