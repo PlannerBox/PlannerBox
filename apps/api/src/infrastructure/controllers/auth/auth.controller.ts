@@ -122,6 +122,8 @@ export class AuthController {
       .getInstance()
       .getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return 'Refresh successful';
+    return {
+      access_token: accessTokenCookie.replace('Authentication=', ''),
+    };
   }
 }

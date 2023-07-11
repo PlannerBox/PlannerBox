@@ -10,36 +10,52 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  // Check for session validity
   try {
-
-    const accessToken = request.cookies.get('access_token');
-
+    const accessToken = request.cookies.get('session')?.value;
     if (accessToken !== undefined) {
-      response.cookies.set('access_token', accessToken.toString());
-    }
+      // Check for session validity
+      await apiCall(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/is_authenticated`,
+        {
+          method: 'GET',
+          headers: new Headers({
+            Cookie: `Authentication=${accessToken}; HttpOnly; Path=/; Max-Age=${process.env.JWT_EXPIRATION_TIME}`,
+          }),
+        }
+      );
 
-    await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/is_authenticated`,
-      {
-        method: 'GET',
-        headers: new Headers(request.headers),
+      // Refresh token
+      const refreshToken = request.cookies.get('session_refresher')?.value;
+      if (refreshToken !== undefined) {
+        const refeshedToken = await apiCall(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`,
+          {
+            method: 'GET',
+            headers: new Headers({
+              Cookie: `Refresh=${refreshToken}; HttpOnly; Path=/; Max-Age=${process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME}`,
+            }),
+          }
+        );
+        response.cookies.set({
+          name: 'session',
+          value: refeshedToken,
+          path: '/',
+          maxAge: process.env.JWT_EXPIRATION_TIME,
+        });
+      } else {
+        // If user isn't authenticated
+        return redirectToSignInPage();
       }
-    );
+    } else {
+      // If user isn't authenticated
+      return redirectToSignInPage();
+    }
   } catch (error) {
-    redirectToSignInPage();
+    // If user seems to not being authenticated
+    return redirectToSignInPage();
   }
 
-  // Refresh token
-  try {
-    await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`, {
-      method: 'GET',
-    });
-  } catch (error) {
-    console.error(error);
-  }
-
-  return response
+  return response;
 }
 
 export const config = {

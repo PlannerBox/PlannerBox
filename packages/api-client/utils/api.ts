@@ -11,15 +11,12 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
       'content-type': 'application/json',
       ...init?.headers,
     }),
-    credentials: 'same-origin',
     ...init,
   };
 
-  console.log({ input, options });
-
-  return fetch(input, options).then((res) => {
+  return fetch(input, options).then(async (res) => {
     if (res.ok) {
-      return res.json();
+      return await res.json();
     }
 
     throw new Error(`${res.status} ${res.statusText}`);

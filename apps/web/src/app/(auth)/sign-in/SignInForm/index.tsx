@@ -4,8 +4,9 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Typography } from 'antd';
 import { SignInResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { removeAfterSemicolon } from '../../../../utils/string';
 import { useSignIn } from './hooks';
 import styles from './styles.module.scss';
 
@@ -23,7 +24,7 @@ export default function SignInForm() {
   );
   const isDisabled = username.length === 0 && password.length === 0;
 
-  const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
+  const [cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
     data,
@@ -34,16 +35,18 @@ export default function SignInForm() {
 
   function handleSuccess(data: SignInResponse) {
     if (!!data) {
-      /*setCookie('session', removeAfterSemicolon(data.access_token), {
-        httpOnly: true,
+      setCookie('session', removeAfterSemicolon(data.access_token), {
+        path: '/',
+        secure: false,
       });
       setCookie('session_refresher', removeAfterSemicolon(data.refresh_token), {
-        httpOnly: true,
-      });*/
+        path: '/',
+        secure: false,
+      });
       router.push('/dashboard');
     } else {
       setErrorMessage(
-        'Une erreur est survenue lors de la connexion. Veuillez vérifier vos informations '
+        'Une erreur est survenue lors de la connexion. Veuillez réessayer'
       );
     }
   }
@@ -51,10 +54,6 @@ export default function SignInForm() {
   function handleError() {
     setErrorMessage('Adresse mail ou mot de passe incorrect');
   }
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   const onFinish = () => {
     setErrorMessage(undefined);
