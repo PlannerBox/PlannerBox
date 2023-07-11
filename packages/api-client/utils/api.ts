@@ -6,13 +6,16 @@ export type SendRequestProps = {
 };
 
 const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
-  const options = {
+  const options: RequestInit = {
     headers: new Headers({
       'content-type': 'application/json',
       ...init?.headers,
     }),
+    credentials: 'same-origin',
     ...init,
   };
+
+  console.log({ input, options });
 
   return fetch(input, options).then((res) => {
     if (res.ok) {

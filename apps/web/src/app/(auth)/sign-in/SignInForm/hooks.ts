@@ -1,18 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
-import { SignInProps, signIn } from 'api-client';
+import { SignInProps, SignInResponse, signIn } from 'api-client';
 
 type SignInHookOptions = {
-  onSuccess?: () => void;
+  onSuccess?: (data: SignInResponse) => void;
+  onError?: () => void;
 };
 
-const useSignIn = ({ onSuccess }: SignInHookOptions) => {
-  return useMutation<any, unknown, SignInProps>({
+const useSignIn = ({ onSuccess, onError }: SignInHookOptions) => {
+  return useMutation<SignInResponse, unknown, SignInProps>({
     mutationFn: async ({ username, password }: SignInProps) => {
       return await signIn({ username, password });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (onSuccess) {
-        onSuccess();
+        onSuccess(data);
+      }
+    },
+    onError: () => {
+      if (onError) {
+        onError();
       }
     },
   });

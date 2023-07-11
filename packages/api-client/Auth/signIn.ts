@@ -5,8 +5,16 @@ export type SignInProps = {
   password: string;
 };
 
-const signIn = async ({ username, password }: SignInProps) => {
-  await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+export type SignInResponse = {
+  access_token: string;
+  refresh_token: string;
+};
+
+const signIn = async ({
+  username,
+  password,
+}: SignInProps): Promise<SignInResponse> => {
+  return await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
     method: 'POST',
     body: JSON.stringify({ username: username, password: password }),
   });

@@ -2,8 +2,10 @@
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Typography } from 'antd';
+import { SignInResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useSignIn } from './hooks';
 import styles from './styles.module.scss';
 
@@ -16,21 +18,46 @@ export default function SignInForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const [errorMessage, setErrorMessage] = useState<undefined | string>(
+    undefined
+  );
   const isDisabled = username.length === 0 && password.length === 0;
 
-  const handleSuccess = () => {
-    router.push('/dashboard');
-  };
+  const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
     data,
     mutate: fetchSignIn,
     isLoading,
-    isError,
     isSuccess,
-  } = useSignIn({ onSuccess: handleSuccess });
+  } = useSignIn({ onSuccess: handleSuccess, onError: handleError });
+
+  function handleSuccess(data: SignInResponse) {
+    if (!!data) {
+      /*setCookie('session', removeAfterSemicolon(data.access_token), {
+        httpOnly: true,
+      });
+      setCookie('session_refresher', removeAfterSemicolon(data.refresh_token), {
+        httpOnly: true,
+      });*/
+      router.push('/dashboard');
+    } else {
+      setErrorMessage(
+        'Une erreur est survenue lors de la connexion. Veuillez vérifier vos informations '
+      );
+    }
+  }
+
+  function handleError() {
+    setErrorMessage('Adresse mail ou mot de passe incorrect');
+  }
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const onFinish = () => {
+    setErrorMessage(undefined);
     fetchSignIn({ username: username, password: password });
   };
 
@@ -46,13 +73,9 @@ export default function SignInForm() {
       <Text className={styles.details} type='secondary'>
         Merci de vous connecter pour accéder à la plateforme
       </Text>
-      {isError && (
+      {!!errorMessage && (
         <div className={styles.error}>
-          <Alert
-            message='Adresse mail ou mot de passe incorrect'
-            type='error'
-            showIcon
-          />
+          <Alert message={errorMessage} type='error' showIcon />
         </div>
       )}
       <div className={styles.inputs}>
@@ -81,7 +104,7 @@ export default function SignInForm() {
         <Button
           htmlType='submit'
           type='primary'
-          loading={isLoading || isSuccess}
+          loading={isLoading || (isSuccess && !errorMessage)}
           disabled={isDisabled}
         >
           Se connecter
