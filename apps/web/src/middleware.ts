@@ -8,17 +8,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   };
 
-  console.log(request.cookies.getAll());
+  const response = NextResponse.next();
 
   // Check for session validity
   try {
+
+    const accessToken = request.cookies.get('access_token');
+
+    if (accessToken !== undefined) {
+      response.cookies.set('access_token', accessToken.toString());
+    }
+
     await apiCall(
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/is_authenticated`,
       {
         method: 'GET',
-        headers: {
-          Cookie: `Authentication=`,
-        },
+        headers: new Headers(request.headers),
       }
     );
   } catch (error) {
@@ -34,7 +39,7 @@ export async function middleware(request: NextRequest) {
     console.error(error);
   }
 
-  return NextResponse.next();
+  return response
 }
 
 export const config = {
