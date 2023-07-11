@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
         );
         response.cookies.set({
           name: 'session',
-          value: refeshedToken,
+          value: refeshedToken.access_token,
           path: '/',
           maxAge: process.env.JWT_EXPIRATION_TIME,
         });
