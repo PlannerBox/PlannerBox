@@ -24,7 +24,7 @@ export default function SignInForm() {
   );
   const isDisabled = username.length === 0 && password.length === 0;
 
-  const [cookies, setCookie] = useCookies(['session', 'session_refresher']);
+  const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
     data,
@@ -38,10 +38,12 @@ export default function SignInForm() {
       setCookie('session', removeAfterSemicolon(data.access_token), {
         path: '/',
         secure: false,
+        maxAge: process.env.JWT_EXPIRATION_TIME,
       });
       setCookie('session_refresher', removeAfterSemicolon(data.refresh_token), {
         path: '/',
         secure: false,
+        maxAge: process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
       });
       router.push('/dashboard');
     } else {
