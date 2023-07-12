@@ -7,6 +7,11 @@ export class IsAuthenticatedUseCases {
   
     async execute(username: string): Promise<AccountWithoutPassword> {
       const user: AccountM = await this.accountRepo.getAccountByUsername(username);
+
+      if (!user) {
+        return null;
+      }
+      
       const { password, ...info } = user;
       return info;
     }

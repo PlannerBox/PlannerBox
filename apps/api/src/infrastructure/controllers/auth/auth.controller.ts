@@ -28,6 +28,7 @@ import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module'
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
 import { AuthSignUpDto } from './authSignUpDto.class';
+import { ResetPasswordUseCases } from "../../../usecases/auth/resetPassword.usecases";
 
 @Controller('auth')
 @ApiTags('auth')
@@ -47,6 +48,8 @@ export class AuthController {
     private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
     @Inject(UsecasesProxyModule.SIGNUP_USECASES_PROXY)
     private readonly signUpUsecaseProxy: UseCaseProxy<SignUpUseCases>,
+    @Inject(UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY)
+    private readonly resetPasswordUsecaseProxy: UseCaseProxy<ResetPasswordUseCases>
   ) {}
 
   @Post('login')
@@ -127,11 +130,19 @@ export class AuthController {
     };
   }
 
-  @Post('reset-password')
+  @Post('change-password')
+  @HttpCode(200)
   @ApiBearerAuth()
-  @ApiOperation({ description: 'reset password' })
-  async resetPassword(@Body() mail: string) {
-    return mail+"12";
-    // return 'Reset password successful';
+  @ApiOperation({ description: 'request a password update' })
+  async changePassword(@Query('mail') mail: string): Promise<string> {
+
+    const user = await this.isAuthUsecaseProxy.getInstance().execute(mail);
+
+    if (user) {
+      let response = await this.resetPasswordUsecaseProxy.getInstance().askResetPassword(mail);
+    }
+
+    // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
+    return `If your mail is correct you should recieve a mail at the address : ${mail}`;
   }
 }
