@@ -17,6 +17,7 @@ import { BcryptService } from '../services/bcrypt/bcrypt.service';
 import { JwtModule } from '../services/jwt/jwt.module';
 import { JwtTokenService } from '../services/jwt/jwt.service';
 import { UseCaseProxy } from './usecases-proxy';
+import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecases';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ export class UsecasesProxyModule {
   static IS_AUTHENTICATED_USECASES_PROXY = 'IsAuthenticatedUseCasesProxy';
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
+  static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -86,12 +88,22 @@ export class UsecasesProxyModule {
               new SignUpUseCases(accountRepository, bcryptService),
             ),
         },
+        {
+          inject: [LoggerService, JwtTokenService, EnvironmentConfigService],
+          provide: UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
+          useFactory: (
+            logger: LoggerService,
+            jwtTokenService: JwtTokenService,
+            config: EnvironmentConfigService,
+          ) => new UseCaseProxy(new ResetPasswordUseCases(logger, jwtTokenService, config)),
+        }
       ],
       exports: [
         UsecasesProxyModule.LOGIN_USECASES_PROXY,
         UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY,
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
+        UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
       ],
     };
   }
