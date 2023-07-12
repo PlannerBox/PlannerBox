@@ -2,8 +2,11 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Inject,
+  Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -153,28 +156,4 @@ export class AuthController {
   async changePasswordWithToken(@Param('token') token: string, @Body('password') password: string): Promise<string> {
     return 'the password has been changed';
   }
-
-  @Post('reset-password')
-  @HttpCode(200)
-  @ApiOperation({ description: 'request a password update' })
-  async changePassword(@Query('mail') mail: string): Promise<string> {
-
-    const user = await this.isAuthUsecaseProxy.getInstance().execute(mail);
-
-    if (user) {
-      let response = await this.resetPasswordUsecaseProxy.getInstance().askResetPassword(mail);
-    }
-
-    // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
-    return `If your mail is correct you should recieve a mail at the address : ${mail}`;
-  }
-
-  @Post('change-password/:token')
-  @UseGuards(ChangePasswordGuard)
-  @HttpCode(200)
-  @ApiOperation({ description: 'change the password of an account' })
-  async changePasswordWithToken(@Param('token') token: string, @Body('password') password: string): Promise<string> {
-    return 'the password has been changed';
-  }
-
 }
