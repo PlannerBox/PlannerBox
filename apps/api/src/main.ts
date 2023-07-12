@@ -21,6 +21,9 @@ async function bootstrap() {
   // pipes
   app.useGlobalPipes(new ValidationPipe());
 
+  // CORS Policy
+  app.enableCors();
+
   // swagger config
   if (env !== 'production') {
     const config = new DocumentBuilder()
@@ -34,6 +37,7 @@ async function bootstrap() {
     });
     SwaggerModule.setup('swagger', app, document);
   }
+
   await app.listen(3000);
   LoggerService.log(`App is running on: ${await app.getUrl()}`);
 }

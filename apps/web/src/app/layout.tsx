@@ -1,6 +1,6 @@
 'use client';
 
-import { ConfigProvider } from 'antd';
+import Providers from '../utils/providers';
 import './global.scss';
 
 export default function RootLayout({
@@ -11,15 +11,7 @@ export default function RootLayout({
   return (
     <html lang='fr'>
       <body>
-        <ConfigProvider
-          theme={{
-            token: {
-              fontSize: 16,
-            },
-          }}
-        >
-          {children}
-        </ConfigProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
