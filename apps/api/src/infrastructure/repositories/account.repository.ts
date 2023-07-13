@@ -52,6 +52,10 @@ export class AccountRepository implements IAccountRepository {
         return info;
     }
     
+    async resetPassword(username: string, newPassword: string): Promise<void> {
+        await this.accountEntityRepository.update({ username: username }, { password: newPassword });
+    }
+
     private toAccount(accountEntity: Account): AccountM {
         return {
             id: accountEntity.id,

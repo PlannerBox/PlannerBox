@@ -25,14 +25,22 @@ async function bootstrap() {
   // CORS Policy
   app.enableCors();
 
-  // swagger config
-  if (env !== 'production') {
-    const config = new DocumentBuilder()
-      .addBearerAuth()
+  const config = new DocumentBuilder()
+      .addBearerAuth(
+        { 
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        },
+        'access-token'
+      )
       .setTitle('Plannerbox API')
       .setDescription('Plannerbox API description for developers')
       .setVersion('1.0')
       .build();
+
+  // swagger config
+  if (env !== 'production') {
     const document = SwaggerModule.createDocument(app, config, {
       deepScanRoutes: true,
     });

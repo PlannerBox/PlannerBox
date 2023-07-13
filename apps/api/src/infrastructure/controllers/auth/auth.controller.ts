@@ -5,7 +5,9 @@ import {
   Get,
   HttpCode,
   Inject,
+  Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -29,7 +31,9 @@ import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
-import { AuthSignUpDto } from './authSignUpDto.class';
+import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
+import { ResetPasswordUseCases } from "../../../usecases/auth/resetPassword.usecases";
+import { JsonResult } from '../../helpers/JsonResult';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -49,6 +53,8 @@ export class AuthController {
     private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
     @Inject(UsecasesProxyModule.SIGNUP_USECASES_PROXY)
     private readonly signUpUsecaseProxy: UseCaseProxy<SignUpUseCases>,
+    @Inject(UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY)
+    private readonly resetPasswordUsecaseProxy: UseCaseProxy<ResetPasswordUseCases>
   ) {}
 
   @Post('login')
@@ -95,7 +101,7 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return 'Signup successful';
+    return JsonResult.Convert('Signup successful');
   }
 
   @Post('logout')
@@ -104,10 +110,10 @@ export class AuthController {
   async logout(@Req() request: any) {
     const cookie = await this.logoutUsecaseProxy.getInstance().execute();
     request.res.setHeader('Set-Cookie', cookie);
-    return 'Logout successful';
+    return JsonResult.Convert('Logout successful');
   }
 
-  @Get('is_authenticated')
+  @Get('is-authenticated')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'is_authenticated' })
@@ -132,5 +138,29 @@ export class AuthController {
     return {
       access_token: accessTokenCookie.replace('Authentication=', ''),
     };
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  @ApiOperation({ description: 'request a password update' })
+  async changePassword(@Query('mail') mail: string) {
+
+    const user = await this.isAuthUsecaseProxy.getInstance().execute(mail);
+
+    if (user) {
+      await this.resetPasswordUsecaseProxy.getInstance().askResetPassword(mail);
+    }
+
+    // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
+    return JsonResult.Convert(`If your mail is correct you should recieve a mail at the address : ${mail}`);
+  }
+
+  @Post('change-password/:token')
+  @HttpCode(200)
+  @ApiOperation({ description: 'change the password of an account' })
+  async changePasswordWithToken(@Param('token') token: string, @Body() accountPassword: AuthPasswordDto) {
+    const response = await this.resetPasswordUsecaseProxy.getInstance().resetPassword(token, accountPassword.password);
+    
+    return JsonResult.Convert('the password has been changed');
   }
 }
