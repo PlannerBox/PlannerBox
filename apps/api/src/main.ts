@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './infrastructure/common/interceptors/logger.interceptor';
 import { LoggerService } from './infrastructure/logger/logger.service';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
@@ -45,7 +46,7 @@ async function bootstrap() {
     });
     SwaggerModule.setup('swagger', app, document);
   }
-
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   await app.listen(3000);
   LoggerService.log(`App is running on: ${await app.getUrl()}`);
 }

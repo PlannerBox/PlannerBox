@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -82,6 +83,11 @@ export class AuthController {
   @ApiBody({ type: AuthSignUpDto })
   @ApiOperation({ description: 'signup' })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
+    const checkUserName = await this.isAuthUsecaseProxy.getInstance().execute(newAccount.username);
+    if(checkUserName)
+    {
+      throw new BadRequestException("User already created"); 
+    }
     const account = await this.signUpUsecaseProxy
       .getInstance()
       .signUp(newAccount);
