@@ -73,10 +73,10 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return JsonResult.Success({
+    return {
       access_token: accessTokenCookie.replace('Authentication=', ''),
       refresh_token: refreshTokenCookie.replace('Refresh=', ''),
-    });
+    };
   }
 
   @Post('signup')
@@ -101,7 +101,7 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return JsonResult.Ok('Signup successful');
+    return JsonResult.Convert('Signup successful');
   }
 
   @Post('logout')
@@ -110,7 +110,7 @@ export class AuthController {
   async logout(@Req() request: any) {
     const cookie = await this.logoutUsecaseProxy.getInstance().execute();
     request.res.setHeader('Set-Cookie', cookie);
-    return JsonResult.Ok('Logout successful');
+    return JsonResult.Convert('Logout successful');
   }
 
   @Get('is-authenticated')
@@ -124,7 +124,7 @@ export class AuthController {
       .execute(request.user.username);
     const response = new IsAuthPresenter();
     response.username = user.username;
-    return JsonResult.Success(response);
+    return response;
   }
 
   @Get('refresh')
@@ -135,9 +135,9 @@ export class AuthController {
       .getInstance()
       .getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return JsonResult.Success({
+    return {
       access_token: accessTokenCookie.replace('Authentication=', ''),
-    });
+    };
   }
 
   @Post('reset-password')
@@ -152,7 +152,7 @@ export class AuthController {
     }
 
     // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
-    return JsonResult.Ok(`If your mail is correct you should recieve a mail at the address : ${mail}`);
+    return JsonResult.Convert(`If your mail is correct you should recieve a mail at the address : ${mail}`);
   }
 
   @Post('change-password/:token')
@@ -161,6 +161,6 @@ export class AuthController {
   async changePasswordWithToken(@Param('token') token: string, @Body() accountPassword: AuthPasswordDto) {
     const response = await this.resetPasswordUsecaseProxy.getInstance().resetPassword(token, accountPassword.password);
     
-    return JsonResult.Ok('the password has been changed');
+    return JsonResult.Convert('the password has been changed');
   }
 }
