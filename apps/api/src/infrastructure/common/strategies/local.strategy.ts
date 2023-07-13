@@ -24,7 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.loginUsecaseProxy.getInstance().validateUserForLocalStrategy(username, password);
     if (!user) {
       this.logger.warn('LocalStrategy', `Invalid username or password`);
-      throw new UnauthorizedException({ message: 'Invalid username or password.' });
+      throw new UnauthorizedException('Invalid username or password.');
     }
     return user;
   }

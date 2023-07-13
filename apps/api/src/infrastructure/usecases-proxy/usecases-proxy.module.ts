@@ -89,13 +89,15 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [LoggerService, JwtTokenService, EnvironmentConfigService],
+          inject: [LoggerService, JwtTokenService, EnvironmentConfigService, AccountRepository, BcryptService],
           provide: UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
           useFactory: (
             logger: LoggerService,
             jwtTokenService: JwtTokenService,
             config: EnvironmentConfigService,
-          ) => new UseCaseProxy(new ResetPasswordUseCases(logger, jwtTokenService, config)),
+            accountRepository: AccountRepository,
+            bcryptService: BcryptService,
+          ) => new UseCaseProxy(new ResetPasswordUseCases(logger, jwtTokenService, config, accountRepository, bcryptService)),
         }
       ],
       exports: [

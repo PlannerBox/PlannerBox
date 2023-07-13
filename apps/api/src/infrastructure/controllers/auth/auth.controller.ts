@@ -30,9 +30,9 @@ import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
-import { AuthSignUpDto } from './authSignUpDto.class';
+import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
 import { ResetPasswordUseCases } from "../../../usecases/auth/resetPassword.usecases";
-import { ChangePasswordGuard } from "../../common/guards/changePassword.guard";
+import { JsonResult } from '../../helpers/JsonResult';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -72,10 +72,10 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return {
+    return JsonResult.Success({
       access_token: accessTokenCookie.replace('Authentication=', ''),
       refresh_token: refreshTokenCookie.replace('Refresh=', ''),
-    };
+    });
   }
 
   @Post('signup')
@@ -95,7 +95,7 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return 'Signup successful';
+    return JsonResult.Ok('Signup successful');
   }
 
   @Post('logout')
@@ -104,7 +104,7 @@ export class AuthController {
   async logout(@Req() request: any) {
     const cookie = await this.logoutUsecaseProxy.getInstance().execute();
     request.res.setHeader('Set-Cookie', cookie);
-    return 'Logout successful';
+    return JsonResult.Ok('Logout successful');
   }
 
   @Get('is-authenticated')
@@ -118,7 +118,7 @@ export class AuthController {
       .execute(request.user.username);
     const response = new IsAuthPresenter();
     response.username = user.username;
-    return response;
+    return JsonResult.Success(response);
   }
 
   @Get('refresh')
@@ -129,31 +129,32 @@ export class AuthController {
       .getInstance()
       .getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return {
+    return JsonResult.Success({
       access_token: accessTokenCookie.replace('Authentication=', ''),
-    };
+    });
   }
 
   @Post('reset-password')
   @HttpCode(200)
   @ApiOperation({ description: 'request a password update' })
-  async changePassword(@Query('mail') mail: string): Promise<string> {
+  async changePassword(@Query('mail') mail: string) {
 
     const user = await this.isAuthUsecaseProxy.getInstance().execute(mail);
 
     if (user) {
-      let response = await this.resetPasswordUsecaseProxy.getInstance().askResetPassword(mail);
+      await this.resetPasswordUsecaseProxy.getInstance().askResetPassword(mail);
     }
 
     // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
-    return `If your mail is correct you should recieve a mail at the address : ${mail}`;
+    return JsonResult.Ok(`If your mail is correct you should recieve a mail at the address : ${mail}`);
   }
 
   @Post('change-password/:token')
-  @UseGuards(ChangePasswordGuard)
   @HttpCode(200)
   @ApiOperation({ description: 'change the password of an account' })
-  async changePasswordWithToken(@Param('token') token: string, @Body('password') password: string): Promise<string> {
-    return 'the password has been changed';
+  async changePasswordWithToken(@Param('token') token: string, @Body() accountPassword: AuthPasswordDto) {
+    const response = await this.resetPasswordUsecaseProxy.getInstance().resetPassword(token, accountPassword.password);
+    
+    return JsonResult.Ok('the password has been changed');
   }
 }
