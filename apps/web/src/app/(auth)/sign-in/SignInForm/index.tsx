@@ -75,7 +75,7 @@ export default function SignInForm() {
         Merci de vous connecter pour accéder à la plateforme
       </Text>
       {!!errorMessage && (
-        <div className={styles.error}>
+        <div className={styles.message}>
           <Alert message={errorMessage} type='error' showIcon />
         </div>
       )}
@@ -105,12 +105,14 @@ export default function SignInForm() {
         <Button
           htmlType='submit'
           type='primary'
-          loading={isLoading || (isSuccess && !errorMessage)}
+          loading={isLoading || (isSuccess && !!errorMessage)}
           disabled={isDisabled}
         >
           Se connecter
         </Button>
-        <Button type='link'>Mot de passe oublié</Button>
+        <Button type='link' href='/forgot-password'>
+          Mot de passe oublié
+        </Button>
       </div>
     </Form>
   );

@@ -59,5 +59,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico|sign-in|sign-out).*)'],
+  matcher: [
+    '/((?!_next/static|favicon.ico|sign-in|sign-out|forgot-password).*)',
+  ],
 };
