@@ -4,7 +4,7 @@ import { IBcryptService } from '../../../domain/adapters/bcrypt.interface';
 
 @Injectable()
 export class BcryptService implements IBcryptService {
-  rounds: number = 10;
+  rounds = 10;
 
   async hash(hashString: string): Promise<string> {
     return await bcrypt.hash(hashString, this.rounds);

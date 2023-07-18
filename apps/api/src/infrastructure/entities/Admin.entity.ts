@@ -1,13 +1,19 @@
-import { Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Account } from "./Account.entity";
+import {
+  Entity,
+  Index,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Account } from './Account.entity';
 
-@Index("Admin_pkey", ["id"], { unique: true })
-@Entity("Admin", { schema: "public" })
+@Index('Admin_pkey', ['id'], { unique: true })
+@Entity('Admin', { schema: 'public' })
 export class Admin {
-  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
   @OneToOne(() => Account)
-  @JoinColumn([{ name: "accountId", referencedColumnName: "id" }])
+  @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 }

@@ -32,7 +32,7 @@ import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module'
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
 import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
-import { ResetPasswordUseCases } from "../../../usecases/auth/resetPassword.usecases";
+import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
 import { JsonResult } from '../../helpers/JsonResult';
 
 @Controller('auth')
@@ -54,7 +54,7 @@ export class AuthController {
     @Inject(UsecasesProxyModule.SIGNUP_USECASES_PROXY)
     private readonly signUpUsecaseProxy: UseCaseProxy<SignUpUseCases>,
     @Inject(UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY)
-    private readonly resetPasswordUsecaseProxy: UseCaseProxy<ResetPasswordUseCases>
+    private readonly resetPasswordUsecaseProxy: UseCaseProxy<ResetPasswordUseCases>,
   ) {}
 
   @Post('login')
@@ -83,10 +83,11 @@ export class AuthController {
   @ApiBody({ type: AuthSignUpDto })
   @ApiOperation({ description: 'signup' })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
-    const checkUserName = await this.isAuthUsecaseProxy.getInstance().execute(newAccount.username);
-    if(checkUserName)
-    {
-      throw new BadRequestException("User already created"); 
+    const checkUserName = await this.isAuthUsecaseProxy
+      .getInstance()
+      .execute(newAccount.username);
+    if (checkUserName) {
+      throw new BadRequestException('User already created');
     }
     const account = await this.signUpUsecaseProxy
       .getInstance()
@@ -144,7 +145,6 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ description: 'request a password update' })
   async changePassword(@Query('mail') mail: string) {
-
     const user = await this.isAuthUsecaseProxy.getInstance().execute(mail);
 
     if (user) {
@@ -152,15 +152,22 @@ export class AuthController {
     }
 
     // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
-    return JsonResult.Convert(`If your mail is correct you should recieve a mail at the address : ${mail}`);
+    return JsonResult.Convert(
+      `If your mail is correct you should recieve a mail at the address : ${mail}`,
+    );
   }
 
   @Post('change-password/:token')
   @HttpCode(200)
   @ApiOperation({ description: 'change the password of an account' })
-  async changePasswordWithToken(@Param('token') token: string, @Body() accountPassword: AuthPasswordDto) {
-    const response = await this.resetPasswordUsecaseProxy.getInstance().resetPassword(token, accountPassword.password);
-    
+  async changePasswordWithToken(
+    @Param('token') token: string,
+    @Body() accountPassword: AuthPasswordDto,
+  ) {
+    const response = await this.resetPasswordUsecaseProxy
+      .getInstance()
+      .resetPassword(token, accountPassword.password);
+
     return JsonResult.Convert('the password has been changed');
   }
 }

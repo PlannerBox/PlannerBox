@@ -11,17 +11,22 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
     private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {
     super();
   }
 
   async validate(username: string, password: string) {
     if (!username || !password) {
-      this.logger.warn('LocalStrategy', `Username or password is missing, BadRequestException`);
+      this.logger.warn(
+        'LocalStrategy',
+        `Username or password is missing, BadRequestException`,
+      );
       throw new UnauthorizedException();
     }
-    const user = await this.loginUsecaseProxy.getInstance().validateUserForLocalStrategy(username, password);
+    const user = await this.loginUsecaseProxy
+      .getInstance()
+      .validateUserForLocalStrategy(username, password);
     if (!user) {
       this.logger.warn('LocalStrategy', `Invalid username or password`);
       throw new UnauthorizedException('Invalid username or password.');
