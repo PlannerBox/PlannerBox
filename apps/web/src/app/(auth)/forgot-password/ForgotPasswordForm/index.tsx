@@ -5,6 +5,7 @@ import { Alert, Button, Form, Input, Typography } from 'antd';
 import Link from 'antd/es/typography/Link';
 import { SignInResponse } from 'api-client';
 import { useEffect, useState } from 'react';
+import { isValidEmail } from 'utils';
 import { useResetPassword } from './hooks';
 import styles from './styles.module.scss';
 
@@ -102,6 +103,10 @@ export default function ForgotPasswordForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder='Adresse mail'
             prefix={<UserOutlined />}
+            type='email'
+            status={
+              email.length > 0 && !isValidEmail(email) ? 'error' : undefined
+            }
           />
         </Form.Item>
       </div>
@@ -110,7 +115,7 @@ export default function ForgotPasswordForm() {
           htmlType='submit'
           type='primary'
           loading={isLoading || (isSuccess && !!errorMessage)}
-          disabled={isDisabled}
+          disabled={isDisabled || !isValidEmail(email)}
         >
           {timer === undefined
             ? 'Réinitialiser le mot de passe'

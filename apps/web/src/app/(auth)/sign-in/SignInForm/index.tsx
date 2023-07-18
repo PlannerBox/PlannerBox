@@ -6,6 +6,7 @@ import { SignInResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { isValidEmail } from 'utils';
 import { removeAfterSemicolon } from '../../../../utils/string';
 import { useSignIn } from './hooks';
 import styles from './styles.module.scss';
@@ -22,7 +23,7 @@ export default function SignInForm() {
   const [errorMessage, setErrorMessage] = useState<undefined | string>(
     undefined
   );
-  const isDisabled = username.length === 0 && password.length === 0;
+  const isDisabled = !isValidEmail(username) || password.length === 0;
 
   const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
@@ -86,6 +87,12 @@ export default function SignInForm() {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Nom d'utilisateur"
             prefix={<UserOutlined />}
+            type='email'
+            status={
+              username.length > 0 && !isValidEmail(username)
+                ? 'error'
+                : undefined
+            }
           />
         </Form.Item>
         <Form.Item label='Mot de passe' name='password' required>
