@@ -28,7 +28,6 @@ export default function SignInForm() {
   const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
-    data,
     mutate: fetchSignIn,
     isLoading,
     isSuccess,
