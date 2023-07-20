@@ -1,9 +1,9 @@
 'use client';
 
-import { UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Typography } from 'antd';
 import Link from 'antd/es/typography/Link';
-import { SignInResponse } from 'api-client';
+import { ResetPasswordResponse } from 'api-client';
 import { useEffect, useState } from 'react';
 import { isValidEmail } from 'utils';
 import { useResetPassword } from './hooks';
@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
     isSuccess,
   } = useResetPassword({ onSuccess: handleSuccess, onError: handleError });
 
-  function handleSuccess(data: SignInResponse) {
+  function handleSuccess(data: ResetPasswordResponse) {
     if (!!data) {
       setSuccessMessage('Mail de réinitialisation envoyé');
     } else {
@@ -85,17 +85,16 @@ export default function ForgotPasswordForm() {
       <Text className={styles.details} type='secondary'>
         Pas d’inquiétude, nous allons vous aider à le réinitialiser
       </Text>
-      {!!errorMessage ||
-        (!!successMessage && (
-          <div className={styles.message}>
-            {!!errorMessage && (
-              <Alert message={errorMessage} type='error' showIcon />
-            )}
-            {!!successMessage && (
-              <Alert message={successMessage} type='success' showIcon />
-            )}
-          </div>
-        ))}
+      {(!!errorMessage || !!successMessage) && (
+        <div className={styles.message}>
+          {!!errorMessage && (
+            <Alert message={errorMessage} type='error' showIcon />
+          )}
+          {!!successMessage && (
+            <Alert message={successMessage} type='success' showIcon />
+          )}
+        </div>
+      )}
       <div className={styles.inputs}>
         <Form.Item name='email' label='Adresse mail' required>
           <Input
@@ -123,7 +122,9 @@ export default function ForgotPasswordForm() {
                 timer > 0 ? ` (${timer}s)` : ''
               }`}
         </Button>
-        <Link href='/sign-in'>Retour à la connexion</Link>
+        <Link href='/sign-in'>
+          <ArrowLeftOutlined /> Retour à la connexion
+        </Link>
       </div>
     </Form>
   );
