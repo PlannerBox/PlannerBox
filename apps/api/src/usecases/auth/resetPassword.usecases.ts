@@ -1,6 +1,6 @@
 import { ILogger } from "../../domain/logger/logger.interface";
 import * as nodemailer from 'nodemailer';
-import { IJwtService, IJwtServicePayload } from "../../domain/adapters/jwt.interface";
+import { IJwtService, IJwtServicePayload, IJwtServiceResetPasswordPayload } from "../../domain/adapters/jwt.interface";
 import { JWTConfig } from "../../domain/config/jwt.interface";
 import { BadRequestException } from "@nestjs/common";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
@@ -21,7 +21,7 @@ export class ResetPasswordUseCases {
     async askResetPassword(username: string) {
         this.logger.log('ResetPasswordUseCases execute', `The user ${username} want to reset his password.`);
         
-        const token = this.generateResetToken(username);
+        const token = await this.generateResetToken(username);
 
         const result = await this.sendMail(username, token);
 
@@ -80,16 +80,28 @@ export class ResetPasswordUseCases {
         })
     }
 
-    private generateResetToken(username: string): string {
-            const payload: IJwtServicePayload = { username: username };
-            const secret = this.jwtConfig.getJwtSecret();
-            const expiresIn = 1800 + 's'; // custom expiration time
-            return this.jwtTokenService.createToken(payload, secret, expiresIn);
+    private async generateResetToken(username: string): Promise<string> {
+        const user = await this.accountRepository.getAccountByUsername(username);
+        
+        if (!user) {
+            this.logger.error('ResetPasswordUseCases execute', `The user ${username} does not exist.`);
+            throw new BadRequestException(`The user ${username} does not exist.`);
+        }
+        this.logger.log('ResetPasswordUseCases execute', `The user ${username} exist, the token will be generate. the password is ${user.password}.`);
+        const payload: IJwtServiceResetPasswordPayload = { username: username, password: user.password };
+        const secret = this.jwtConfig.getJwtSecret();
+        const expiresIn = 1800 + 's'; // custom expiration time
+        return this.jwtTokenService.createToken(payload, secret, expiresIn);
     }
 
     private async checkTokenValidity(token: string): Promise<any> {
         try{
             let payload = await this.jwtTokenService.checkToken(token);
+            const user = await this.accountRepository.getAccountByUsername(payload.username);
+
+            if (user.password !== payload.password)
+                throw new BadRequestException(`The Token is invalid.`);
+
             this.logger.log('ResetPasswordUseCases execute', `The user is verified his password will be update.`);
             return payload;
         } catch (error) {
