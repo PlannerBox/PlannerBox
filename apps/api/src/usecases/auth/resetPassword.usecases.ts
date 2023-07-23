@@ -38,11 +38,23 @@ export class ResetPasswordUseCases {
   async resetPassword(token: string, password: string): Promise<any> {
     const payload = await this.checkTokenValidity(token);
 
+<<<<<<< HEAD
     await this.accountRepository.resetPassword(
       payload.username,
       await this.bcryptService.hash(password),
     );
   }
+=======
+
+    /// <summary>
+    ///     return token validity
+    /// </summary>
+    async tokenIsValid(token: string): Promise<any> {
+        return await this.checkTokenValidity(token);
+    }
+
+    private async sendMail(mail: string, token: string): Promise<boolean> {
+>>>>>>> 2e8a091 (add token validity status route)
 
   private async sendMail(mail: string, token: string): Promise<boolean> {
       // create reusable transporter object using the default SMTP transport
@@ -101,6 +113,7 @@ export class ResetPasswordUseCases {
           let payload = await this.jwtTokenService.checkToken(token);
           const user = await this.accountRepository.getAccountByUsername(payload.username);
 
+<<<<<<< HEAD
           if (user.password !== payload.password)
               throw new BadRequestException(`The Token is invalid.`);
 
@@ -112,3 +125,16 @@ export class ResetPasswordUseCases {
       }
   }
 }
+=======
+            if (user.password !== payload.password)
+                throw new BadRequestException(`The token is invalid.`);
+
+            this.logger.log('ResetPasswordUseCases execute', `The user is verified his password can be update.`);
+            return payload;
+        } catch (error) {
+            this.logger.error('ResetPasswordUseCases execute', `${error}`);
+            throw new BadRequestException(`${error}`);
+        }
+    }
+}
+>>>>>>> 2e8a091 (add token validity status route)
