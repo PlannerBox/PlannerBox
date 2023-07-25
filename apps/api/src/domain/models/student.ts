@@ -1,4 +1,3 @@
-import { AccountWithoutPassword } from "./account";
+import { AccountWithoutPassword } from './account';
 
-export class StudentM extends AccountWithoutPassword {
-}
+export class StudentM extends AccountWithoutPassword {}

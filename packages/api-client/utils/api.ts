@@ -23,4 +23,10 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
   });
 };
 
-export { apiCall };
+const addQueryParams = (url: string, key: string, value: string) => {
+  const urlObject = new URL(url);
+  urlObject.searchParams.set(key, value);
+  return urlObject.toString();
+};
+
+export { addQueryParams, apiCall };

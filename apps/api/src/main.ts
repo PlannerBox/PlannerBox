@@ -26,18 +26,18 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-      .addBearerAuth(
-        { 
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT'
-        },
-        'access-token'
-      )
-      .setTitle('Plannerbox API')
-      .setDescription('Plannerbox API description for developers')
-      .setVersion('1.0')
-      .build();
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    )
+    .setTitle('Plannerbox API')
+    .setDescription('Plannerbox API description for developers')
+    .setVersion('1.0')
+    .build();
 
   // swagger config
   if (env !== 'production') {

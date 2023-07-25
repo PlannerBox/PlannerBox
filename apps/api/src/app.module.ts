@@ -15,14 +15,14 @@ import { JwtRefreshTokenStrategy } from './infrastructure/common/strategies/jwtR
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET
+      secret: process.env.JWT_SECRET,
     }),
     LoggerModule,
     UsecasesProxyModule.register(),
     ControllersModule,
     BcryptModule,
     JwtServiceModule,
-    EnvironmentConfigModule
+    EnvironmentConfigModule,
   ],
   providers: [LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
 })

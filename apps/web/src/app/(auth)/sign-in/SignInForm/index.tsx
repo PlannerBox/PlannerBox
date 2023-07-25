@@ -6,6 +6,7 @@ import { SignInResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { isValidEmail } from 'utils';
 import { removeAfterSemicolon } from '../../../../utils/string';
 import { useSignIn } from './hooks';
 import styles from './styles.module.scss';
@@ -22,12 +23,11 @@ export default function SignInForm() {
   const [errorMessage, setErrorMessage] = useState<undefined | string>(
     undefined
   );
-  const isDisabled = username.length === 0 && password.length === 0;
+  const isDisabled = !isValidEmail(username) || password.length === 0;
 
   const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
-    data,
     mutate: fetchSignIn,
     isLoading,
     isSuccess,
@@ -75,7 +75,7 @@ export default function SignInForm() {
         Merci de vous connecter pour accéder à la plateforme
       </Text>
       {!!errorMessage && (
-        <div className={styles.error}>
+        <div className={styles.message}>
           <Alert message={errorMessage} type='error' showIcon />
         </div>
       )}
@@ -86,6 +86,12 @@ export default function SignInForm() {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Nom d'utilisateur"
             prefix={<UserOutlined />}
+            type='email'
+            status={
+              username.length > 0 && !isValidEmail(username)
+                ? 'error'
+                : undefined
+            }
           />
         </Form.Item>
         <Form.Item label='Mot de passe' name='password' required>
@@ -105,12 +111,14 @@ export default function SignInForm() {
         <Button
           htmlType='submit'
           type='primary'
-          loading={isLoading || (isSuccess && !errorMessage)}
+          loading={isLoading || (isSuccess && !!errorMessage)}
           disabled={isDisabled}
         >
           Se connecter
         </Button>
-        <Button type='link'>Mot de passe oublié</Button>
+        <Button type='link' href='/forgot-password'>
+          Mot de passe oublié
+        </Button>
       </div>
     </Form>
   );

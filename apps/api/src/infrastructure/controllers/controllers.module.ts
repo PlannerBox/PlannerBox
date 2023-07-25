@@ -4,8 +4,6 @@ import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [UsecasesProxyModule.register()],
-    controllers: [
-        AuthController
-    ],
+  controllers: [AuthController],
 })
 export class ControllersModule {}

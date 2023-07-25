@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
     private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -25,7 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const user = this.loginUsecaseProxy.getInstance().validateUserForJWTStrategy(payload.username);
+    const user = this.loginUsecaseProxy
+      .getInstance()
+      .validateUserForJWTStrategy(payload.username);
     if (!user) {
       this.logger.warn('JwtStrategy', `User not found`);
     }

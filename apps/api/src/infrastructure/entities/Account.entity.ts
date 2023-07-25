@@ -1,35 +1,41 @@
-import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Admin } from "./Admin.entity";
-import { Student } from "./Student.entity";
-import { Teacher } from "./Teacher.entity";
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Admin } from './Admin.entity';
+import { Student } from './Student.entity';
+import { Teacher } from './Teacher.entity';
 
-@Index("Account_pkey", ["id"], { unique: true })
-@Entity("Account", { schema: "public" })
+@Index('Account_pkey', ['id'], { unique: true })
+@Entity('Account', { schema: 'public' })
 export class Account {
-  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @Column("character varying", { unique: true, name: "username", length: 255 })
+  @Column('character varying', { unique: true, name: 'username', length: 255 })
   username: string;
 
-  @Column("character varying", { name: "password", length: 255 })
+  @Column('character varying', { name: 'password', length: 255 })
   password: string;
 
-  @Column("character varying", {
-    name: "firstname",
+  @Column('character varying', {
+    name: 'firstname',
     nullable: true,
     length: 50,
   })
   firstname: string | null;
 
-  @Column("character varying", { name: "lastname", nullable: true, length: 50 })
+  @Column('character varying', { name: 'lastname', nullable: true, length: 50 })
   lastname: string | null;
 
-  @Column("date", { name: "birth", nullable: true })
+  @Column('date', { name: 'birth', nullable: true })
   birthDate: Date | null;
 
-  @Column("character varying", {
-    name: "birthPlace",
+  @Column('character varying', {
+    name: 'birthPlace',
     nullable: true,
     length: 50,
   })
