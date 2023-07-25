@@ -7,6 +7,7 @@ export class AccountWithoutPassword {
   birthPlace: string;
   lastLogin?: Date;
   hashRefreshToken?: string;
+  active: boolean;
 }
 
 export class AccountM extends AccountWithoutPassword {

@@ -22,6 +22,7 @@ export class SignUpUseCases {
       lastname: authSignUpDto.lastname,
       birthDate: authSignUpDto.birthDate,
       birthPlace: authSignUpDto.birthPlace,
+      active: true,
     };
   }
 }

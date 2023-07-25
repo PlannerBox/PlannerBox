@@ -75,6 +75,7 @@ export class AccountRepository implements IAccountRepository {
       birthPlace: accountEntity.birthPlace,
       lastLogin: accountEntity.lastLogin,
       hashRefreshToken: accountEntity.hashRefreshToken,
+      active: accountEntity.active,
     };
   }
 
@@ -86,6 +87,7 @@ export class AccountRepository implements IAccountRepository {
     accountEntity.lastname = account.lastname;
     accountEntity.birthDate = account.birthDate;
     accountEntity.birthPlace = account.birthPlace;
+    accountEntity.active = account.active;
     return accountEntity;
   }
 }
