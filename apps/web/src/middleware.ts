@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     if (accessToken !== undefined) {
       // Check for session validity
       await apiCall(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/is_authenticated`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/is-authenticated`,
         {
           method: 'GET',
           headers: new Headers({
@@ -60,6 +60,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|favicon.ico|sign-in|sign-out|forgot-password).*)',
+    '/((?!_next/static|favicon.ico|sign-in|sign-out|forgot-password|change-password).*)',
   ],
 };

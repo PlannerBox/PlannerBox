@@ -12,13 +12,6 @@ export type ResetPasswordResponse = {
 const resetPassword = async ({
   email,
 }: ResetPasswordProps): Promise<ResetPasswordResponse> => {
-  console.log(
-    addQueryParams(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`,
-      'mail',
-      email
-    )
-  );
   return await apiCall(
     addQueryParams(
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`,
