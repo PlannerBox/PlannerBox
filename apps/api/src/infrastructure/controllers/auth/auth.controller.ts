@@ -160,17 +160,6 @@ export class AuthController {
   @Post('change-password/:token')
   @HttpCode(200)
   @ApiOperation({ description: 'change the password of an account' })
-<<<<<<< HEAD
-  async changePasswordWithToken(
-    @Param('token') token: string,
-    @Body() accountPassword: AuthPasswordDto,
-  ) {
-    const response = await this.resetPasswordUsecaseProxy
-      .getInstance()
-      .resetPassword(token, accountPassword.password);
-
-    return JsonResult.Convert('the password has been changed');
-=======
   async changePasswordWithToken(@Param('token') token: string, @Body() accountPassword: AuthPasswordDto) {
     const response = await this.resetPasswordUsecaseProxy.getInstance().resetPassword(token, accountPassword.password);
     
@@ -184,6 +173,5 @@ export class AuthController {
     const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
     
     return response.statusCode ? response : JsonResult.Convert('The token is valid');
->>>>>>> 2e8a091 (add token validity status route)
   }
 }
