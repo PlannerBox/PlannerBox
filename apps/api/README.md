@@ -42,17 +42,17 @@ $ pnpm run test:cov
 ## TypeORM
 
 ```bash
-# Generate migration
-npm run migration:generate --name=migrationName
-
-# Create empty migration
-npm run migration:create
+# Generate new migration with model changes
+npm run migration:add --name=migrationName
 
 # Run migrations
 npm run migration:run
 
 # Revert the latest migration
 npm run migration:revert
+
+# Create empty migration
+npm run migration:create --name=migrationName
 ```
 
 ## More
