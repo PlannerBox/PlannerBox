@@ -69,12 +69,12 @@ export class ResetPasswordUseCases {
 
       // create mail options (content of the mail)
       let mailOptions = {
-          from: `"Plannerbox" <${process.env.CONFIG_MAIL_USER}>`, 
+          from: '"Plannerbox" <' + process.env.CONFIG_MAIL_USER + '>', 
           to: mail, // list of receivers (separated by ,)
           subject: 'Réinitialisation du mot de passe de votre compte Plannerbox', 
           text: 'Réinitialisation du mot de passe',
           html: 'Bonjour ! <br><br> Si vous avez demandé à réinitialiser votre mot de passe<br><br>'+
-          `<a href=${process.env.WEBSITE_URL}/change-password/${token}>Cliquez sur ce lien</a>`+ // html body
+          '<a href='+ process.env.NEXT_PUBLIC_API_URL +'/auth/email/change-password/'+ token + '>Cliquez sur ce lien</a>' + // html body
           '<br><br> Sinon, ignorez ce mail ou contactez nous pour nous le faire savoir, quelqu\'un essaye peut être de s\'approprier votre compte Plannerbox.<br><br>'
       };
 
