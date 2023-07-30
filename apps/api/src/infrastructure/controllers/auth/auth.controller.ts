@@ -34,7 +34,6 @@ import { AuthLoginDto } from './authDto.class';
 import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
 import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
 import { JsonResult } from '../../helpers/JsonResult';
-import { AccountManagementUseCases } from '../../../usecases/auth/accountManagement.usecases';
 
 @Controller('auth')
 @ApiTags('auth')
