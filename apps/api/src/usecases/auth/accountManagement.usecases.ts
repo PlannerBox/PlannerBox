@@ -20,4 +20,19 @@ export class AccountManagementUseCases {
 
         return account.active;
     }
+
+    /// <summary>
+    ///     Update account state (active/inactive)
+    /// </summary>
+    async updateAccountState(username: string): Promise<any> {
+        const account = await this.accountRepository.getAccountByUsername(username);
+        if (!account) {
+            this.logger.error('AccountManagementUseCases updateAccountState', 'Account not found')
+            throw new BadRequestException('Account not found');
+        }
+
+        account.active = !account.active;
+        await this.accountRepository.updateAccount(account);
+        return account.active;
+    }
 }

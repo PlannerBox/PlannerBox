@@ -28,8 +28,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       .getInstance()
       .validateUserForLocalStrategy(username, password);
     if (!user) {
-      this.logger.warn('LocalStrategy', `Invalid username or password`);
-      throw new UnauthorizedException('Invalid username or password.');
+      this.logger.warn('LocalStrategy', `Unauthorized`);
+      throw new UnauthorizedException('Unauthorized access');
     }
     return user;
   }

@@ -1,5 +1,6 @@
 export interface IJwtServicePayload {
   username: string;
+  role?: string;
 }
 
 export interface IJwtServiceResetPasswordPayload extends IJwtServicePayload {

@@ -1,6 +1,7 @@
 import { AccountM, AccountWithoutPassword } from '../models/account';
 
 export interface IAccountRepository {
+  updateAccount(account: AccountM): Promise<void>;
   getAccountByUsername(username: string): Promise<AccountM>;
   updateLastLogin(username: string): Promise<void>;
   updateRefreshToken(username: string, refreshToken: string): Promise<void>;
