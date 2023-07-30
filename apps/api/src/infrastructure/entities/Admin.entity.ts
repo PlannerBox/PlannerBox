@@ -13,7 +13,7 @@ export class Admin {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @OneToOne(() => Account)
+  @OneToOne(() => Account, { eager: true })
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 }

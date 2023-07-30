@@ -1,9 +1,13 @@
-import { Controller, Get, HttpCode, Inject, Param, Query } from "@nestjs/common";
+import { Controller, Get, HttpCode, Inject, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { JsonResult } from "../../helpers/JsonResult";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { HasRoles } from "../../decorators/has-role.decorator";
+import { Role } from "../../../domain/models/role.enum";
+import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -18,12 +22,20 @@ export class UserManagementController {
     ) 
     {}
 
-    @Get('is-valid')
+    @Get('is-active')
     @HttpCode(200)
-    @ApiOperation({ description: 'check if a account is valid' })
+    @ApiOperation({ description: 'check if a account is active' })
     async isValidAccount(@Query('username') username: string) {
-        const response = await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
-        console.log(response)
-        return response;
+        return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
+  }
+
+  @HasRoles(Role.Admin)
+  @Post('account-state')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(200)
+  @ApiOperation({ description: 'update account state' })
+  async updateAccountState(@Query('username') username: string) {
+      const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
+      return JsonResult.Convert(`Account ${ !response? 'de' : '' }activated`) 
   }
 }

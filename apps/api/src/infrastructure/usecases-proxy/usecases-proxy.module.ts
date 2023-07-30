@@ -19,6 +19,7 @@ import { JwtTokenService } from '../services/jwt/jwt.service';
 import { UseCaseProxy } from './usecases-proxy';
 import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecases';
 import { AccountManagementUseCases } from '../../usecases/auth/accountManagement.usecases';
+import { AdminRepository } from '../repositories/admin.repository';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ export class UsecasesProxyModule {
             JwtTokenService,
             EnvironmentConfigService,
             AccountRepository,
+            AdminRepository,
             BcryptService,
           ],
           provide: UsecasesProxyModule.LOGIN_USECASES_PROXY,
@@ -56,6 +58,7 @@ export class UsecasesProxyModule {
             jwtTokenService: JwtTokenService,
             config: EnvironmentConfigService,
             accountRepository: AccountRepository,
+            adminRepository: AdminRepository,
             bcryptService: BcryptService,
           ) =>
             new UseCaseProxy(
@@ -64,6 +67,7 @@ export class UsecasesProxyModule {
                 jwtTokenService,
                 config,
                 accountRepository,
+                adminRepository,
                 bcryptService,
               ),
             ),

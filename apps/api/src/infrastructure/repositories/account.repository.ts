@@ -12,6 +12,11 @@ export class AccountRepository implements IAccountRepository {
     private readonly accountEntityRepository: Repository<Account>,
   ) {}
 
+  async updateAccount(account: AccountM): Promise<void> {
+    const accountEntity = this.toAccountEntity(account);
+    await this.accountEntityRepository.update(accountEntity.id, accountEntity);
+  }
+  
   async getAccountByUsername(username: string): Promise<AccountM> {
     const accountEntity: Account = await this.accountEntityRepository.findOne({
       where: {
@@ -26,6 +31,7 @@ export class AccountRepository implements IAccountRepository {
     return this.toAccount(accountEntity);
   }
 
+  async 
   async updateLastLogin(username: string): Promise<void> {
     await this.accountEntityRepository.update(
       {
@@ -81,6 +87,7 @@ export class AccountRepository implements IAccountRepository {
 
   private toAccountEntity(account: AccountM): Account {
     const accountEntity = new Account();
+    accountEntity.id = account.id;
     accountEntity.username = account.username;
     accountEntity.password = account.password;
     accountEntity.firstname = account.firstname;

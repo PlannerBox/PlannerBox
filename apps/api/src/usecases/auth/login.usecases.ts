@@ -1,3 +1,4 @@
+import { get } from 'http';
 import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
 import {
   IJwtService,
@@ -6,6 +7,7 @@ import {
 import { JWTConfig } from '../../domain/config/jwt.interface';
 import { ILogger } from '../../domain/logger/logger.interface';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
+import { IAdminRepository } from '../../domain/repositories/adminRepository.interface';
 
 export class LoginUseCases {
   constructor(
@@ -13,6 +15,7 @@ export class LoginUseCases {
     private readonly jwtTokenService: IJwtService,
     private readonly jwtConfig: JWTConfig,
     private readonly accountRepository: IAccountRepository,
+    private readonly adminRepository: IAdminRepository,
     private readonly bcryptService: IBcryptService,
   ) {}
 
@@ -21,7 +24,10 @@ export class LoginUseCases {
       'LoginUseCases execute',
       `The user ${username} have been logged.`,
     );
-    const payload: IJwtServicePayload = { username: username };
+    const payload: IJwtServicePayload = { 
+      username: username,
+      role: await this.getRole(username)
+    };
     const secret = this.jwtConfig.getJwtSecret();
     const expiresIn = this.jwtConfig.getJwtExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
@@ -61,6 +67,17 @@ export class LoginUseCases {
     if (!user) {
       return null;
     }
+    return {
+      username: user.username, 
+      role: await this.getRole(user.username)
+    };
+  }
+
+  async validateUserForJWTAdminStrategy(username: string) {
+    const user = await this.adminRepository.findOne(username);
+    if (!user) {
+      return null;
+    }
     return user;
   }
 
@@ -93,5 +110,10 @@ export class LoginUseCases {
     }
 
     return null;
+  }
+
+  private async getRole(username: string): Promise<string> {
+    const user = await this.adminRepository.findOne(username);
+    return user != null ? 'admin' : 'user';
   }
 }
