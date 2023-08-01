@@ -96,7 +96,6 @@ export class ResetPasswordUseCases {
           this.logger.error('ResetPasswordUseCases execute', `The user ${username} does not exist.`);
           throw new BadRequestException(`The user ${username} does not exist.`);
       }
-      this.logger.log('ResetPasswordUseCases execute', `The user ${username} exist, the token will be generate. the password is ${user.password}.`);
       const payload: IJwtServiceResetPasswordPayload = { username: username, password: user.password };
       const secret = this.jwtConfig.getJwtSecret();
       const expiresIn = 1800 + 's'; // custom expiration time
