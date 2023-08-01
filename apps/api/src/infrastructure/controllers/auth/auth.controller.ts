@@ -170,14 +170,4 @@ export class AuthController {
 
     return JsonResult.Convert('the password has been changed');
   }
-
-  @Get('is-valid/:token')
-  @HttpCode(200)
-  @ApiOperation({ description: 'check if a token is valid' })
-  async isValidToken(@Param('token') token: string) {
-    const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
-    
-    return response.statusCode ? response : JsonResult.Convert('The token is valid');
-
-  }
 }
