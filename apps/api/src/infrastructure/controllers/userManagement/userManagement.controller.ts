@@ -8,6 +8,7 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { HasRoles } from "../../decorators/has-role.decorator";
 import { Role } from "../../../domain/models/role.enum";
 import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
+import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -29,7 +30,7 @@ export class UserManagementController {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
   }
 
-  @HasRoles(Role.Admin)
+  @HasRoles(UsersPermissions.Admin)
   @Post('account-state')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(200)

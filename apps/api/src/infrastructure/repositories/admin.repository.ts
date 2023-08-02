@@ -38,6 +38,7 @@ export class AdminRepository implements IAdminRepository {
             birthDate: adminAccountEntity.account.birthDate,
             birthPlace: adminAccountEntity.account.birthPlace,
             active: adminAccountEntity.account.active,
+            permissions: adminAccountEntity.account.permissions,
         };
 
         return adminAccount;

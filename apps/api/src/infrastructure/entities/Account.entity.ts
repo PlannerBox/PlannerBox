@@ -2,12 +2,9 @@ import {
   Column,
   Entity,
   Index,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Admin } from './Admin.entity';
-import { Student } from './Student.entity';
-import { Teacher } from './Teacher.entity';
+import Permission from '../../domain/models/enums/permission.type';
 
 @Index('Account_pkey', ['id'], { unique: true })
 @Entity('Account', { schema: 'public' })
@@ -49,4 +46,7 @@ export class Account {
 
   @Column("boolean", { name: "active", default: () => "true" })
   active: boolean;
+
+  @Column({ type: 'enum', enum: Permission, array: true, default: [] })
+  permissions: Permission[];
 }

@@ -26,7 +26,6 @@ export class LoginUseCases {
     );
     const payload: IJwtServicePayload = { 
       username: username,
-      role: await this.getRole(username)
     };
     const secret = this.jwtConfig.getJwtSecret();
     const expiresIn = this.jwtConfig.getJwtExpirationTime() + 's';
@@ -69,7 +68,7 @@ export class LoginUseCases {
     }
     return {
       username: user.username, 
-      role: await this.getRole(user.username)
+      permissions: user.permissions
     };
   }
 
@@ -110,10 +109,5 @@ export class LoginUseCases {
     }
 
     return null;
-  }
-
-  private async getRole(username: string): Promise<string> {
-    const user = await this.adminRepository.findOne(username);
-    return user != null ? 'admin' : 'user';
   }
 }

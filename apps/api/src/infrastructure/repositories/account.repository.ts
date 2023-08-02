@@ -80,18 +80,19 @@ export class AccountRepository implements IAccountRepository {
   }
     
   private toAccount(accountEntity: Account): AccountM {
-      return {
-          id: accountEntity.id,
-          username: accountEntity.username,
-          password: accountEntity.password,
-          firstname: accountEntity.firstname,
-          lastname: accountEntity.lastname,
-          birthDate: accountEntity.birthDate,
-          birthPlace: accountEntity.birthPlace,
-          lastLogin: accountEntity.lastLogin,
-          hashRefreshToken: accountEntity.hashRefreshToken,
-          active: accountEntity.active
-      }
+    return {
+      id: accountEntity.id,
+      username: accountEntity.username,
+      password: accountEntity.password,
+      firstname: accountEntity.firstname,
+      lastname: accountEntity.lastname,
+      birthDate: accountEntity.birthDate,
+      birthPlace: accountEntity.birthPlace,
+      lastLogin: accountEntity.lastLogin,
+      hashRefreshToken: accountEntity.hashRefreshToken,
+      active: accountEntity.active,
+      permissions: accountEntity.permissions,
+    };
   }
 
   private toAccountEntity(account: AccountM): Account {
@@ -104,6 +105,7 @@ export class AccountRepository implements IAccountRepository {
     accountEntity.birthDate = account.birthDate;
     accountEntity.birthPlace = account.birthPlace;
     accountEntity.active = account.active;
+    accountEntity.permissions = account.permissions;
     return accountEntity;
   }
 }
