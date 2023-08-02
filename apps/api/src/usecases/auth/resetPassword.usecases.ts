@@ -69,7 +69,7 @@ export class ResetPasswordUseCases {
 
       // create mail options (content of the mail)
       let mailOptions = {
-          from: '"Plannerbox" <' + process.env.CONFIG_MAIL_USER + '>', 
+          from: `"Plannerbox" <${process.env.CONFIG_MAIL_USER}>`,
           to: mail, // list of receivers (separated by ,)
           subject: 'Réinitialisation du mot de passe de votre compte Plannerbox', 
           text: 'Réinitialisation du mot de passe',
