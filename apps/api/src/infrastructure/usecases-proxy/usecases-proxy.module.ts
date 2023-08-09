@@ -18,6 +18,8 @@ import { JwtModule } from '../services/jwt/jwt.module';
 import { JwtTokenService } from '../services/jwt/jwt.service';
 import { UseCaseProxy } from './usecases-proxy';
 import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecases';
+import { AccountManagementUseCases } from '../../usecases/auth/accountManagement.usecases';
+import { AdminRepository } from '../repositories/admin.repository';
 
 @Module({
   imports: [
@@ -35,6 +37,7 @@ export class UsecasesProxyModule {
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
+  static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -46,6 +49,7 @@ export class UsecasesProxyModule {
             JwtTokenService,
             EnvironmentConfigService,
             AccountRepository,
+            AdminRepository,
             BcryptService,
           ],
           provide: UsecasesProxyModule.LOGIN_USECASES_PROXY,
@@ -54,6 +58,7 @@ export class UsecasesProxyModule {
             jwtTokenService: JwtTokenService,
             config: EnvironmentConfigService,
             accountRepository: AccountRepository,
+            adminRepository: AdminRepository,
             bcryptService: BcryptService,
           ) =>
             new UseCaseProxy(
@@ -62,6 +67,7 @@ export class UsecasesProxyModule {
                 jwtTokenService,
                 config,
                 accountRepository,
+                adminRepository,
                 bcryptService,
               ),
             ),
@@ -114,6 +120,23 @@ export class UsecasesProxyModule {
               ),
             ),
         },
+        {
+          inject: [
+            AccountRepository,
+            LoggerService
+          ],
+          provide: UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
+          useFactory: (
+            accountRepository: AccountRepository,
+            logger: LoggerService
+          ) => 
+            new UseCaseProxy(
+              new AccountManagementUseCases(
+                accountRepository,
+                logger
+              )
+            ),
+        }
       ],
       exports: [
         UsecasesProxyModule.LOGIN_USECASES_PROXY,
@@ -121,6 +144,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
+        UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY
       ],
     };
   }

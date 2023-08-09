@@ -46,4 +46,7 @@ export class Account {
 
   @Column('varchar', { nullable: true })
   hashRefreshToken: string;
+
+  @Column("boolean", { name: "active", default: () => "true" })
+  active: boolean;
 }
