@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Permission from '../../domain/models/enums/permission.type';
+import Role from '../../domain/models/enums/role.enum';
 
 @Index('Account_pkey', ['id'], { unique: true })
 @Entity('Account', { schema: 'public' })
@@ -46,6 +47,9 @@ export class Account {
 
   @Column("boolean", { name: "active", default: () => "true" })
   active: boolean;
+
+  @Column({ type: 'enum', enum: Role, default: Role.User })
+  role: Role;
 
   @Column({ type: 'enum', enum: Permission, array: true, default: [] })
   permissions: Permission[];

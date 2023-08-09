@@ -1,6 +1,7 @@
 import { BadRequestException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
+import Role from "../../domain/models/enums/role.enum";
 
 export class AccountManagementUseCases {
     constructor(
@@ -34,5 +35,12 @@ export class AccountManagementUseCases {
         account.active = !account.active;
         await this.accountRepository.updateAccount(account);
         return account.active;
+    }
+
+    async updateRolePermissions(role: Role, permissions: string[]): Promise<any> {
+        await this.accountRepository.updateRolePermissions(role, permissions);
+        
+        this.logger.log('AccountManagementUseCases updateRolePermissions', 'Role permissions updated')
+        return 'Role permissions updated';
     }
 }

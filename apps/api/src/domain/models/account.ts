@@ -1,4 +1,5 @@
 import Permission from "./enums/permission.type";
+import Role from "./enums/role.enum";
 
 export class AccountWithoutPassword {
   id?: string;
@@ -10,6 +11,7 @@ export class AccountWithoutPassword {
   lastLogin?: Date;
   hashRefreshToken?: string;
   active: boolean;
+  role: Role;
   permissions: Permission[];
 }
 

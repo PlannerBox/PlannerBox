@@ -4,8 +4,7 @@ enum UsersPermissions {
     Desactivate = 'desactivate',
     Delete = 'delete',
     Read = 'read',
-    ReadAll = 'readAll',
-    Admin = 'admin',
+    ReadAll = 'readAll'
 }
 
 export default UsersPermissions;

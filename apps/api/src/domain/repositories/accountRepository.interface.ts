@@ -8,4 +8,5 @@ export interface IAccountRepository {
   updateRefreshToken(username: string, refreshToken: string): Promise<void>;
   createAccount(account: AccountM): Promise<AccountWithoutPassword>;
   resetPassword(username: string, newPassword: string): Promise<void>;
+  updateRolePermissions(role: string, permissions: string[]): Promise<void>;
 }

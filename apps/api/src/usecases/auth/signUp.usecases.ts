@@ -1,5 +1,6 @@
 import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
 import { AccountWithoutPassword, AccountM } from '../../domain/models/account';
+import Role from '../../domain/models/enums/role.enum';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { AuthSignUpDto } from '../../infrastructure/controllers/auth/authSignUpDto.class';
 
@@ -23,6 +24,7 @@ export class SignUpUseCases {
       birthDate: authSignUpDto.birthDate,
       birthPlace: authSignUpDto.birthPlace,
       active: true,
+      role: Role.User,
       permissions: [],
     };
   }
