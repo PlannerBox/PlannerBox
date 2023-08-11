@@ -2,10 +2,11 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import Permission from '../../domain/models/enums/permission.type';
-import Role from '../../domain/models/enums/role.enum';
+import { RolePermissions } from './RolePermissions.entity';
 
 @Index('Account_pkey', ['id'], { unique: true })
 @Entity('Account', { schema: 'public' })
@@ -48,9 +49,7 @@ export class Account {
   @Column("boolean", { name: "active", default: () => "true" })
   active: boolean;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
-  role: Role;
-
-  @Column({ type: 'enum', enum: Permission, array: true, default: [] })
-  permissions: Permission[];
+  @OneToOne(() => RolePermissions, { eager: true })
+  @JoinColumn([{ name: 'roleId', referencedColumnName: 'id' }])
+  rolePermissions: RolePermissions;
 }

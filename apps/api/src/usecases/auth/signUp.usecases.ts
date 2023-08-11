@@ -24,8 +24,6 @@ export class SignUpUseCases {
       birthDate: authSignUpDto.birthDate,
       birthPlace: authSignUpDto.birthPlace,
       active: true,
-      role: Role.User,
-      permissions: [],
     };
   }
 }

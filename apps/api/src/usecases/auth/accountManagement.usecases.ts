@@ -2,10 +2,13 @@ import { BadRequestException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import Role from "../../domain/models/enums/role.enum";
+import { IRolePermissionsRepository } from "../../domain/repositories/rolePermissionsRepository.interface";
+import Permission from "../../domain/models/enums/permission.type";
 
 export class AccountManagementUseCases {
     constructor(
         private readonly accountRepository: IAccountRepository,
+        private readonly rolePermissionsRepository: IRolePermissionsRepository,
         private readonly logger: ILogger
     ) {}
 
@@ -37,8 +40,11 @@ export class AccountManagementUseCases {
         return account.active;
     }
 
-    async updateRolePermissions(role: Role, permissions: string[]): Promise<any> {
-        await this.accountRepository.updateRolePermissions(role, permissions);
+    /// <summary>
+    ///     Update account role permissions
+    /// </summary>
+    async updateRolePermissions(role: Role, permissions: Permission[]): Promise<any> {
+        await this.rolePermissionsRepository.updateRolePermissions(role, permissions);
         
         this.logger.log('AccountManagementUseCases updateRolePermissions', 'Role permissions updated')
         return 'Role permissions updated';

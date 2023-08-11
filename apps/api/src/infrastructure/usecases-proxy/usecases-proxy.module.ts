@@ -22,6 +22,7 @@ import { UseCaseProxy } from './usecases-proxy';
 import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecases';
 import { AccountManagementUseCases } from '../../usecases/auth/accountManagement.usecases';
 import { AdminRepository } from '../repositories/admin.repository';
+import { RolePermissionsRepository } from '../repositories/rolePermissions.repository';
 
 @Module({
   imports: [
@@ -126,16 +127,19 @@ export class UsecasesProxyModule {
         {
           inject: [
             AccountRepository,
+            RolePermissionsRepository,
             LoggerService
           ],
           provide: UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
+            rolePermissionsRepository: RolePermissionsRepository,
             logger: LoggerService
           ) => 
             new UseCaseProxy(
               new AccountManagementUseCases(
                 accountRepository,
+                rolePermissionsRepository,
                 logger
               )
             ),

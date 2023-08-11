@@ -68,8 +68,8 @@ export class LoginUseCases {
     }
     return {
       username: user.username, 
-      role: user.role,
-      permissions: user.permissions
+      role: user.rolePermissions.role,
+      permissions: user.rolePermissions.permissions
     };
   }
 

@@ -1,5 +1,6 @@
-import Permission from "./enums/permission.type";
+import { RolePermissions } from "../../infrastructure/entities/RolePermissions.entity";
 import Role from "./enums/role.enum";
+
 
 export class AccountWithoutPassword {
   id?: string;
@@ -11,8 +12,7 @@ export class AccountWithoutPassword {
   lastLogin?: Date;
   hashRefreshToken?: string;
   active: boolean;
-  role: Role;
-  permissions: Permission[];
+  rolePermissions?: RolePermissions;
 }
 
 export class AccountM extends AccountWithoutPassword {

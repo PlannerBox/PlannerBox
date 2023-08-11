@@ -50,7 +50,6 @@ export class UserManagementController {
     @ApiOperation({ description: 'update roles permissions' })
     async updateAccountPermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
         rolesPermissions.forEach(async rolePermission => {
-            console.log(rolePermission);
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
         });
         return JsonResult.Convert(`Account permissions updated`);

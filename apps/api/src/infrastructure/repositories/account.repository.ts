@@ -4,8 +4,6 @@ import { AccountM, AccountWithoutPassword } from '../../domain/models/account';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { Account } from '../entities/Account.entity';
 import { Repository } from 'typeorm';
-import Role from '../../domain/models/enums/role.enum';
-import Permission from '../../domain/models/enums/permission.type';
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -100,8 +98,7 @@ export class AccountRepository implements IAccountRepository {
       lastLogin: accountEntity.lastLogin,
       hashRefreshToken: accountEntity.hashRefreshToken,
       active: accountEntity.active,
-      role: accountEntity.role,
-      permissions: accountEntity.permissions,
+      rolePermissions: accountEntity.rolePermissions,
     };
   }
 
@@ -115,8 +112,7 @@ export class AccountRepository implements IAccountRepository {
     accountEntity.birthDate = account.birthDate;
     accountEntity.birthPlace = account.birthPlace;
     accountEntity.active = account.active;
-    accountEntity.role = account.role;
-    accountEntity.permissions = account.permissions;
+    accountEntity.rolePermissions = account.rolePermissions;
     return accountEntity;
   }
 }
