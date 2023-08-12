@@ -7,9 +7,11 @@ import { AdminRepository } from './admin.repository';
 import { Admin } from '../entities/Admin.entity';
 import { RolePermissionsRepository } from './rolePermissions.repository';
 import { RolePermissions } from '../entities/RolePermissions.entity';
+import { Student } from '../entities/Student.entity';
+import { Teacher } from '../entities/Teacher.entity';
 
 @Module({
-  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin, RolePermissions])],
+  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin, RolePermissions, Student, Teacher])],
   providers: [AccountRepository, AdminRepository, RolePermissionsRepository],
   exports: [AccountRepository, AdminRepository, RolePermissionsRepository],
 })

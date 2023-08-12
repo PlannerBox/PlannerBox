@@ -35,9 +35,8 @@ export class AccountManagementUseCases {
             throw new BadRequestException('Account not found');
         }
 
-        account.active = !account.active;
-        await this.accountRepository.updateAccount(account);
-        return account.active;
+        await this.accountRepository.updateAccountState(username, !account.active);
+        return !account.active;
     }
 
     /// <summary>

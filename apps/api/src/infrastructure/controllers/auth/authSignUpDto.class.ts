@@ -10,6 +10,7 @@ import {
   ValidationOptions,
   registerDecorator,
 } from 'class-validator';
+import Role from '../../../domain/models/enums/role.enum';
 
 export class AuthPasswordDto {
   @ApiProperty({ required: true })
@@ -50,4 +51,8 @@ export class AuthSignUpDto extends AuthPasswordDto {
   @MaxLength(50, { message: 'Birth place too long' })
   @IsNotEmpty({ message: 'Birth place can not be empty' })
   readonly birthPlace: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty({ message: 'Role can not be empty' })
+  readonly role: Role;
 }

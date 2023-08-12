@@ -18,3 +18,7 @@ export class AccountWithoutPassword {
 export class AccountM extends AccountWithoutPassword {
   password?: string;
 }
+
+export class newAccount extends AccountM {
+  role: Role;
+}

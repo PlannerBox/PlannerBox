@@ -41,7 +41,7 @@ export class UserManagementController {
     @ApiOperation({ description: 'update account state' })
     async updateAccountState(@Query('username') username: string) {
         const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
-        return JsonResult.Convert(`Account ${ !response? 'de' : '' }activated`);
+        return JsonResult.Convert(`Account ${ !response ? 'de' : '' }activated`);
     }
 
     @Post('role-permissions')
