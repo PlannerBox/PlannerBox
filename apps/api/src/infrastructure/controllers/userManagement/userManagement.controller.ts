@@ -44,14 +44,14 @@ export class UserManagementController {
         return JsonResult.Convert(`Account ${ !response? 'de' : '' }activated`);
     }
 
-    @Post('account-permissions')
+    @Post('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'update roles permissions' })
-    async updateAccountPermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
+    async updateRolePermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
         rolesPermissions.forEach(async rolePermission => {
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
         });
-        return JsonResult.Convert(`Account permissions updated`);
+        return JsonResult.Convert(`Role permissions updated`);
     }
 }
