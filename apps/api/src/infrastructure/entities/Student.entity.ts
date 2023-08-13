@@ -14,9 +14,6 @@ export class Student {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: number;
 
-  @Column("boolean", { name: 'intern', default: () => 'true' })
-  intern: boolean;
-
   @OneToOne(() => Account, { eager: true, cascade: true })
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;

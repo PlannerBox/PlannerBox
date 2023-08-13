@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddAccountRolePermissions1691854303378 implements MigrationInterface {
-    name = 'AddAccountRolePermissions1691854303378'
+export class AddAccountRolePermissions1691947678063 implements MigrationInterface {
+    name = 'AddAccountRolePermissions1691947678063'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."RolePermissions_role_enum" AS ENUM('user', 'admin', 'student', 'teacher', 'internTeacher')`);
@@ -10,7 +10,7 @@ export class AddAccountRolePermissions1691854303378 implements MigrationInterfac
         await queryRunner.query(`CREATE UNIQUE INDEX "RolePermissions_pkey" ON "RolePermissions" ("id") `);
         await queryRunner.query(`ALTER TABLE "Account" ADD "roleId" uuid`);
         await queryRunner.query(`ALTER TABLE "Account" ADD CONSTRAINT "UQ_a9738c411d54f010029fa60104d" UNIQUE ("roleId")`);
-        await queryRunner.query(`ALTER TABLE "Student" ADD "intern" boolean NOT NULL DEFAULT true`);
+        await queryRunner.query(`ALTER TABLE "Teacher" ADD "intern" boolean NOT NULL DEFAULT true`);
         await queryRunner.query(`ALTER TABLE "Account" ADD CONSTRAINT "FK_a9738c411d54f010029fa60104d" FOREIGN KEY ("roleId") REFERENCES "RolePermissions"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
 
         await queryRunner.query(`INSERT INTO public."RolePermissions" (id, "role", permissions) VALUES('10d65583-3068-4f76-be90-5234a306f04b'::uuid, 'admin'::public."RolePermissions_role_enum", '{add,update,desactivate,delete,read,readAll}')`);
@@ -22,7 +22,7 @@ export class AddAccountRolePermissions1691854303378 implements MigrationInterfac
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "Account" DROP CONSTRAINT "FK_a9738c411d54f010029fa60104d"`);
-        await queryRunner.query(`ALTER TABLE "Student" DROP COLUMN "intern"`);
+        await queryRunner.query(`ALTER TABLE "Teacher" DROP COLUMN "intern"`);
         await queryRunner.query(`ALTER TABLE "Account" DROP CONSTRAINT "UQ_a9738c411d54f010029fa60104d"`);
         await queryRunner.query(`ALTER TABLE "Account" DROP COLUMN "roleId"`);
         await queryRunner.query(`DROP INDEX "public"."RolePermissions_pkey"`);
