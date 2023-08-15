@@ -48,4 +48,18 @@ export class AccountManagementUseCases {
         this.logger.log('AccountManagementUseCases updateRolePermissions', 'Role permissions updated')
         return 'Role permissions updated';
     }
+
+    /// <summary>
+    ///     Get role permissions
+    /// </summary>
+    async getRolePermissions(role: Role): Promise<any> {
+        return await this.rolePermissionsRepository.getRolePermissions(role);
+    }
+
+    /// <summary>
+    ///     Get all accounts
+    /// </summary>
+    async getAllAccounts(): Promise<any> {
+        return await this.accountRepository.getAllAccounts();
+    }
 }

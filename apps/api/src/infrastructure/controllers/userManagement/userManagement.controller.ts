@@ -22,7 +22,7 @@ import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 export class UserManagementController {
     constructor(
         @Inject(UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY)
-        private readonly accountManagementUsecaseProxy: UseCaseProxy<AccountManagementUseCases>,
+        private readonly accountManagementUsecaseProxy: UseCaseProxy<AccountManagementUseCases>
     ) 
     {}
 
@@ -44,6 +44,14 @@ export class UserManagementController {
         return JsonResult.Convert(`Account ${ !response ? 'de' : '' }activated`);
     }
 
+    @Get('role-permissions')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get roles permissions of the connected user' })
+    async getRolePermissions(@Req() request: any) {
+        return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
+    }
+    
     @Post('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
@@ -53,5 +61,13 @@ export class UserManagementController {
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
         });
         return JsonResult.Convert(`Role permissions updated`);
+    }
+
+    @Get('users')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get all users' })
+    async getAllUsers() {
+        return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
     }
 }

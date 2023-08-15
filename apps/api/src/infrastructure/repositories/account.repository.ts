@@ -106,6 +106,14 @@ export class AccountRepository implements IAccountRepository {
     );
   }
 
+  async getAllAccounts(): Promise<AccountWithoutPassword[]> {
+    const accountEntities = await this.accountEntityRepository.find();
+    return accountEntities.map(accountEntity => {
+      const { password, ...info } = this.toAccount(accountEntity);
+      return info;
+    });
+  }
+
   private toAccount(accountEntity: Account): AccountM {    
     return accountEntity.active ? {
       id: accountEntity.id,

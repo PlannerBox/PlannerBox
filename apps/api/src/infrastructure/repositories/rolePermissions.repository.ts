@@ -5,6 +5,7 @@ import { RolePermissions } from "../entities/RolePermissions.entity";
 import { Repository } from "typeorm";
 import Role from "../../domain/models/enums/role.enum";
 import Permission from "../../domain/models/enums/permission.type";
+import UsersPermissions from "../../domain/models/enums/usersPermissions.enum";
 
 @Injectable()
 export class RolePermissionsRepository implements IRolePermissionsRepository {
@@ -12,6 +13,10 @@ export class RolePermissionsRepository implements IRolePermissionsRepository {
         @InjectRepository(RolePermissions)
         private readonly rolePermissionsRepository: Repository<RolePermissions>
     ) {}
+
+    async getRolePermissions(role: Role): Promise<RolePermissions> {
+        return await this.rolePermissionsRepository.findOne({where: {role: role }});
+    }
 
     async updateRolePermissions(role: Role, permissions: Permission[]): Promise<void> {
         await this.rolePermissionsRepository.update(
