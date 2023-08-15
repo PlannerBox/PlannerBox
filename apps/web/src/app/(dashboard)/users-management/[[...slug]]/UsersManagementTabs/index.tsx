@@ -2,7 +2,7 @@
 
 import { Tabs, TabsProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import GroupsTab from './partials/GroupsTab';
 import PermissionsTab from './partials/PermissionsTab';
 import UsersTab from './partials/UsersTab';
@@ -16,16 +16,19 @@ export default function UsersManagementTabs() {
     .replace('/users-management', '')
     .replace('/', '');
 
-  const shallowRedirect = (key: string) => {
-    router.push(`/users-management/${key}`, { shallow: true });
-  };
+  const shallowRedirect = useCallback(
+    (key: string) => {
+      router.push(`/users-management/${key}`, { shallow: true });
+    },
+    [router]
+  );
 
   useEffect(() => {
     // Redirect to 'users' by default
     if (currentTabPathname === '') {
       shallowRedirect('users');
     }
-  }, [router, currentTabPathname]);
+  }, [shallowRedirect, currentTabPathname]);
 
   const currentTab = validTabs.includes(currentTabPathname)
     ? currentTabPathname
