@@ -12,9 +12,15 @@ export class AccountRepository implements IAccountRepository {
     private readonly accountEntityRepository: Repository<Account>,
   ) {}
 
-  async updateAccount(account: AccountM): Promise<void> {
+  async updateAccount(account: AccountM): Promise<AccountWithoutPassword> {
     const accountEntity = this.toAccountEntity(account);
-    await this.accountEntityRepository.update(accountEntity.id, accountEntity);
+
+    await this.accountEntityRepository.update(
+        accountEntity.id, accountEntity);
+
+    const createdAccount = this.toAccount(accountEntity);
+    const { password, ...info } = createdAccount;
+    return info;
   }
   
   async getAccountByUsername(username: string): Promise<AccountM> {
@@ -31,7 +37,6 @@ export class AccountRepository implements IAccountRepository {
     return this.toAccount(accountEntity);
   }
 
-  async 
   async updateLastLogin(username: string): Promise<void> {
     await this.accountEntityRepository.update(
       {
@@ -69,20 +74,20 @@ export class AccountRepository implements IAccountRepository {
       { password: newPassword },
     );
   }
-
+    
   private toAccount(accountEntity: Account): AccountM {
-    return {
-      id: accountEntity.id,
-      username: accountEntity.username,
-      password: accountEntity.password,
-      firstname: accountEntity.firstname,
-      lastname: accountEntity.lastname,
-      birthDate: accountEntity.birthDate,
-      birthPlace: accountEntity.birthPlace,
-      lastLogin: accountEntity.lastLogin,
-      hashRefreshToken: accountEntity.hashRefreshToken,
-      active: accountEntity.active,
-    };
+      return {
+          id: accountEntity.id,
+          username: accountEntity.username,
+          password: accountEntity.password,
+          firstname: accountEntity.firstname,
+          lastname: accountEntity.lastname,
+          birthDate: accountEntity.birthDate,
+          birthPlace: accountEntity.birthPlace,
+          lastLogin: accountEntity.lastLogin,
+          hashRefreshToken: accountEntity.hashRefreshToken,
+          active: accountEntity.active
+      }
   }
 
   private toAccountEntity(account: AccountM): Account {
