@@ -4,6 +4,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Button, Layout, Tooltip, theme } from 'antd';
 import Logo from '../components/Logo';
 import SideMenu from '../components/SideMenu';
+import styles from './styles.module.scss';
 
 const { Header, Content } = Layout;
 
@@ -28,13 +29,7 @@ export default function DashboardLayout({
           padding: '0 var(--spacing-4)',
         }}
       >
-        <div
-          style={{
-            width: 253,
-            display: 'flex',
-            placeContent: 'center',
-          }}
-        >
+        <div className={styles.homeButton}>
           <Button
             type='text'
             href={'/dashboard'}
@@ -45,7 +40,8 @@ export default function DashboardLayout({
               height: 46,
             }}
           >
-            <Logo width={150} />
+            <Logo width={150} className={styles.hideOnMobile} />
+            <Logo isIconOnly className={styles.displayOnMobile} />
           </Button>
         </div>
         <div

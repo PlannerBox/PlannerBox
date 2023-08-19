@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ConfigProvider } from 'antd';
+import frFR from 'antd/locale/fr_FR';
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 
@@ -19,6 +20,7 @@ function Providers({ children }: React.PropsWithChildren) {
             fontSize: 16,
           },
         }}
+        locale={frFR}
       >
         <CookiesProvider>{children}</CookiesProvider>
       </ConfigProvider>
