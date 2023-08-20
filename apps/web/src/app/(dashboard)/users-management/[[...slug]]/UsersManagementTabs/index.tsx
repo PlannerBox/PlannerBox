@@ -12,9 +12,8 @@ export default function UsersManagementTabs() {
   const router = useRouter();
 
   const validTabs = ['users', 'groups', 'permissions'];
-  const currentTabPathname = pathname
-    .replace('/users-management', '')
-    .replace('/', '');
+  const currentTabSplittedPathname = pathname.split('/');
+  const currentTabPathname = currentTabSplittedPathname[2] ?? '';
 
   const shallowRedirect = useCallback(
     (key: string) => {
@@ -38,7 +37,11 @@ export default function UsersManagementTabs() {
     {
       key: 'users',
       label: `Utilisateurs`,
-      children: <UsersTab />,
+      children: (
+        <UsersTab
+          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
+        />
+      ),
     },
     {
       key: 'groups',
