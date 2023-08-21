@@ -9,6 +9,7 @@ import { Admin } from '../entities/Admin.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
+import Permission from '../../domain/models/enums/permission.type';
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -96,13 +97,6 @@ export class AccountRepository implements IAccountRepository {
     await this.accountEntityRepository.update(
       { username: username },
       { password: newPassword },
-    );
-  }
-
-  async updateRolePermissions(role: Role, permissions: Permission[]): Promise<void> {
-    await this.accountEntityRepository.update(
-      { role: role },
-      { permissions: permissions}
     );
   }
 
