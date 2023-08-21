@@ -46,7 +46,11 @@ export default function UsersManagementTabs() {
     {
       key: 'groups',
       label: `Groupes`,
-      children: <GroupsTab />,
+      children: (
+        <GroupsTab
+          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
+        />
+      ),
     },
     {
       key: 'permissions',
