@@ -2,7 +2,7 @@ import { IBcryptService } from "../../domain/adapters/bcrypt.interface";
 import { AccountWithoutPassword, AccountM } from "../../domain/models/account";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { ILogger } from "../../domain/logger/logger.interface";
-import { UserAccountDto, UserAccountWithoutPasswordDto } from "../../infrastructure/controllers/user/userAccountDto.class";
+import { UserAccountDto, UserAccountWithoutPasswordDto } from "../../infrastructure/controllers/userManagement/userAccountDto.class";
 import { BadRequestException } from "@nestjs/common";
 
 
@@ -13,19 +13,21 @@ export class UpdateAccountUseCase {
         private readonly logger: ILogger,
     ) { }
 
-    async updateAccount(userAccountDto: AccountM): Promise<AccountWithoutPassword> {
-        const account = await this.accountRepository.findAccountById(userAccountDto.id);
+    async updateAccount(userAccountDto: UserAccountWithoutPasswordDto): Promise<AccountWithoutPassword> {
+        const userAccount = this.toAccount(userAccountDto);
+        const account = await this.accountRepository.findAccountById(userAccount.id);
+
         if (!account) {
             this.logger.error('AccountManagementUseCases updateAccountState', 'Account not found')
             throw new BadRequestException('Account not found');
         }
 
-        account.username = userAccountDto.username;
-        account.firstname = userAccountDto.firstname;
-        account.lastname = userAccountDto.lastname;
-        account.birthDate = userAccountDto.birthDate;
-        account.birthPlace = userAccountDto.birthPlace;
-        account.active = userAccountDto.active;
+        account.username = userAccount.username;
+        account.firstname = userAccount.firstname;
+        account.lastname = userAccount.lastname;
+        account.birthDate = userAccount.birthDate;
+        account.birthPlace = userAccount.birthPlace;
+        account.active = userAccount.active;
 
         const accountWithoutPassword= await this.accountRepository.updateAccount(account);
         return accountWithoutPassword;

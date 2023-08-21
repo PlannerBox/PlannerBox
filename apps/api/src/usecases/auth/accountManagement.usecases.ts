@@ -1,10 +1,14 @@
 import { BadRequestException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
+import Role from "../../domain/models/enums/role.enum";
+import { IRolePermissionsRepository } from "../../domain/repositories/rolePermissionsRepository.interface";
+import Permission from "../../domain/models/enums/permission.type";
 
 export class AccountManagementUseCases {
     constructor(
         private readonly accountRepository: IAccountRepository,
+        private readonly rolePermissionsRepository: IRolePermissionsRepository,
         private readonly logger: ILogger
     ) {}
 
@@ -31,8 +35,31 @@ export class AccountManagementUseCases {
             throw new BadRequestException('Account not found');
         }
 
-        account.active = !account.active;
-        await this.accountRepository.updateAccount(account);
-        return account.active;
+        await this.accountRepository.updateAccountState(username, !account.active);
+        return !account.active;
+    }
+
+    /// <summary>
+    ///     Update account role permissions
+    /// </summary>
+    async updateRolePermissions(role: Role, permissions: Permission[]): Promise<any> {
+        await this.rolePermissionsRepository.updateRolePermissions(role, permissions);
+        
+        this.logger.log('AccountManagementUseCases updateRolePermissions', 'Role permissions updated')
+        return 'Role permissions updated';
+    }
+
+    /// <summary>
+    ///     Get role permissions
+    /// </summary>
+    async getRolePermissions(role: Role): Promise<any> {
+        return await this.rolePermissionsRepository.getRolePermissions(role);
+    }
+
+    /// <summary>
+    ///     Get all accounts
+    /// </summary>
+    async getAllAccounts(): Promise<any> {
+        return await this.accountRepository.getAllAccounts();
     }
 }

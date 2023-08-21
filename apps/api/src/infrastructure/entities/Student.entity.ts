@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   Index,
   JoinColumn,
@@ -11,9 +12,9 @@ import { Account } from './Account.entity';
 @Entity('Student', { schema: 'public' })
 export class Student {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: number;
+  id: string;
 
-  @OneToOne(() => Account)
+  @OneToOne(() => Account, { eager: true, cascade: true })
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 }
