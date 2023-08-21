@@ -383,7 +383,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
               <ArrowLeftOutlined /> Retour
             </Button>
             <Button type='primary' htmlType='submit'>
-              Créer l'utilisateur
+              Créer l&apos;utilisateur
             </Button>
           </Form.Item>
         </Form>
