@@ -8,6 +8,8 @@ import { IsAuthenticatedUseCases } from '../../usecases/auth/isAuthenticated.use
 import { LoginUseCases } from '../../usecases/auth/login.usecases';
 import { LogoutUseCases } from '../../usecases/auth/logout.usecases';
 import { SignUpUseCases } from '../../usecases/auth/signUp.usecases';
+import { UpdateAccountUseCase } from '../../usecases/account/updateAccount.usecase';
+
 import { EnvironmentConfigModule } from '../config/environment-config/environment-config.module';
 import { EnvironmentConfigService } from '../config/environment-config/environment-config.service';
 import { LoggerService } from '../logger/logger.service';
@@ -38,6 +40,7 @@ export class UsecasesProxyModule {
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
   static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
+  static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy'
 
   static register(): DynamicModule {
     return {
@@ -136,6 +139,18 @@ export class UsecasesProxyModule {
                 logger
               )
             ),
+        },
+        {
+          inject: [AccountRepository, BcryptService, LoggerService],
+          provide: UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
+          useFactory: (
+            accountRepository: AccountRepository,
+            bcryptService: BcryptService,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new UpdateAccountUseCase(accountRepository, bcryptService, logger),
+            ),
         }
       ],
       exports: [
@@ -144,7 +159,8 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
-        UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY
+        UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
+        UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY
       ],
     };
   }
