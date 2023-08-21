@@ -71,4 +71,17 @@ export class AccountManagementUseCases {
         const role=account.rolePermissions.role;
         return await this.accountRepository.deleteAccount(id);
     }
+
+    ///     Update student formation mode
+    /// </summary>
+    async updateStudentFormationMode(id: string, formationMode: FormationMode): Promise<any> {
+        if (formationMode in FormationMode)
+        {
+            await this.accountRepository.updateFormationMode(id, formationMode);
+            this.logger.log('AccountManagementUseCases updateStudentFormationMode', 'Student formation mode updated');
+            return;
+        }
+
+        this.logger.error('AccountManagementUseCases updateStudentFormationMode', `Formation mode "${formationMode}" does not exists`);
+    }
 }

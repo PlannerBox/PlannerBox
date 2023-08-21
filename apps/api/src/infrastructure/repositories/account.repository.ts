@@ -10,6 +10,8 @@ import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import { AccountMapper } from '../mappers/account.mapper';
+import Permission from '../../domain/models/enums/permission.type';
+import { FormationMode } from '../../domain/models/enums/formationMode.enum';
 
 
 @Injectable()
