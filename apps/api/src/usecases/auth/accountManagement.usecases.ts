@@ -4,6 +4,7 @@ import { IAccountRepository } from "../../domain/repositories/accountRepository.
 import Role from "../../domain/models/enums/role.enum";
 import { IRolePermissionsRepository } from "../../domain/repositories/rolePermissionsRepository.interface";
 import Permission from "../../domain/models/enums/permission.type";
+import { FormationMode } from "../../domain/models/enums/formationMode.enum";
 
 export class AccountManagementUseCases {
     constructor(
@@ -69,5 +70,18 @@ export class AccountManagementUseCases {
         }
         const role=account.rolePermissions.role;
         return await this.accountRepository.deleteAccount(id);
+    }
+
+    ///     Update student formation mode
+    /// </summary>
+    async updateStudentFormationMode(id: string, formationMode: FormationMode): Promise<any> {
+        if (formationMode in FormationMode)
+        {
+            await this.accountRepository.updateFormationMode(id, formationMode);
+            this.logger.log('AccountManagementUseCases updateStudentFormationMode', 'Student formation mode updated');
+            return;
+        }
+
+        this.logger.error('AccountManagementUseCases updateStudentFormationMode', `Formation mode "${formationMode}" does not exists`);
     }
 }

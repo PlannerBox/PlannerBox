@@ -14,6 +14,9 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
+import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { Exception } from "handlebars";
+import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -106,5 +109,15 @@ export class UserManagementController {
     @ApiOperation({ description: 'get all users' })
     async getAllUsers() {
         return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
+    }
+
+    @Post('student/:id')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'update student formation mode' })
+    async updateStudentFormationMode(@Param('id') id: string, @Query('formationMode') formationMode: FormationMode) {
+        console.log(formationMode in FormationMode);
+        await this.accountManagementUsecaseProxy.getInstance().updateStudentFormationMode(id, formationMode);
+        return JsonResult.Convert(`Student formation mode updated`);
     }
 }

@@ -10,6 +10,7 @@ import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import Permission from '../../domain/models/enums/permission.type';
+import { FormationMode } from '../../domain/models/enums/formationMode.enum';
 
 
 @Injectable()
@@ -110,6 +111,12 @@ export class AccountRepository implements IAccountRepository {
     });
   }
 
+  async updateFormationMode(id: string, formationMode: FormationMode): Promise<void> {
+    await this.studentEntityRepository.update(
+      { id: id },
+      { formationMode: formationMode }
+    );
+  }
   private toAccount(accountEntity: Account): AccountM {    
     return {
       id: accountEntity.id,
