@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Inject,
   Post,
   Put,
@@ -22,7 +23,7 @@ import { LoginGuard } from '../../common/guards/login.guard';
 import { ApiResponseType } from '../../common/swagger/response.decorator';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { UserAccountDto } from './userAccountDto.class';
+import { UserAccountDto, UserAccountWithoutPasswordDto } from './userAccountDto.class';
 import { UpdateAccountUseCase } from '../../../usecases/account/updateAccount.usecase';
 
 
@@ -42,9 +43,10 @@ export class UserAccountController {
 
 
   @Post('update')
-  @ApiBody({ type: UserAccountDto })
+  @ApiBody({ type: UserAccountWithoutPasswordDto })
   @ApiOperation({ description: 'update' })
-  async updateAccount(@Body() userAccount: UserAccountDto, @Req() request: any) {
+  @HttpCode(200)
+  async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
     const AccountWithoutPassword=await this.updateAccountUseCase.
       getInstance().updateAccount(userAccount);
       return AccountWithoutPassword;

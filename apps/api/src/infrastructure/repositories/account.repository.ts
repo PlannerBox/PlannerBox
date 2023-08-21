@@ -37,6 +37,10 @@ export class AccountRepository implements IAccountRepository {
     return this.toAccount(accountEntity);
   }
 
+  async findAccountById(id: string): Promise<AccountM> {
+    return await this.accountEntityRepository.findOneBy({ id });
+  }
+
   async updateLastLogin(username: string): Promise<void> {
     await this.accountEntityRepository.update(
       {

@@ -141,14 +141,15 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [AccountRepository, BcryptService],
+          inject: [AccountRepository, BcryptService, LoggerService],
           provide: UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
             bcryptService: BcryptService,
+            logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new UpdateAccountUseCase(accountRepository, bcryptService),
+              new UpdateAccountUseCase(accountRepository, bcryptService, logger),
             ),
         }
       ],
@@ -158,7 +159,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
-        UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY
+        UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
         UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY
       ],
     };
