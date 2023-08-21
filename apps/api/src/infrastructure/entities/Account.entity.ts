@@ -49,7 +49,7 @@ export class Account {
   @Column("boolean", { name: "active", default: () => "true" })
   active: boolean;
 
-  @ManyToOne(() => RolePermissions, (rolePermissions) => rolePermissions)
+  @ManyToOne(() => RolePermissions, (rolePermissions) => rolePermissions, { eager: true})
   @JoinColumn([{ name: 'roleId', referencedColumnName: 'id' }])
   rolePermissions: RolePermissions;
 }
