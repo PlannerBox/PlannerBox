@@ -3,7 +3,7 @@ import {
   Entity,
   Index,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RolePermissions } from './RolePermissions.entity';
@@ -49,7 +49,7 @@ export class Account {
   @Column("boolean", { name: "active", default: () => "true" })
   active: boolean;
 
-  @OneToOne(() => RolePermissions, { eager: true })
+  @ManyToOne(() => RolePermissions, (rolePermissions) => rolePermissions)
   @JoinColumn([{ name: 'roleId', referencedColumnName: 'id' }])
   rolePermissions: RolePermissions;
 }
