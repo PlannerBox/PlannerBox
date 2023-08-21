@@ -109,7 +109,7 @@ export class AccountRepository implements IAccountRepository {
   }
 
   private toAccount(accountEntity: Account): AccountM {    
-    return accountEntity.active ? {
+    return {
       id: accountEntity.id,
       username: accountEntity.username,
       password: accountEntity.password,
@@ -121,19 +121,7 @@ export class AccountRepository implements IAccountRepository {
       hashRefreshToken: accountEntity.hashRefreshToken,
       active: accountEntity.active,
       rolePermissions: accountEntity.rolePermissions,
-    } : {
-      id: accountEntity.id,
-      username: "**********",
-      password: "**********",
-      firstname: "**********",
-      lastname: "**********",
-      birthDate: new Date(0),
-      birthPlace: "**********",
-      lastLogin: accountEntity.lastLogin,
-      hashRefreshToken: "**********",
-      active: accountEntity.active,
-      rolePermissions: accountEntity.rolePermissions,
-    };
+    }
   }
 
   private toAccountEntity(account: AccountM): Account {

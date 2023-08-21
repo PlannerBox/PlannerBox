@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Inject, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
@@ -12,6 +12,8 @@ import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum
 import { HasRole } from "../../decorators/has-role.decorator";
 import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
+import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
+import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -22,7 +24,9 @@ import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 export class UserManagementController {
     constructor(
         @Inject(UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY)
-        private readonly accountManagementUsecaseProxy: UseCaseProxy<AccountManagementUseCases>
+        private readonly accountManagementUsecaseProxy: UseCaseProxy<AccountManagementUseCases>,
+        @Inject(UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY)
+        private readonly updateAccountUseCase: UseCaseProxy<UpdateAccountUseCase>,
     ) 
     {}
 
@@ -33,6 +37,15 @@ export class UserManagementController {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
     }
 
+    @Post('update')
+    @ApiBody({ type: UserAccountWithoutPasswordDto })
+    @ApiOperation({ description: 'update' })
+    @HttpCode(200)
+    async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
+        const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateAccount(userAccount);
+        return AccountWithoutPassword;
+    }
+    
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
     @Post('account-state')
