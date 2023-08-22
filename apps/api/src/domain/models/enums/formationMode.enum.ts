@@ -1,5 +1,7 @@
 export enum FormationMode {
-    Presentiel,
-    Hybride,
-    Distanciel
+    Presentiel = "presentiel",
+    Hybride = "hybride",
+    Distanciel = "distanciel"
 }
+
+export default FormationMode;

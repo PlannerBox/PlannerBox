@@ -9,8 +9,8 @@ import { Admin } from '../entities/Admin.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
-import Permission from '../../domain/models/enums/permission.type';
 import { FormationMode } from '../../domain/models/enums/formationMode.enum';
+import { StudentMapper } from '../mappers/student.mapper';
 
 
 @Injectable()
@@ -82,13 +82,8 @@ export class AccountRepository implements IAccountRepository {
   }
 
   async createAccount(account: newAccount): Promise<AccountWithoutPassword> {
-    const accountEntity = this.toAccountEntity(account);
-    accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({
-      where: {
-        role: account.role,
-      },
-    });
-    const createdAccountEntity = await this.linkAccountToSubClass(accountEntity);
+    
+    const createdAccountEntity = await this.linkAccountToSubClass(account);
     const createdAccount = this.toAccount(createdAccountEntity);
     const { password, ...info } = createdAccount;
     return info;
@@ -149,17 +144,24 @@ export class AccountRepository implements IAccountRepository {
     }
   }
 
-  private async linkAccountToSubClass(account: Account): Promise<Account> {
-    switch (account.rolePermissions.role) {
+  private async linkAccountToSubClass(account: newAccount): Promise<Account> {
+
+    const accountEntity = this.toAccountEntity(account);
+        accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({
+          where: {
+            role: account.role,
+          },
+        });
+
+    switch (account.role) {
       case Role.Admin:
         const createdAdminAccountEntity = await this.adminEntityRepository.save({
-          account: account,
+          account: accountEntity,
         });
         return createdAdminAccountEntity.account;
       case Role.Student:
-        const createdStudentAccountEntity = await this.studentEntityRepository.save({
-          account: account,
-        });
+        let student = StudentMapper.fromNewAccountToEntity(account);
+        const createdStudentAccountEntity = await this.studentEntityRepository.save(student);
         return createdStudentAccountEntity.account;
       case Role.ExternTeacher:
       case Role.InternTeacher:

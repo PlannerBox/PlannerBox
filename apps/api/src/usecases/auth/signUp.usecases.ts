@@ -11,12 +11,12 @@ export class SignUpUseCases {
   ) {}
 
   async signUp(authSignUpDto: AuthSignUpDto): Promise<AccountWithoutPassword> {
-    const account = this.toAccountM(authSignUpDto);
+    const account = this.toNewAccount(authSignUpDto);
     account.password = await this.bcryptService.hash(authSignUpDto.password);
     return await this.accountRepository.createAccount(account);
   }
 
-  private toAccountM(authSignUpDto: AuthSignUpDto): newAccount {
+  private toNewAccount(authSignUpDto: AuthSignUpDto): newAccount {
     return {
       username: authSignUpDto.username,
       firstname: authSignUpDto.firstname,
@@ -25,6 +25,7 @@ export class SignUpUseCases {
       birthPlace: authSignUpDto.birthPlace,
       active: true,
       role: authSignUpDto.role,
+      formationMode: authSignUpDto.formationMode,
     };
   }
 }

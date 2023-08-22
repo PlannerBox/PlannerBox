@@ -14,9 +14,8 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
-import { Exception } from "handlebars";
 import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
+import { StudentAccountDto } from "./studentAccountDto.class";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -73,6 +72,13 @@ export class UserManagementController {
         return JsonResult.Convert('Account delete');
     }
     
+    @Post('/student/update')
+    @HttpCode(200)
+    async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
+        const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateAccount(studentAccount);
+        return AccountWithoutPassword;
+    }
+
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
     @Post('account-state')

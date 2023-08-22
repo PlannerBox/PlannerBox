@@ -1,4 +1,5 @@
 import { RolePermissions } from "../../infrastructure/entities/RolePermissions.entity";
+import { FormationMode } from "./enums/formationMode.enum";
 import Role from "./enums/role.enum";
 
 
@@ -17,8 +18,10 @@ export class AccountWithoutPassword {
 
 export class AccountM extends AccountWithoutPassword {
   password?: string;
+  formationMode?: FormationMode;
 }
 
 export class newAccount extends AccountM {
   role: Role;
+  formationMode?: FormationMode;
 }
