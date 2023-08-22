@@ -14,8 +14,8 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { GenericUserAccountDto, UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
-import { StudentAccountDto } from "./studentAccountDto.class";
 import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
+import { StudentAccountDto } from "./studentAccountDto.class";
 
 @Controller('user-management')
 @ApiTags('user-management')

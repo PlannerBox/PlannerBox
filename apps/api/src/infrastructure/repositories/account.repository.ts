@@ -10,7 +10,6 @@ import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import { AccountMapper } from '../mappers/account.mapper';
-import Permission from '../../domain/models/enums/permission.type';
 import { FormationMode } from '../../domain/models/enums/formationMode.enum';
 
 
@@ -115,8 +114,14 @@ export class AccountRepository implements IAccountRepository {
     });
   }
 
-  private async linkAccountToSubClass(account: AccountM): Promise<Account> {
+  async updateFormationMode(id: string, formationMode: FormationMode): Promise<void> {
+    await this.studentEntityRepository.update(
+      { id: id },
+      { formationMode: formationMode }
+    );
+  }
 
+  private async linkAccountToSubClass(account: AccountM): Promise<Account> {
     const accountEntity = AccountMapper.fromModelToEntity(account);
         accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({
           where: {

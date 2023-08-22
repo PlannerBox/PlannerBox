@@ -1,3 +1,4 @@
+import { newAccount } from "../../domain/models/account";
 import { StudentM } from "../../domain/models/student";
 import { StudentAccountDto } from "../controllers/userManagement/studentAccountDto.class";
 import { GenericUserAccountDto } from "../controllers/userManagement/userAccountDto.class";
