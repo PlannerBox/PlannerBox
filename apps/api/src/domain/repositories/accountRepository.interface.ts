@@ -1,5 +1,4 @@
 import { AccountM, AccountWithoutPassword } from '../models/account';
-import { FormationMode } from '../models/enums/formationMode.enum';
 
 export interface IAccountRepository {
   updateAccount(account: AccountM): Promise<AccountM>;
@@ -12,5 +11,4 @@ export interface IAccountRepository {
   resetPassword(username: string, newPassword: string): Promise<void>;
   getAllAccounts(): Promise<AccountWithoutPassword[]>;
   deleteAccount(id: string): Promise<void>;
-  updateFormationMode(id: string, formationMode: FormationMode): Promise<void>;
 }
