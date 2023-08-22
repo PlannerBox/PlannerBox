@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AccountM, AccountWithoutPassword, newAccount } from '../../domain/models/account';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { Account } from '../entities/Account.entity';
-import { In, IntegerType, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Admin } from '../entities/Admin.entity';
 import { Student } from '../entities/Student.entity';
