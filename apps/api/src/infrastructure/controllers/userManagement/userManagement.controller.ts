@@ -46,7 +46,6 @@ export class UserManagementController {
     @ApiOperation({ description: 'update' })
     @HttpCode(200)
     async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
-        console.log(request.user);
         let AccountWithoutPassword;
         if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
 
