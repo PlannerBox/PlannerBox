@@ -24,7 +24,7 @@ export class StudentMapper {
         return {
             studentId: studentDto.studentId,
             formationMode: studentDto.formationMode,
-            ...AccountMapper.fromDtoToModel(studentDto)
+            ...AccountMapper.fromUpdateDtoToModel(studentDto)
         }
     }
 }

@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
-import { UserAccountDto } from "./userAccountDto.class";
+import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { IsNotEmpty } from "class-validator";
 
-export class StudentAccountDto extends UserAccountDto {
+export class StudentAccountDto extends UserAccountWithoutPasswordDto {
     
     @ApiProperty({ required: true })
     @IsNotEmpty({ message: 'Student id can not be empty' })

@@ -3,9 +3,8 @@ import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxLength } from 
 import Role from "../../../domain/models/enums/role.enum";
 
 export class UserAccountWithoutPasswordDto {
-  @ApiProperty({ required: true })
-  @IsNotEmpty({ message: 'ID cannot be empty' })
-  readonly id: string;
+  @ApiProperty({ required: false })
+  readonly id?: string;
 
   @IsNotEmpty({ message: 'User name can not be empty' })
   @IsEmail()
