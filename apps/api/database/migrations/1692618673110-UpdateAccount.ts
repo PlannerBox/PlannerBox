@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class  $npmConfigName1692618673110 implements MigrationInterface {
-    name = ' $npmConfigName1692618673110'
+export class  UpdateAccount1692618673110 implements MigrationInterface {
+    name = 'UpdateAccount1692618673110'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TYPE "public"."RolePermissions_permissions_enum" RENAME TO "RolePermissions_permissions_enum_old"`);
