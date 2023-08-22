@@ -21,8 +21,3 @@ export class AccountM extends AccountWithoutPassword {
   password?: string;
   formationMode?: FormationMode;
 }
-
-export class newAccount extends AccountM {
-  role: Role;
-  formationMode?: FormationMode;
-}

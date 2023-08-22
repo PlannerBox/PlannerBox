@@ -1,5 +1,4 @@
-import { UUID } from 'crypto';
-import { AccountM, AccountWithoutPassword, newAccount } from '../models/account';
+import { AccountM, AccountWithoutPassword } from '../models/account';
 import { FormationMode } from '../models/enums/formationMode.enum';
 
 export interface IAccountRepository {
