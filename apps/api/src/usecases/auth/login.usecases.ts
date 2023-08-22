@@ -67,6 +67,7 @@ export class LoginUseCases {
       return null;
     }
     return {
+      id: user.id,
       username: user.username, 
       role: user.rolePermissions.role,
       permissions: user.rolePermissions.permissions

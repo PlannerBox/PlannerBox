@@ -21,7 +21,7 @@ export class UpdateAccountUseCase {
             this.logger.error('AccountManagementUseCases updateAccountState', 'Account not found')
             throw new BadRequestException('Account not found');
         }
-
+        account.id=userAccount.id;
         account.username = userAccount.username;
         account.firstname = userAccount.firstname;
         account.lastname = userAccount.lastname;

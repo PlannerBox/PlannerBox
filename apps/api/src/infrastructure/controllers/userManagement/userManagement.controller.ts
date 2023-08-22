@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Inject, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, HttpCode, Inject, Param, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
@@ -14,6 +14,8 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
+import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { Exception } from "handlebars";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -38,11 +40,25 @@ export class UserManagementController {
     }
 
     @Post('update')
+    @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
+    @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: UserAccountWithoutPasswordDto })
     @ApiOperation({ description: 'update' })
     @HttpCode(200)
     async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
-        const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateAccount(userAccount);
+        let AccountWithoutPassword;
+        if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
+
+            AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateAccount(userAccount);
+        }
+        else if (request.user.id==userAccount.id) {
+            AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateAccount(userAccount);
+        }
+        else
+        {
+            return new UnauthorizedException("Impossible de modifier cet utilisateur.");
+        }
+        
         return AccountWithoutPassword;
     }
     
