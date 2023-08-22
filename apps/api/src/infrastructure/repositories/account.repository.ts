@@ -28,7 +28,7 @@ export class AccountRepository implements IAccountRepository {
 
   async updateAccount(account: AccountM): Promise<AccountWithoutPassword> {
     const accountEntity = this.toAccountEntity(account);
-
+    console.log(accountEntity);
     await this.accountEntityRepository.update(
         accountEntity.id, accountEntity);
 
