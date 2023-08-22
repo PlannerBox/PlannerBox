@@ -10,4 +10,5 @@ export interface IAccountRepository {
   createAccount(account: newAccount): Promise<AccountWithoutPassword>;
   resetPassword(username: string, newPassword: string): Promise<void>;
   getAllAccounts(): Promise<AccountWithoutPassword[]>;
+  deleteAccount(id: string): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Inject, Param, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Inject, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
@@ -14,8 +14,6 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
-import { Exception } from "handlebars";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -60,6 +58,16 @@ export class UserManagementController {
         }
         
         return AccountWithoutPassword;
+    }
+
+    @Delete('delete')
+    @HasRole(Role.Admin)
+    @HasPermissions(UsersPermissions.Delete)
+    @HttpCode(200)
+    @ApiOperation({ description: 'check if a account is active' })
+    async deleteAccount(@Query('id') id: string) {
+        await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
+        return JsonResult.Convert('Account delete');
     }
     
     @HasRole(Role.Admin)

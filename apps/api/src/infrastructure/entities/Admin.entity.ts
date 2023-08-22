@@ -13,7 +13,7 @@ export class Admin {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @OneToOne(() => Account, { eager: true, cascade: true })
+  @OneToOne(() => Account, { eager: true, cascade: true, onDelete:"CASCADE" })
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 }

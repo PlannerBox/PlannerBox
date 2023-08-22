@@ -62,4 +62,12 @@ export class AccountManagementUseCases {
     async getAllAccounts(): Promise<any> {
         return await this.accountRepository.getAllAccounts();
     }
+    async deleteAccount(id: string): Promise<any> {
+        const account=await this.accountRepository.findAccountById(id);
+        if(account.active){
+            throw new BadRequestException("account is active");
+        }
+        const role=account.rolePermissions.role;
+        return await this.accountRepository.deleteAccount(id);
+    }
 }
