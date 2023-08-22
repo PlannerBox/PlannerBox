@@ -114,13 +114,6 @@ export class AccountRepository implements IAccountRepository {
     });
   }
 
-  async updateFormationMode(id: string, formationMode: FormationMode): Promise<void> {
-    await this.studentEntityRepository.update(
-      { id: id },
-      { formationMode: formationMode }
-    );
-  }
-
   private async linkAccountToSubClass(account: AccountM): Promise<Account> {
     const accountEntity = AccountMapper.fromModelToEntity(account);
         accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({

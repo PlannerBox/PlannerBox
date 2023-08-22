@@ -119,14 +119,4 @@ export class UserManagementController {
     async getAllUsers() {
         return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
     }
-
-    @Post('student/:id')
-    @UseGuards(JwtAuthGuard)
-    @HttpCode(200)
-    @ApiOperation({ description: 'update student formation mode' })
-    async updateStudentFormationMode(@Param('id') id: string, @Query('formationMode') formationMode: FormationMode) {
-        console.log(formationMode in FormationMode);
-        await this.accountManagementUsecaseProxy.getInstance().updateStudentFormationMode(id, formationMode);
-        return JsonResult.Convert(`Student formation mode updated`);
-    }
 }
