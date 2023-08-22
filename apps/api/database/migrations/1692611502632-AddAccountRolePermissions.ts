@@ -5,7 +5,7 @@ export class AddAccountRolePermissions1692611502632 implements MigrationInterfac
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."RolePermissions_role_enum" AS ENUM('admin', 'student', 'externTeacher', 'internTeacher')`);
-        await queryRunner.query(`CREATE TYPE "public"."RolePermissions_permissions_enum" AS ENUM('add', 'update', 'delete', 'read', 'readAll')`);
+        await queryRunner.query(`CREATE TYPE "public"."RolePermissions_permissions_enum" AS ENUM('add', 'update', 'delete', 'read', 'readAll', 'updateAll')`);
         await queryRunner.query(`CREATE TABLE "RolePermissions" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "role" "public"."RolePermissions_role_enum" NOT NULL DEFAULT 'student', "permissions" "public"."RolePermissions_permissions_enum" array NOT NULL DEFAULT '{}', CONSTRAINT "PK_29cf5edaa365f1e090b95eb6708" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "RolePermissions_pkey" ON "RolePermissions" ("id") `);
         await queryRunner.query(`ALTER TABLE "Account" ADD "roleId" uuid`);
