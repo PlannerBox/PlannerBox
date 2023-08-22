@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountM, AccountWithoutPassword, newAccount } from '../../domain/models/account';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { Account } from '../entities/Account.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Admin } from '../entities/Admin.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import Permission from '../../domain/models/enums/permission.type';
+
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -98,7 +99,9 @@ export class AccountRepository implements IAccountRepository {
       { password: newPassword },
     );
   }
-
+  async deleteAccount(id: string): Promise<void> {
+    await this.accountEntityRepository.delete({id: id});
+  }
   async getAllAccounts(): Promise<AccountWithoutPassword[]> {
     const accountEntities = await this.accountEntityRepository.find();
     return accountEntities.map(accountEntity => {

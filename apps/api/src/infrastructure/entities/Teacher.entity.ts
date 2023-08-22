@@ -17,7 +17,7 @@ export class Teacher {
   @Column("boolean", { name: 'intern', default: () => 'true' })
   intern: boolean;
 
-  @OneToOne(() => Account, { eager: true, cascade: true})
+  @OneToOne(() => Account, { eager: true, cascade: true, onDelete:"CASCADE"})
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 }
