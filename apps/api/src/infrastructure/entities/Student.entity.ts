@@ -18,9 +18,6 @@ export class Student {
   @Column({ type: 'enum', name: 'formationMode', enum: FormationMode, default: FormationMode.Presentiel})
   formationMode: FormationMode;
 
-  @Column({ type: 'enum', name: 'formationMode', enum: FormationMode, default: FormationMode.Presentiel})
-  formationMode: FormationMode;
-
   @OneToOne(() => Account, { eager: true, cascade: true, onDelete:"CASCADE" })
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;

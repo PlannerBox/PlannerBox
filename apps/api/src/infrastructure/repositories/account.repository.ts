@@ -9,7 +9,6 @@ import { Admin } from '../entities/Admin.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
-import { FormationMode } from '../../domain/models/enums/formationMode.enum';
 import { AccountMapper } from '../mappers/account.mapper';
 
 
