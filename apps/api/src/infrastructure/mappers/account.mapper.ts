@@ -1,5 +1,6 @@
-import { AccountM, newAccount } from "../../domain/models/account";
-import { UserAccountDto } from "../controllers/userManagement/userAccountDto.class";
+import { AccountM } from "../../domain/models/account";
+import { AuthSignUpDto } from "../controllers/auth/authSignUpDto.class";
+import { UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
 import { Account } from "../entities/Account.entity";
 
 export class AccountMapper {
@@ -19,7 +20,7 @@ export class AccountMapper {
         };
     }
 
-    static fromEntityToModel(account: Account): newAccount {
+    static fromEntityToModel(account: Account): AccountM {
         return {
             id: account.id,
             username: account.username,
@@ -31,11 +32,12 @@ export class AccountMapper {
             lastLogin: account.lastLogin,
             hashRefreshToken: account.hashRefreshToken,
             active: account.active,
-            role: account.rolePermissions.role
+            role: account.rolePermissions.role,
+            rolePermissions: account.rolePermissions
         };
     }
 
-    static fromDtoToModel(userAccountDto: UserAccountDto): newAccount {
+    static fromDtoToModel(userAccountDto: UserAccountDto): AccountM {
         return {
             id: userAccountDto.id,
             username: userAccountDto.username,
@@ -48,19 +50,30 @@ export class AccountMapper {
         };
     }
 
-    static fromNewAccountToEntity(newAccount: newAccount): Account {
+    static fromUpdateDtoToModel(userAccountDto: UserAccountWithoutPasswordDto): AccountM {
         return {
-            id: newAccount.id,
-            username: newAccount.username,
-            password: newAccount.password,
-            firstname: newAccount.firstname,
-            lastname: newAccount.lastname,
-            birthDate: newAccount.birthDate,
-            birthPlace: newAccount.birthPlace,
-            lastLogin: newAccount.lastLogin,
-            hashRefreshToken: newAccount.hashRefreshToken,
-            active: newAccount.active,
-            rolePermissions: newAccount.rolePermissions
+            id: userAccountDto.id,
+            username: userAccountDto.username,
+            firstname: userAccountDto.firstname,
+            lastname: userAccountDto.lastname,
+            birthDate: userAccountDto.birthDate,
+            birthPlace: userAccountDto.birthPlace,
+            active: userAccountDto.active,
+            role: userAccountDto.role,
+        };
+    }
+
+    static fromSignupDtoToNewAccount(newAccountDto: AuthSignUpDto): AccountM {
+        return {
+            username: newAccountDto.username,
+            password: newAccountDto.password,
+            firstname: newAccountDto.firstname,
+            lastname: newAccountDto.lastname,
+            birthDate: newAccountDto.birthDate,
+            birthPlace: newAccountDto.birthPlace,
+            active: true,
+            role: newAccountDto.role,
+            formationMode: newAccountDto.formationMode,
         };
     }
 }

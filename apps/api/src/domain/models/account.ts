@@ -13,15 +13,11 @@ export class AccountWithoutPassword {
   lastLogin?: Date;
   hashRefreshToken?: string;
   active: boolean;
+  role: Role;
   rolePermissions?: RolePermissions;
 }
 
 export class AccountM extends AccountWithoutPassword {
   password?: string;
-  formationMode?: FormationMode;
-}
-
-export class newAccount extends AccountM {
-  role: Role;
   formationMode?: FormationMode;
 }

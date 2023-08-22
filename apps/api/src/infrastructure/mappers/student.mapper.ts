@@ -1,4 +1,3 @@
-import { newAccount } from "../../domain/models/account";
 import { StudentM } from "../../domain/models/student";
 import { StudentAccountDto } from "../controllers/userManagement/studentAccountDto.class";
 import { Student } from "../entities/Student.entity";
@@ -26,14 +25,6 @@ export class StudentMapper {
             studentId: studentDto.studentId,
             formationMode: studentDto.formationMode,
             ...AccountMapper.fromDtoToModel(studentDto)
-        }
-    }
-
-    static fromNewAccountToEntity(newStudentAccount: newAccount): Student {
-        return {
-            id: newStudentAccount.id,
-            formationMode: newStudentAccount.formationMode,
-            account: AccountMapper.fromNewAccountToEntity(newStudentAccount)
         }
     }
 }

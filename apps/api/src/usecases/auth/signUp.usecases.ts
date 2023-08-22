@@ -1,8 +1,8 @@
 import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
-import { AccountWithoutPassword, AccountM, newAccount } from '../../domain/models/account';
-import Role from '../../domain/models/enums/role.enum';
+import { AccountWithoutPassword } from '../../domain/models/account';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { AuthSignUpDto } from '../../infrastructure/controllers/auth/authSignUpDto.class';
+import { AccountMapper } from '../../infrastructure/mappers/account.mapper';
 
 export class SignUpUseCases {
   constructor(
@@ -11,21 +11,8 @@ export class SignUpUseCases {
   ) {}
 
   async signUp(authSignUpDto: AuthSignUpDto): Promise<AccountWithoutPassword> {
-    const account = this.toNewAccount(authSignUpDto);
+    const account = AccountMapper.fromSignupDtoToNewAccount(authSignUpDto);
     account.password = await this.bcryptService.hash(authSignUpDto.password);
     return await this.accountRepository.createAccount(account);
-  }
-
-  private toNewAccount(authSignUpDto: AuthSignUpDto): newAccount {
-    return {
-      username: authSignUpDto.username,
-      firstname: authSignUpDto.firstname,
-      lastname: authSignUpDto.lastname,
-      birthDate: authSignUpDto.birthDate,
-      birthPlace: authSignUpDto.birthPlace,
-      active: true,
-      role: authSignUpDto.role,
-      formationMode: authSignUpDto.formationMode,
-    };
   }
 }

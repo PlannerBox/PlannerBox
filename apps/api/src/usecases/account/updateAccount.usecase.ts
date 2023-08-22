@@ -8,6 +8,7 @@ import { StudentAccountDto } from "../../infrastructure/controllers/userManageme
 import { StudentM } from "../../domain/models/student";
 import { IStudentRepository } from "../../domain/repositories/studentRepository.interface";
 import { StudentMapper } from "../../infrastructure/mappers/student.mapper";
+import { AccountMapper } from "../../infrastructure/mappers/account.mapper";
 
 
 export class UpdateAccountUseCase {
@@ -19,7 +20,7 @@ export class UpdateAccountUseCase {
     ) { }
 
     async updateAccount(userAccountDto: UserAccountWithoutPasswordDto): Promise<AccountWithoutPassword> {
-        const userAccount = this.toAccount(userAccountDto);
+        const userAccount = AccountMapper.fromUpdateDtoToModel(userAccountDto);
         const account = await this.accountRepository.findAccountById(userAccount.id);
 
         if (!account) {
@@ -57,17 +58,5 @@ export class UpdateAccountUseCase {
         student.formationMode = studentAccount.formationMode;
 
         return await this.studentRepository.updateStudent(student);
-    }
-
-    private toAccount(userAccountDto: UserAccountWithoutPasswordDto): AccountWithoutPassword {
-        return {
-            id: userAccountDto.id,
-            username: userAccountDto.username,
-            firstname: userAccountDto.firstname,
-            lastname: userAccountDto.lastname,
-            birthDate: userAccountDto.birthDate,
-            birthPlace: userAccountDto.birthPlace,
-            active: userAccountDto.active
-        }
     }
 }
