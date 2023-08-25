@@ -1,3 +1,5 @@
+import { Group } from "../../infrastructure/entities/Group.entity";
+import { GroupMembers } from "../../infrastructure/entities/GroupMembers.entity";
 import { RolePermissions } from "../../infrastructure/entities/RolePermissions.entity";
 import { FormationMode } from "./enums/formationMode.enum";
 import Role from "./enums/role.enum";
@@ -15,6 +17,7 @@ export class AccountWithoutPassword {
   active: boolean;
   role: Role;
   rolePermissions?: RolePermissions;
+  groups?: GroupMembers[];
 }
 
 export class AccountM extends AccountWithoutPassword {

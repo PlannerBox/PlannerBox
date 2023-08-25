@@ -16,7 +16,8 @@ export class AccountMapper {
             lastLogin: accountM.lastLogin,
             hashRefreshToken: accountM.hashRefreshToken,
             active: accountM.active,
-            rolePermissions: accountM.rolePermissions
+            rolePermissions: accountM.rolePermissions,
+            groups: accountM.groups,
         };
     }
 
@@ -33,7 +34,8 @@ export class AccountMapper {
             hashRefreshToken: account.hashRefreshToken,
             active: account.active,
             role: account.rolePermissions.role,
-            rolePermissions: account.rolePermissions
+            rolePermissions: account.rolePermissions,
+            groups: account.groups,
         };
     }
 
