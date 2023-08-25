@@ -9,7 +9,7 @@ export class GroupRepository implements IGroupRepository {
         private readonly groupRepository: Repository<Group>
     ) {}
     
-    async findAll() {
-        return await this.groupRepository.find();
+    async findAll(): Promise<Group[]> {
+        return await this.groupRepository.find({ relations: {groupMembers: true} });
     }
 }

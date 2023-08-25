@@ -25,6 +25,8 @@ import { AdminRepository } from '../repositories/admin.repository';
 import { RolePermissionsRepository } from '../repositories/rolePermissions.repository';
 import { StudentRepository } from '../repositories/student.repository';
 import { TeacherRepository } from '../repositories/teacher.repository';
+import { GroupRepository } from '../repositories/group.repository';
+import { GetGroupUseCase } from '../../usecases/group/getGroup.usecase';
 
 @Module({
   imports: [
@@ -43,7 +45,8 @@ export class UsecasesProxyModule {
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
   static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
-  static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy'
+  static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy';
+  static GET_GROUP_USECASES_PROXY = 'GetGroupUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -160,6 +163,17 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new UpdateAccountUseCase(accountRepository, studentRepository, adminRepository, teacherRepository, bcryptService, logger)
             ),
+        },
+        {
+          inject: [GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.GET_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new GetGroupUseCase(groupRepository, logger),
+            ),
         }
       ],
       exports: [
@@ -169,7 +183,8 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
         UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
-        UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY
+        UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
+        UsecasesProxyModule.GET_GROUP_USECASES_PROXY
       ],
     };
   }
