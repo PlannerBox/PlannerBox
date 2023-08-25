@@ -33,6 +33,19 @@ export default function UsersManagementTabs() {
     ? currentTabPathname
     : 'users';
 
+  const groupStep = useCallback(() => {
+    if (currentTabSplittedPathname[4] === 'manage') {
+      // TODO: Check for ID validity
+      return 'manage';
+    }
+
+    if (currentTabSplittedPathname[3] === 'create') {
+      return 'create';
+    }
+
+    return 'list';
+  }, [currentTabSplittedPathname]);
+
   const items: TabsProps['items'] = [
     {
       key: 'users',
@@ -46,11 +59,7 @@ export default function UsersManagementTabs() {
     {
       key: 'groups',
       label: `Groupes`,
-      children: (
-        <GroupsTab
-          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
-        />
-      ),
+      children: <GroupsTab step={groupStep()} />,
     },
     {
       key: 'permissions',
