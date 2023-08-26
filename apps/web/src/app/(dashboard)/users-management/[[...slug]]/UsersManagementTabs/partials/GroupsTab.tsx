@@ -6,6 +6,7 @@ import {
   Cascader,
   Form,
   Input,
+  Popover,
   Select,
   Space,
   Switch,
@@ -15,7 +16,9 @@ import {
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import UsersList from '../../../../../components/UsersList';
+import { UserElementProps } from '../../../../../components/UsersList/partials/UserElement';
 
 type UsersTabProps = {
   step?: 'list' | 'create' | 'manage';
@@ -276,6 +279,107 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
     [router]
   );
 
+  const addMemberPopoverContent = () => {
+    const [users, setUsers] = useState<UserElementProps[]>([]);
+    const fakeUsers: UserElementProps[] = [
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-12)',
+        }}
+      >
+        <Input
+          placeholder='Rechercher un utilisateur'
+          onChange={(input) =>
+            input.currentTarget.value.length > 0
+              ? setUsers(fakeUsers)
+              : setUsers([])
+          }
+        />
+        <UsersList users={users} />
+      </div>
+    );
+  };
+
   return (
     <div>
       {step === 'list' && (
@@ -405,7 +509,14 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
               margin: 'var(--spacing-16) var(--spacing-8)',
             }}
           >
-            <Button type='primary'>Ajouter un membre</Button>
+            <Popover
+              placement='leftTop'
+              title='Sélectionner le membre'
+              content={addMemberPopoverContent}
+              trigger='click'
+            >
+              <Button type='primary'>Ajouter un membre</Button>
+            </Popover>
           </div>
           <Table
             columns={membersColumns}
