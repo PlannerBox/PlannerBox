@@ -12,6 +12,7 @@ import {
   Switch,
   Table,
   Tag,
+  Typography,
 } from 'antd';
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
@@ -279,6 +280,8 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
     [router]
   );
 
+  const { Text } = Typography;
+
   const addMemberPopoverContent = () => {
     const [users, setUsers] = useState<UserElementProps[]>([]);
     const fakeUsers: UserElementProps[] = [
@@ -505,10 +508,12 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'flex-end',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               margin: 'var(--spacing-16) var(--spacing-8)',
             }}
           >
+            <Text strong>Membres du groupe</Text>
             <Popover
               placement='leftTop'
               title='Sélectionner le membre'
