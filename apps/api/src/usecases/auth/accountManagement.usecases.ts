@@ -4,6 +4,7 @@ import { IAccountRepository } from "../../domain/repositories/accountRepository.
 import Role from "../../domain/models/enums/role.enum";
 import { IRolePermissionsRepository } from "../../domain/repositories/rolePermissionsRepository.interface";
 import Permission from "../../domain/models/enums/permission.type";
+import { FormationMode } from "../../domain/models/enums/formationMode.enum";
 
 export class AccountManagementUseCases {
     constructor(

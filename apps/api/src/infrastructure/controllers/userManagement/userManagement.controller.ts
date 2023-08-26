@@ -14,6 +14,8 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
+import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
+import { StudentAccountDto } from "./studentAccountDto.class";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -70,6 +72,15 @@ export class UserManagementController {
         return JsonResult.Convert('Account delete');
     }
     
+    @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
+    @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @Post('/student/update')
+    @HttpCode(200)
+    async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
+        const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
+        return AccountWithoutPassword;
+    }
+
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
     @Post('account-state')

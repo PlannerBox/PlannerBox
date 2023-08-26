@@ -1,4 +1,4 @@
-import { AccountM, AccountWithoutPassword, newAccount } from '../models/account';
+import { AccountM, AccountWithoutPassword } from '../models/account';
 
 export interface IAccountRepository {
   updateAccount(account: AccountM): Promise<AccountM>;
@@ -7,7 +7,7 @@ export interface IAccountRepository {
   findAccountById(id: string): Promise<AccountM>;
   updateLastLogin(username: string): Promise<void>;
   updateRefreshToken(username: string, refreshToken: string): Promise<void>;
-  createAccount(account: newAccount): Promise<AccountWithoutPassword>;
+  createAccount(account: AccountM): Promise<AccountWithoutPassword>;
   resetPassword(username: string, newPassword: string): Promise<void>;
   getAllAccounts(): Promise<AccountWithoutPassword[]>;
   deleteAccount(id: string): Promise<void>;

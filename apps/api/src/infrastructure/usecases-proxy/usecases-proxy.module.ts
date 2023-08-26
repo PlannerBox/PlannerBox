@@ -23,6 +23,7 @@ import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecase
 import { AccountManagementUseCases } from '../../usecases/auth/accountManagement.usecases';
 import { AdminRepository } from '../repositories/admin.repository';
 import { RolePermissionsRepository } from '../repositories/rolePermissions.repository';
+import { StudentRepository } from '../repositories/student.repository';
 
 @Module({
   imports: [
@@ -145,15 +146,16 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [AccountRepository, BcryptService, LoggerService],
+          inject: [AccountRepository, StudentRepository, BcryptService, LoggerService],
           provide: UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
+            studentRepository: StudentRepository,
             bcryptService: BcryptService,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new UpdateAccountUseCase(accountRepository, bcryptService, logger),
+              new UpdateAccountUseCase(accountRepository, studentRepository, bcryptService, logger),
             ),
         }
       ],

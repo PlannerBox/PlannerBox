@@ -86,22 +86,28 @@ export class AuthController {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
       .execute(newAccount.username);
+
     if (checkUserName) {
       throw new BadRequestException('User already created');
     }
+
     const account = await this.signUpUsecaseProxy
       .getInstance()
       .signUp(newAccount);
+
     const accessTokenCookie = await this.loginUsecaseProxy
       .getInstance()
       .getCookieWithJwtToken(account.username);
+
     const refreshTokenCookie = await this.loginUsecaseProxy
       .getInstance()
       .getCookieWithJwtRefreshToken(account.username);
+
     request.res.setHeader('Set-Cookie', [
       accessTokenCookie,
       refreshTokenCookie,
     ]);
+
     return JsonResult.Convert('Signup successful');
   }
 

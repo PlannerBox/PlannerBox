@@ -8,6 +8,7 @@ import {
   MaxLength
 } from 'class-validator';
 import Role from '../../../domain/models/enums/role.enum';
+import { FormationMode } from '../../../domain/models/enums/formationMode.enum';
 
 export class AuthPasswordDto {
   @ApiProperty({ required: true })
@@ -52,4 +53,7 @@ export class AuthSignUpDto extends AuthPasswordDto {
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'Role can not be empty' })
   readonly role: Role;
+
+  @ApiProperty({ required: false })
+  readonly formationMode?: FormationMode;
 }

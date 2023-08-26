@@ -4,6 +4,7 @@ import { AdminM } from "../../domain/models/admin";
 import { IAdminRepository } from "../../domain/repositories/adminRepository.interface";
 import { Repository } from "typeorm";
 import { Admin } from "../entities/Admin.entity";
+import { AdminMapper } from "../mappers/admin.mapper";
 
 @Injectable()
 export class AdminRepository implements IAdminRepository {
@@ -25,22 +26,6 @@ export class AdminRepository implements IAdminRepository {
             return null;
         }
 
-        return this.toAdmin(adminAccountEntity);
-    }
-
-    private toAdmin(adminAccountEntity: Admin): AdminM {
-        const adminAccount: AdminM = {
-            id: adminAccountEntity.id,
-            username: adminAccountEntity.account.username,
-            password: adminAccountEntity.account.password,
-            firstname: adminAccountEntity.account.firstname,
-            lastname: adminAccountEntity.account.lastname,
-            birthDate: adminAccountEntity.account.birthDate,
-            birthPlace: adminAccountEntity.account.birthPlace,
-            active: adminAccountEntity.account.active,
-            rolePermissions: adminAccountEntity.account.rolePermissions
-        };
-
-        return adminAccount;
+        return AdminMapper.fromEntityToModel(adminAccountEntity);
     }
 }
