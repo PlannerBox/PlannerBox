@@ -34,7 +34,7 @@ export class UserManagementController {
 
     @Get('is-active')
     @HttpCode(200)
-    @ApiOperation({ description: 'check if a account is active' })
+    @ApiOperation({ description: 'check if the given account is active' })
     async isValidAccount(@Query('username') username: string) {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
     }
@@ -43,7 +43,7 @@ export class UserManagementController {
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: UserAccountWithoutPasswordDto })
-    @ApiOperation({ description: 'update' })
+    @ApiOperation({ description: 'update user account' })
     @HttpCode(200)
     async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
         let AccountWithoutPassword;
@@ -66,7 +66,7 @@ export class UserManagementController {
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Delete)
     @HttpCode(200)
-    @ApiOperation({ description: 'check if a account is active' })
+    @ApiOperation({ description: 'delete an inactive account' })
     async deleteAccount(@Query('id') id: string) {
         await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
         return JsonResult.Convert('Account delete');
@@ -75,6 +75,7 @@ export class UserManagementController {
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @Post('/student/update')
+    @ApiOperation({ description: 'update a student account (not really usefull, prefer UpdateAccount route' })
     @HttpCode(200)
     async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
         const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
@@ -86,7 +87,7 @@ export class UserManagementController {
     @Post('account-state')
     @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'update account state' })
+    @ApiOperation({ description: 'invert account state' })
     async updateAccountState(@Query('username') username: string) {
         const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
         return JsonResult.Convert(`Account ${ !response ? 'de' : '' }activated`);
@@ -103,7 +104,7 @@ export class UserManagementController {
     @Post('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'update roles permissions' })
+    @ApiOperation({ description: 'update permissions for given roles' })
     async updateRolePermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
         rolesPermissions.forEach(async rolePermission => {
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
