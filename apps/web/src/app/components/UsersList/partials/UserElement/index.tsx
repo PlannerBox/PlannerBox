@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import styles from './styles.module.scss';
 
 export type UserElementProps = {
@@ -15,11 +15,11 @@ export default function UserElement({
   const { Text } = Typography;
 
   return (
-    <div className={styles.userElement}>
+    <Button className={styles.userElement} type='text'>
       <Text>
         {firstname} {lastname}
       </Text>
       <Text type='secondary'>{email}</Text>
-    </div>
+    </Button>
   );
 }
