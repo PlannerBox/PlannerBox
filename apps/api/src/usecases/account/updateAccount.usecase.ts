@@ -2,41 +2,45 @@ import { IBcryptService } from "../../domain/adapters/bcrypt.interface";
 import { AccountWithoutPassword, AccountM } from "../../domain/models/account";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { ILogger } from "../../domain/logger/logger.interface";
-import { UserAccountDto, UserAccountWithoutPasswordDto } from "../../infrastructure/controllers/userManagement/userAccountDto.class";
+import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../../infrastructure/controllers/userManagement/userAccountDto.class";
 import { BadRequestException } from "@nestjs/common";
 import { StudentAccountDto } from "../../infrastructure/controllers/userManagement/studentAccountDto.class";
 import { StudentM } from "../../domain/models/student";
 import { IStudentRepository } from "../../domain/repositories/studentRepository.interface";
 import { StudentMapper } from "../../infrastructure/mappers/student.mapper";
 import { AccountMapper } from "../../infrastructure/mappers/account.mapper";
+import { IAdminRepository } from "../../domain/repositories/adminRepository.interface";
+import { ITeacherRepository } from "../../domain/repositories/teacherRepository.interface";
+import { TeacherM } from "../../domain/models/teacher";
+import { TeacherMapper } from "../../infrastructure/mappers/teacher.mapper";
 
 
 export class UpdateAccountUseCase {
     constructor(
         private readonly accountRepository: IAccountRepository,
         private readonly studentRepository: IStudentRepository,
+        private readonly adminRepository: IAdminRepository,
+        private readonly teacherRepository: ITeacherRepository,
         private readonly bcryptService: IBcryptService,
         private readonly logger: ILogger,
     ) { }
 
-    async updateAccount(userAccountDto: UserAccountWithoutPasswordDto): Promise<AccountWithoutPassword> {
-        const userAccount = AccountMapper.fromUpdateDtoToModel(userAccountDto);
-        const account = await this.accountRepository.findAccountById(userAccount.id);
+    async updateAccount(userAccountDto: GenericUserAccountDto): Promise<AccountWithoutPassword> {
 
-        if (!account) {
-            this.logger.error('AccountManagementUseCases updateAccountState', 'Account not found')
-            throw new BadRequestException('Account not found');
+        switch (userAccountDto.role) {
+            case 'student':
+                const studentAccount = StudentMapper.fromGenericDtoToModel(userAccountDto);
+                return await this.updateStudent(studentAccount);
+            case 'internTeacher':
+            case 'externTeacher':
+                const teacherAccount = TeacherMapper.fromGenericDtoToModel(userAccountDto);
+                return await this.updateTeacher(teacherAccount);
+            case 'admin':
+                const adminAccount = AccountMapper.fromGenericDtoToModel(userAccountDto);
+                return await this.updateAdmin(adminAccount);
+            default:
+                throw new BadRequestException('Role not found');
         }
-        account.id=userAccount.id;
-        account.username = userAccount.username;
-        account.firstname = userAccount.firstname;
-        account.lastname = userAccount.lastname;
-        account.birthDate = userAccount.birthDate;
-        account.birthPlace = userAccount.birthPlace;
-        account.active = userAccount.active;
-
-        const accountWithoutPassword= await this.accountRepository.updateAccount(account);
-        return accountWithoutPassword;
     }
 
     async updateStudentAccount(studentAccountDto: StudentAccountDto): Promise<any> {
@@ -58,5 +62,65 @@ export class UpdateAccountUseCase {
         student.formationMode = studentAccount.formationMode;
 
         return await this.studentRepository.updateStudent(student);
+    }
+
+    private async updateStudent(studentM: StudentM): Promise<any> {
+        const student = await this.studentRepository.findStudentById(studentM.studentId);
+
+        if (!student) {
+            this.logger.error('UpdateAccountUseCases updateStudentAccount', 'Account not found')
+            throw new BadRequestException('Account not found');
+        }
+
+        student.username = studentM.username;
+        student.firstname = studentM.firstname;
+        student.lastname = studentM.lastname;
+        student.birthDate = studentM.birthDate;
+        student.birthPlace = studentM.birthPlace;
+        student.active = studentM.active;
+        student.formationMode = studentM.formationMode;
+
+        return await this.studentRepository.updateStudent(student);
+    }
+
+    private async updateTeacher(teacherM: TeacherM): Promise<any> {
+        const teacher = await this.teacherRepository.findTeacherById(teacherM.id);
+
+        if (!teacher) {
+            this.logger.error('UpdateAccountUseCases updateTeacher', 'Account not found')
+            throw new BadRequestException('Account not found');
+        }
+
+        teacher.username = teacherM.username;
+        teacher.firstname = teacherM.firstname;
+        teacher.lastname = teacherM.lastname;
+        teacher.birthDate = teacherM.birthDate;
+        teacher.birthPlace = teacherM.birthPlace;
+        teacher.active = teacherM.active;
+        teacher.role = teacherM.role;
+        teacher.rolePermissions = teacherM.rolePermissions;
+        teacher.intern = teacherM.intern;
+
+        return await this.teacherRepository.updateTeacher(teacher);
+    }
+
+    private async updateAdmin(adminAccount: AccountM): Promise<any> {
+        const admin = await this.accountRepository.findAccountById(adminAccount.id);
+
+        if (!admin) {
+            this.logger.error('UpdateAccountUseCases updateAdmin', 'Account not found')
+            throw new BadRequestException('Account not found');
+        }
+
+        admin.username = adminAccount.username;
+        admin.firstname = adminAccount.firstname;
+        admin.lastname = adminAccount.lastname;
+        admin.birthDate = adminAccount.birthDate;
+        admin.birthPlace = adminAccount.birthPlace;
+        admin.active = adminAccount.active;
+        admin.role = adminAccount.role;
+        admin.rolePermissions = adminAccount.rolePermissions;
+
+        return await this.accountRepository.updateAccount(admin);
     }
 }

@@ -12,7 +12,7 @@ import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum
 import { HasRole } from "../../decorators/has-role.decorator";
 import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
-import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
+import { GenericUserAccountDto, UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
 import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
 import { StudentAccountDto } from "./studentAccountDto.class";
@@ -42,10 +42,10 @@ export class UserManagementController {
     @Post('update')
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiBody({ type: UserAccountWithoutPasswordDto })
+    @ApiBody({ type: GenericUserAccountDto })
     @ApiOperation({ description: 'update user account' })
     @HttpCode(200)
-    async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
+    async updateAccount(@Body() userAccount: GenericUserAccountDto, @Req() request: any) {
         let AccountWithoutPassword;
         if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
 

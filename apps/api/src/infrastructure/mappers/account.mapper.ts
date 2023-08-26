@@ -1,6 +1,6 @@
 import { AccountM } from "../../domain/models/account";
 import { AuthSignUpDto } from "../controllers/auth/authSignUpDto.class";
-import { UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
+import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
 import { Account } from "../entities/Account.entity";
 
 export class AccountMapper {
@@ -74,6 +74,19 @@ export class AccountMapper {
             active: true,
             role: newAccountDto.role,
             formationMode: newAccountDto.formationMode,
+        };
+    }
+
+    static fromGenericDtoToModel(userAccountDto: GenericUserAccountDto): AccountM {
+        return {
+            id: userAccountDto.id,
+            username: userAccountDto.username,
+            firstname: userAccountDto.firstname,
+            lastname: userAccountDto.lastname,
+            birthDate: userAccountDto.birthDate,
+            birthPlace: userAccountDto.birthPlace,
+            active: userAccountDto.active,
+            role: userAccountDto.role,
         };
     }
 }

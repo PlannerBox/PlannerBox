@@ -10,10 +10,11 @@ import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import { StudentRepository } from './student.repository';
+import { TeacherRepository } from './teacher.repository';
 
 @Module({
   imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin, RolePermissions, Student, Teacher])],
-  providers: [AccountRepository, AdminRepository, RolePermissionsRepository, StudentRepository],
-  exports: [AccountRepository, AdminRepository, RolePermissionsRepository, StudentRepository],
+  providers: [AccountRepository, AdminRepository, RolePermissionsRepository, StudentRepository, TeacherRepository],
+  exports: [AccountRepository, AdminRepository, RolePermissionsRepository, StudentRepository, TeacherRepository],
 })
 export class RepositoriesModule {}
