@@ -75,7 +75,7 @@ export class UserManagementController {
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @Post('/student/update')
-    @ApiOperation({ description: 'update a student account (not really usefull, prefer UpdateAccount route' })
+    @ApiOperation({ description: 'update a student account (not really usefull, prefer user-management/update route)' })
     @HttpCode(200)
     async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
         const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
@@ -96,7 +96,7 @@ export class UserManagementController {
     @Get('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'get roles permissions of the connected user' })
+    @ApiOperation({ description: 'get role permissions of the connected user' })
     async getRolePermissions(@Req() request: any) {
         return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
     }
@@ -115,7 +115,7 @@ export class UserManagementController {
     @Get('users')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'get all users' })
+    @ApiOperation({ description: 'get all users (0 filter 0 pagination at the moment)' })
     async getAllUsers() {
         return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
     }
