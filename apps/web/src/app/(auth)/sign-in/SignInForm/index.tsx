@@ -4,7 +4,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Typography } from 'antd';
 import { SignInResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { isValidEmail } from 'utils';
 import { removeAfterSemicolon } from '../../../../utils/string';
@@ -25,7 +25,7 @@ export default function SignInForm() {
   );
   const isDisabled = !isValidEmail(username) || password.length === 0;
 
-  const [_cookies, setCookie] = useCookies(['session', 'session_refresher']);
+  const [cookies, setCookie] = useCookies(['session', 'session_refresher']);
 
   const {
     mutate: fetchSignIn,
@@ -61,6 +61,14 @@ export default function SignInForm() {
     setErrorMessage(undefined);
     fetchSignIn({ username: username, password: password });
   };
+
+  useEffect(() => {
+    console.log('useEffect');
+    if (cookies['session'] && cookies['session_refresher']) {
+      console.log('cookies found');
+      router.push('/dashboard');
+    }
+  }, [cookies, router]);
 
   return (
     <Form
