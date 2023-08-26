@@ -24,6 +24,7 @@ import { AccountManagementUseCases } from '../../usecases/auth/accountManagement
 import { AdminRepository } from '../repositories/admin.repository';
 import { RolePermissionsRepository } from '../repositories/rolePermissions.repository';
 import { StudentRepository } from '../repositories/student.repository';
+import { TeacherRepository } from '../repositories/teacher.repository';
 
 @Module({
   imports: [
@@ -146,16 +147,18 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [AccountRepository, StudentRepository, BcryptService, LoggerService],
+          inject: [AccountRepository, StudentRepository, AdminRepository, TeacherRepository, BcryptService, LoggerService],
           provide: UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
             studentRepository: StudentRepository,
+            adminRepository: AdminRepository,
+            teacherRepository: TeacherRepository,
             bcryptService: BcryptService,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new UpdateAccountUseCase(accountRepository, studentRepository, bcryptService, logger),
+              new UpdateAccountUseCase(accountRepository, studentRepository, adminRepository, teacherRepository, bcryptService, logger)
             ),
         }
       ],

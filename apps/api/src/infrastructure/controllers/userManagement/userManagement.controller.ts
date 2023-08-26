@@ -12,7 +12,7 @@ import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum
 import { HasRole } from "../../decorators/has-role.decorator";
 import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
-import { UserAccountWithoutPasswordDto } from "./userAccountDto.class";
+import { GenericUserAccountDto, UserAccountWithoutPasswordDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
 import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
 import { StudentAccountDto } from "./studentAccountDto.class";
@@ -34,7 +34,7 @@ export class UserManagementController {
 
     @Get('is-active')
     @HttpCode(200)
-    @ApiOperation({ description: 'check if a account is active' })
+    @ApiOperation({ description: 'check if the given account is active' })
     async isValidAccount(@Query('username') username: string) {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
     }
@@ -42,10 +42,10 @@ export class UserManagementController {
     @Post('update')
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiBody({ type: UserAccountWithoutPasswordDto })
-    @ApiOperation({ description: 'update' })
+    @ApiBody({ type: GenericUserAccountDto })
+    @ApiOperation({ description: 'update user account' })
     @HttpCode(200)
-    async updateAccount(@Body() userAccount: UserAccountWithoutPasswordDto, @Req() request: any) {
+    async updateAccount(@Body() userAccount: GenericUserAccountDto, @Req() request: any) {
         let AccountWithoutPassword;
         if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
 
@@ -66,7 +66,7 @@ export class UserManagementController {
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Delete)
     @HttpCode(200)
-    @ApiOperation({ description: 'check if a account is active' })
+    @ApiOperation({ description: 'delete an inactive account' })
     async deleteAccount(@Query('id') id: string) {
         await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
         return JsonResult.Convert('Account delete');
@@ -75,6 +75,7 @@ export class UserManagementController {
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @Post('/student/update')
+    @ApiOperation({ description: 'update a student account (not really usefull, prefer user-management/update route)' })
     @HttpCode(200)
     async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
         const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
@@ -86,7 +87,7 @@ export class UserManagementController {
     @Post('account-state')
     @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'update account state' })
+    @ApiOperation({ description: 'invert account state' })
     async updateAccountState(@Query('username') username: string) {
         const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
         return JsonResult.Convert(`Account ${ !response ? 'de' : '' }activated`);
@@ -95,7 +96,7 @@ export class UserManagementController {
     @Get('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'get roles permissions of the connected user' })
+    @ApiOperation({ description: 'get role permissions of the connected user' })
     async getRolePermissions(@Req() request: any) {
         return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
     }
@@ -103,7 +104,7 @@ export class UserManagementController {
     @Post('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'update roles permissions' })
+    @ApiOperation({ description: 'update permissions for given roles' })
     async updateRolePermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
         rolesPermissions.forEach(async rolePermission => {
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
@@ -114,7 +115,7 @@ export class UserManagementController {
     @Get('users')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'get all users' })
+    @ApiOperation({ description: 'get all users (0 filter 0 pagination at the moment)' })
     async getAllUsers() {
         return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
     }

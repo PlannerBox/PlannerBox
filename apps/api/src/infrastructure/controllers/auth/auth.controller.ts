@@ -59,7 +59,6 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LoginGuard)
-  @ApiBearerAuth()
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Req() request: any) {
@@ -81,7 +80,7 @@ export class AuthController {
 
   @Post('signup')
   @ApiBody({ type: AuthSignUpDto })
-  @ApiOperation({ description: 'signup' })
+  @ApiOperation({ description: 'create a new user account' })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
@@ -121,9 +120,8 @@ export class AuthController {
   }
 
   @Get('is-authenticated')
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ description: 'is_authenticated' })
+  @ApiOperation({ description: 'check if user is authenticated while checking if the mail which is in the token exists in the database' })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
     const user = await this.isAuthUsecaseProxy
@@ -136,7 +134,7 @@ export class AuthController {
 
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
-  @ApiBearerAuth()
+  @ApiOperation({ description: 'refresh user JWT' })
   async refresh(@Req() request: any) {
     const accessTokenCookie = await this.loginUsecaseProxy
       .getInstance()
@@ -179,7 +177,7 @@ export class AuthController {
 
   @Get('is-valid/:token')
   @HttpCode(200)
-  @ApiOperation({ description: 'check if a token is valid' })
+  @ApiOperation({ description: 'check if the reset password token is valid' })
   async isValidToken(@Param('token') token: string) {
     const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
 
