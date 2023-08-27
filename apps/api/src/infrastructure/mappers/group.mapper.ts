@@ -1,4 +1,5 @@
 import { GroupM, GroupSummary, NestedGroupM } from "../../domain/models/group";
+import { GroupDetailDto } from "../controllers/groupManagement/groupDetailDto.class";
 import { Group } from "../entities/Group.entity";
 import { GroupMemberMapper } from "./groupMember.mapper";
 
@@ -27,6 +28,15 @@ export class GroupMapper {
             id: group.id,
             name: group.name,
             color: group.color
+        };
+    }
+
+    static fromModelToDto(groupM: GroupM): GroupDetailDto {
+        return {
+            id: groupM.id,
+            name: groupM.name,
+            color: groupM.color,
+            groupMembers: groupM.groupMembers.map(gm => GroupMemberMapper.fromModelToDto(gm))
         };
     }
 }

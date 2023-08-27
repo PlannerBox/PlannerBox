@@ -3,6 +3,8 @@ import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module"
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { GroupDetailDto } from "./groupDetailDto.class";
+import { GroupMapper } from "../../mappers/group.mapper";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -37,13 +39,16 @@ export class GroupManagementController {
     @ApiResponse({
         status: 200,
         description: 'Returns details of a group',
+        type: GroupDetailDto
     })
     @ApiResponse({
         status: 404,
         description: 'No group found',
     })
     @ApiOperation({ description: 'Returns details of a group' })
-    async getGroupDetails(@Param('groupId') groupId: string) {
-        return await this.getGroupUsecasesProxy.getInstance().findGroupDetails(groupId);
+    async getGroupDetails(@Param('groupId') groupId: string): Promise<GroupDetailDto> {
+        const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetails(groupId);
+
+        return GroupMapper.fromModelToDto(group);
     }
 }

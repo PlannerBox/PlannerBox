@@ -1,5 +1,6 @@
 import { AccountM, NestedAccountM } from "../../domain/models/account";
 import { AuthSignUpDto } from "../controllers/auth/authSignUpDto.class";
+import { NestedAccountDto } from "../controllers/groupManagement/nestedAccountDto.class";
 import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
 import { Account } from "../entities/Account.entity";
 
@@ -93,6 +94,15 @@ export class AccountMapper {
     }
 
     static fromEntityToNestedModel(account: Account): NestedAccountM {
+        return {
+            id: account.id,
+            username: account.username,
+            firstname: account.firstname,
+            lastname: account.lastname,
+        };
+    }
+
+    static fromNestedModelToNestedDto(account: NestedAccountM): NestedAccountDto {
         return {
             id: account.id,
             username: account.username,
