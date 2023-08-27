@@ -16,10 +16,10 @@ export class GroupManagementController {
         private readonly getGroupUsecasesProxy: UseCaseProxy<GetGroupUseCase>,
     ) {}
 
-    @Get('group-list')
+    @Get('summary')
     @HttpCode(200)
-    @ApiOperation({ description: 'Get a list of all groups' })
-    async getGroupList() {
+    @ApiOperation({ description: 'Returns a summary of all groups' })
+    async getGroupSummaryList() {
         return await this.getGroupUsecasesProxy.getInstance().findGroupList();
     }
 }
