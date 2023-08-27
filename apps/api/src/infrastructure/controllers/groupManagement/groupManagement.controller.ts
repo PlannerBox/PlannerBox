@@ -18,8 +18,18 @@ export class GroupManagementController {
 
     @Get('summary')
     @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns a summary of all groups',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'No group found',
+    })
     @ApiOperation({ description: 'Returns a summary of all groups' })
     async getGroupSummaryList() {
         return await this.getGroupUsecasesProxy.getInstance().findGroupList();
     }
+
+
 }

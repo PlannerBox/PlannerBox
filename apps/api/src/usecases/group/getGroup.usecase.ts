@@ -1,3 +1,4 @@
+import { NotFoundException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
@@ -12,6 +13,10 @@ export class GetGroupUseCase {
         let groupList = await this.groupRepository.findAll();
         this.logger.log('GetGroupUseCase', `Found ${groupList.length} groups`);
         
+        if (!groupList) {
+            throw new NotFoundException('No group found');
+        }
+
         let summaryGroup = [];
 
         groupList.forEach(group => {
