@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Inject } from "@nestjs/common";
+import { Controller, Get, HttpCode, Inject, Param } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
@@ -32,4 +32,18 @@ export class GroupManagementController {
     }
 
 
+    @Get('detail')
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns details of a group',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns details of a group' })
+    async getGroupDetails(@Param('groupId') groupId: string) {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupDetails(groupId);
+    }
 }

@@ -13,6 +13,10 @@ export class GroupRepository implements IGroupRepository {
         private readonly groupMembersRepository: Repository<GroupMembers>
     ) {}
 
+    findGroup(groupID: string): Promise<any> {
+        return this.groupRepository.findOne({ where: { id: groupID }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
+    }
+
     async findReferee(refereeID: string): Promise<any> {
         return await this.groupMembersRepository.findOne({ where: { accountId: refereeID }, relations: { account: true } });
     }

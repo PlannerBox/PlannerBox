@@ -25,4 +25,14 @@ export class GetGroupUseCase {
 
         return summaryGroup;
     }
+
+    async findGroupDetails(groupId: string): Promise<any> {
+        let group = await this.groupRepository.findGroup(groupId);
+
+        if (!group) {
+            throw new NotFoundException(`group with id ${groupId} not found`);
+        }
+
+        return group;
+    }
 }
