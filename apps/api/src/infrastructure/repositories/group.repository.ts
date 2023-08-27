@@ -4,6 +4,8 @@ import { Group } from "../entities/Group.entity";
 import { Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
+import { GroupMapper } from "../mappers/group.mapper";
+import { NotFoundException } from "@nestjs/common";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -32,5 +34,19 @@ export class GroupRepository implements IGroupRepository {
     
     async findAll(): Promise<Group[]> {
         return await this.groupRepository.find({ relations: {groupMembers: { account: true}} });
+    }
+
+    async updateGroup(groupM: GroupM): Promise<any> {
+        const group = await this.groupRepository.findOne({ where: { id: groupM.id }});
+
+        if (!group) {
+            throw new NotFoundException('Group not found');
+        }
+        console.log(group);
+        group.name = groupM.name;
+        group.color = groupM.color;
+
+        return this.groupRepository.update(group.id, group);
+        
     }
 }

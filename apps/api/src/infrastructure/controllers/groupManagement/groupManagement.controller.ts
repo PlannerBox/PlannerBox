@@ -9,8 +9,10 @@ import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
 import { AccountMapper } from "../../mappers/account.mapper";
 import { NestedAccountDto } from "./nestedAccountDto.class";
 import { AddMemberUseCase } from "../../../usecases/group/addMember.usecase";
-import { NewGroupDto } from "./newGroupDto.class";
+import { GroupDto, NewGroupDto } from "./groupDto.class";
 import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase";
+import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase";
+import { JsonResult } from "../../helpers/JsonResult";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -28,6 +30,9 @@ export class GroupManagementController {
 
         @Inject(UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY)
         private readonly createGroupUseCase: UseCaseProxy<CreateGroupUseCase>,
+
+        @Inject(UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY)
+        private readonly updateGroupUseCase: UseCaseProxy<UpdateGroupUseCase>,
     ) {}
 
     @Get('group/summary')
@@ -62,7 +67,7 @@ export class GroupManagementController {
     async getGroupDetails(@Param('groupId') groupId: string): Promise<GroupDetailDto> {
         const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetails(groupId);
 
-        return GroupMapper.fromModelToDto(group);
+        return GroupMapper.fromModelToDetailDto(group);
     }
 
     @Get('user/summary')
@@ -88,10 +93,29 @@ export class GroupManagementController {
 
     @Post('group/create')
     @UseGuards(JwtAuthGuard)
-    @HttpCode(200)
-    async createGroup(@Body() NewGroupDto: NewGroupDto) {
-        const newGroup = await this.createGroupUseCase.getInstance().createGroup(NewGroupDto);
+    @HttpCode(201)
+    @ApiResponse({
+        status: 201,
+        description: 'Group successfully created',
+    })
+    async createGroup(@Body() newGroupDto: NewGroupDto): Promise<any> {
+        await this.createGroupUseCase.getInstance().createGroup(newGroupDto);
+        return JsonResult.Convert('Group successfully created');
+    }
 
-        return newGroup;
+    @Post('group/update')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Group successfully updated',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Group not found',
+    })
+    async updateGroup(@Body() groupDto: GroupDto): Promise<any> {
+        await this.updateGroupUseCase.getInstance().updateGroup(groupDto);
+        return JsonResult.Convert('Group successfully updated');
     }
 }

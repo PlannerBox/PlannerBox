@@ -29,6 +29,7 @@ import { GroupRepository } from '../repositories/group.repository';
 import { GetGroupUseCase } from '../../usecases/group/getGroup.usecase';
 import { AddMemberUseCase } from '../../usecases/group/addMember.usecase';
 import { CreateGroupUseCase } from '../../usecases/group/createGroup.usecase';
+import { UpdateGroupUseCase } from '../../usecases/group/updateGroup.usecase';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ export class UsecasesProxyModule {
   static GET_GROUP_USECASES_PROXY = 'GetGroupUseCasesProxy';
   static ADD_MEMBER_USECASES_PROXY = 'AddMemberUseCasesProxy';
   static CREATE_GROUP_USECASES_PROXY = 'CreateGroupUseCasesProxy';
+  static UPDATE_GROUP_USECASES_PROXY = 'UpdateGroupUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -205,6 +207,17 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new CreateGroupUseCase(groupRepository, logger),
             ),
+        },
+        {
+          inject: [GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new UpdateGroupUseCase(groupRepository, logger),
+            ),
         }
       ],
       exports: [
@@ -218,6 +231,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.GET_GROUP_USECASES_PROXY,
         UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
         UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY,
+        UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY,
       ],
     };
   }

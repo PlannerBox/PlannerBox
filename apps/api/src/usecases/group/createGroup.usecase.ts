@@ -1,6 +1,6 @@
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
-import { NewGroupDto } from "../../infrastructure/controllers/groupManagement/newGroupDto.class";
+import { NewGroupDto } from "../../infrastructure/controllers/groupManagement/groupDto.class";
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 
 export class CreateGroupUseCase {
