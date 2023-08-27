@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Inject, Param, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Inject, Param, Post, UseGuards } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
@@ -9,6 +9,8 @@ import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
 import { AccountMapper } from "../../mappers/account.mapper";
 import { NestedAccountDto } from "./nestedAccountDto.class";
 import { AddMemberUseCase } from "../../../usecases/group/addMember.usecase";
+import { NewGroupDto } from "./newGroupDto.class";
+import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -22,7 +24,10 @@ export class GroupManagementController {
         private readonly getGroupUsecasesProxy: UseCaseProxy<GetGroupUseCase>,
 
         @Inject(UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY)
-        private readonly addMemberUseCase: UseCaseProxy<AddMemberUseCase>
+        private readonly addMemberUseCase: UseCaseProxy<AddMemberUseCase>,
+
+        @Inject(UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY)
+        private readonly createGroupUseCase: UseCaseProxy<CreateGroupUseCase>,
     ) {}
 
     @Get('group/summary')
@@ -79,5 +84,14 @@ export class GroupManagementController {
         return accounts.map(account => {
             return AccountMapper.fromNestedModelToNestedDto(account);
         });
+    }
+
+    @Post('group/create')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    async createGroup(@Body() NewGroupDto: NewGroupDto) {
+        const newGroup = await this.createGroupUseCase.getInstance().createGroup(NewGroupDto);
+
+        return newGroup;
     }
 }

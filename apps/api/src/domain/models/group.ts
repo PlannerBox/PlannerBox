@@ -4,7 +4,7 @@ export class GroupM {
     id?: string;
     name: string;
     color: string;
-    groupMembers: GroupMembersM[];
+    groupMembers?: GroupMembersM[];
 }
 
 export class GroupSummary {
