@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inject, Param, Post, Res, UseGuards } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
@@ -46,13 +46,19 @@ export class GroupManagementController {
         description: 'Returns a summary of all groups',
     })
     @ApiResponse({
-        status: 404,
+        status: 204,
         description: 'No group found',
     })
 
     @ApiOperation({ description: 'Returns a summary of all groups' })
-    async getGroupSummaryList() {
-        return await this.getGroupUsecasesProxy.getInstance().findGroupList();
+    async getGroupSummaryList(): Promise<any> {
+        const groups = await this.getGroupUsecasesProxy.getInstance().findGroupList();
+
+        if (groups.length === 0) {
+            throw new HttpException('No group found', HttpStatus.NO_CONTENT);
+        }
+
+        return groups;
     }
 
 
@@ -64,7 +70,7 @@ export class GroupManagementController {
         type: GroupDetailDto
     })
     @ApiResponse({
-        status: 404,
+        status: 400,
         description: 'No group found',
     })
     @ApiOperation({ description: 'Returns details of a group' })
@@ -83,13 +89,16 @@ export class GroupManagementController {
         type: NestedAccountDto,
     })
     @ApiResponse({
-        status: 404,
+        status: 204,
         description: 'No user found',
     })
     @ApiOperation({ description: 'Get the summary of all users' })
     async getAllUsersSummary(): Promise<NestedAccountDto[]> {
         const accounts = await this.addMemberUseCase.getInstance().getAllSummaryAccounts();
 
+        if (accounts.length === 0) {
+            throw new HttpException('No user found', HttpStatus.NO_CONTENT);
+        }
         return accounts.map(account => {
             return AccountMapper.fromNestedModelToNestedDto(account);
         });
@@ -116,7 +125,7 @@ export class GroupManagementController {
         description: 'Group successfully updated',
     })
     @ApiResponse({
-        status: 404,
+        status: 400,
         description: 'Group not found',
     })
     @ApiOperation({ description: 'Update group informations (name & color)' })
@@ -133,7 +142,7 @@ export class GroupManagementController {
         description: 'Member successfully added',
     })
     @ApiResponse({
-        status: 404,
+        status: 400,
         description: 'Group or member not found',
     })
     @ApiOperation({ description: 'Add or Update a member to a group, if it\'s a new user, it will be added to the group, otherwise the user already exists and the "isOwner" boolean can be updated' })
@@ -150,7 +159,7 @@ export class GroupManagementController {
         description: 'Member successfully removed',
     })
     @ApiResponse({
-        status: 404,
+        status: 400,
         description: 'Group or member not found',
     })
     @ApiOperation({ description: 'Remove a member from a group' })
@@ -167,7 +176,7 @@ export class GroupManagementController {
         description: 'Group successfully deleted',
     })
     @ApiResponse({
-        status: 404,
+        status: 400,
         description: 'Group not found',
     })
     @ApiOperation({ description: 'Delete a group' })

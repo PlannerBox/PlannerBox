@@ -4,7 +4,7 @@ import { Group } from "../entities/Group.entity";
 import { Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -52,7 +52,7 @@ export class GroupRepository implements IGroupRepository {
         const group = await this.groupRepository.findOne({ where: { id: groupId }});
 
         if (!group) {
-            throw new NotFoundException('Group not found');
+            throw new BadRequestException('Group not found');
         }
 
         return this.groupRepository.delete(group.id);
