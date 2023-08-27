@@ -24,3 +24,10 @@ export class AccountM extends AccountWithoutPassword {
   password?: string;
   formationMode?: FormationMode;
 }
+
+export class NestedAccountM {
+  id?: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+}

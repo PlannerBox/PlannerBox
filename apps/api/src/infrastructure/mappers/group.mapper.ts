@@ -1,4 +1,6 @@
-import { Group, GroupSummary } from "../../domain/models/group";
+import { GroupM, GroupSummary, NestedGroupM } from "../../domain/models/group";
+import { Group } from "../entities/Group.entity";
+import { GroupMemberMapper } from "./groupMember.mapper";
 
 export class GroupMapper {
     static fromModelToSummary(group: Group): GroupSummary {
@@ -8,6 +10,23 @@ export class GroupMapper {
             name: group.name,
             referee: referee ? `${referee.account.firstname} ${referee.account.lastname}` : '',
             memberCount: group.groupMembers.length
+        };
+    }
+
+    static fromEntityToModel(group: Group): GroupM {
+        return {
+            id: group.id,
+            name: group.name,
+            color: group.color,
+            groupMembers: group.groupMembers.map(gm => GroupMemberMapper.fromEntityToModel(gm))
+        };
+    }
+
+    static fromEntityToNestedModel(group: Group): NestedGroupM {
+        return {
+            id: group.id,
+            name: group.name,
+            color: group.color
         };
     }
 }

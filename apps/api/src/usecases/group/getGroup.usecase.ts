@@ -33,6 +33,6 @@ export class GetGroupUseCase {
             throw new NotFoundException(`group with id ${groupId} not found`);
         }
 
-        return group;
+        return GroupMapper.fromEntityToModel(group);
     }
 }

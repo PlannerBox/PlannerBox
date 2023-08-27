@@ -1,11 +1,10 @@
-import { GroupMembers } from "../../infrastructure/entities/GroupMembers.entity";
-import { AccountM } from "./account";
+import { GroupMembersM } from "./groupMembers";
 
-export class Group {
+export class GroupM {
     id?: string;
     name: string;
     color: string;
-    groupMembers: GroupMembers[];
+    groupMembers: GroupMembersM[];
 }
 
 export class GroupSummary {
@@ -13,4 +12,10 @@ export class GroupSummary {
     name: string;
     referee: string;
     memberCount: number;
+}
+
+export class NestedGroupM {
+    id?: string;
+    name: string;
+    color: string;
 }

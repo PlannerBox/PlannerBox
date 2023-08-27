@@ -1,5 +1,4 @@
-import { Account } from "../../infrastructure/entities/Account.entity";
-import { Group } from "../models/group";
+import { Group } from "../../infrastructure/entities/Group.entity";
 
 export interface IGroupRepository {
     findAll(): Promise<Group[]>;

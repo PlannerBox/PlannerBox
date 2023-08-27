@@ -1,10 +1,8 @@
-import { Account } from "../../infrastructure/entities/Account.entity";
-import { Group } from "./group";
+import { NestedAccountM } from "./account";
 
-export class GroupMembers {
-    id?: string;
+export class GroupMembersM {
     accountId: string;
     groupId: string;
-    group: Group;
-    account: Account;
+    isOwner: boolean;
+    account?: NestedAccountM;
 }
