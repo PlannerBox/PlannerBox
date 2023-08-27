@@ -10,5 +10,6 @@ export class GetGroupUseCase {
     async findGroupList(): Promise<any> {
         let groupList = await this.groupRepository.findAll();
         console.log(groupList[0].groupMembers);
+        return groupList;
     }
 }
