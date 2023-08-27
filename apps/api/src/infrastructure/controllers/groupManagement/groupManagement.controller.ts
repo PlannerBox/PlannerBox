@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Inject, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post, UseGuards } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
@@ -8,8 +8,8 @@ import { GroupMapper } from "../../mappers/group.mapper";
 import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
 import { AccountMapper } from "../../mappers/account.mapper";
 import { NestedAccountDto } from "./nestedAccountDto.class";
-import { AddMemberUseCase } from "../../../usecases/group/addMember.usecase";
-import { GroupDto, NewGroupDto } from "./groupDto.class";
+import { AddMemberUseCase } from "../../../usecases/group/manageMember.usecase";
+import { GroupDto, NewGroupDto, NewGroupMemberDto } from "./groupDto.class";
 import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase";
 import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase";
 import { JsonResult } from "../../helpers/JsonResult";
@@ -98,6 +98,7 @@ export class GroupManagementController {
         status: 201,
         description: 'Group successfully created',
     })
+    @ApiOperation({ description: 'Create a new group' })
     async createGroup(@Body() newGroupDto: NewGroupDto): Promise<any> {
         await this.createGroupUseCase.getInstance().createGroup(newGroupDto);
         return JsonResult.Convert('Group successfully created');
@@ -114,8 +115,43 @@ export class GroupManagementController {
         status: 404,
         description: 'Group not found',
     })
+    @ApiOperation({ description: 'Update group informations (name & color)' })
     async updateGroup(@Body() groupDto: GroupDto): Promise<any> {
         await this.updateGroupUseCase.getInstance().updateGroup(groupDto);
         return JsonResult.Convert('Group successfully updated');
+    }
+
+    @Post('group/:groupId/manage-member')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Member successfully added',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Group or member not found',
+    })
+    @ApiOperation({ description: 'Add or Update a member to a group, if it\'s a new user, it will be added to the group, otherwise the user already exists and the "isOwner" boolean can be updated' })
+    async addMember(@Param('groupId') groupId: string, @Body() newGroupMemberDto: NewGroupMemberDto): Promise<any> {
+        await this.addMemberUseCase.getInstance().addMember(groupId, newGroupMemberDto);
+        return JsonResult.Convert('Member successfully added');
+    }
+
+    @Delete('group/:groupId/remove-member/:accountId')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Member successfully removed',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Group or member not found',
+    })
+    @ApiOperation({ description: 'Remove a member from a group' })
+    async removeMember(@Param('groupId') groupId: string, @Param('accountId') accountId: string): Promise<any> {
+        await this.addMemberUseCase.getInstance().removeMember(groupId, accountId);
+        return JsonResult.Convert('Member successfully removed');
     }
 }

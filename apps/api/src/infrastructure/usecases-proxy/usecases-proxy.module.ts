@@ -27,9 +27,10 @@ import { StudentRepository } from '../repositories/student.repository';
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { GroupRepository } from '../repositories/group.repository';
 import { GetGroupUseCase } from '../../usecases/group/getGroup.usecase';
-import { AddMemberUseCase } from '../../usecases/group/addMember.usecase';
+import { AddMemberUseCase } from '../../usecases/group/manageMember.usecase';
 import { CreateGroupUseCase } from '../../usecases/group/createGroup.usecase';
 import { UpdateGroupUseCase } from '../../usecases/group/updateGroup.usecase';
+import { GroupMemberRepository } from '../repositories/groupMemberRepository';
 
 @Module({
   imports: [
@@ -186,15 +187,16 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [GroupRepository, AccountRepository, LoggerService],
+          inject: [GroupRepository, GroupMemberRepository, AccountRepository, LoggerService],
           provide: UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
           useFactory: (
             groupRepository: GroupRepository,
+            groupMemberRepository: GroupMemberRepository,
             accountRepository: AccountRepository,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new AddMemberUseCase(groupRepository, accountRepository, logger),
+              new AddMemberUseCase(groupRepository, groupMemberRepository, accountRepository, logger),
             ),
         },
         {

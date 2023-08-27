@@ -42,7 +42,7 @@ export class GroupRepository implements IGroupRepository {
         if (!group) {
             throw new NotFoundException('Group not found');
         }
-        console.log(group);
+
         group.name = groupM.name;
         group.color = groupM.color;
 
