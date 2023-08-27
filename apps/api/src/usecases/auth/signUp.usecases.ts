@@ -11,7 +11,7 @@ export class SignUpUseCases {
   ) {}
 
   async signUp(authSignUpDto: AuthSignUpDto): Promise<AccountWithoutPassword> {
-    const account = AccountMapper.fromSignupDtoToNewAccount(authSignUpDto);
+    const account = AccountMapper.fromSignupDtoToModel(authSignUpDto);
     account.password = await this.bcryptService.hash(authSignUpDto.password);
     return await this.accountRepository.createAccount(account);
   }

@@ -27,6 +27,7 @@ import { StudentRepository } from '../repositories/student.repository';
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { GroupRepository } from '../repositories/group.repository';
 import { GetGroupUseCase } from '../../usecases/group/getGroup.usecase';
+import { AddMemberUseCase } from '../../usecases/group/addMember.usecase';
 
 @Module({
   imports: [
@@ -44,9 +45,14 @@ export class UsecasesProxyModule {
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
+
+  // AccountManagement
   static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
   static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy';
+
+  // GroupManagement
   static GET_GROUP_USECASES_PROXY = 'GetGroupUseCasesProxy';
+  static ADD_MEMBER_USECASES_PROXY = 'AddMemberUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -174,6 +180,18 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new GetGroupUseCase(groupRepository, logger),
             ),
+        },
+        {
+          inject: [GroupRepository, AccountRepository, LoggerService],
+          provide: UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            accountRepository: AccountRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new AddMemberUseCase(groupRepository, accountRepository, logger),
+            ),
         }
       ],
       exports: [
@@ -184,7 +202,8 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
         UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
         UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
-        UsecasesProxyModule.GET_GROUP_USECASES_PROXY
+        UsecasesProxyModule.GET_GROUP_USECASES_PROXY,
+        UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
       ],
     };
   }

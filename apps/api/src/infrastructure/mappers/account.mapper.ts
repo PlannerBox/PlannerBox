@@ -66,7 +66,7 @@ export class AccountMapper {
         };
     }
 
-    static fromSignupDtoToNewAccount(newAccountDto: AuthSignUpDto): AccountM {
+    static fromSignupDtoToModel(newAccountDto: AuthSignUpDto): AccountM {
         return {
             username: newAccountDto.username,
             password: newAccountDto.password,
@@ -102,6 +102,14 @@ export class AccountMapper {
         };
     }
 
+    static fromModelToNestedModel(accountM: AccountM): NestedAccountM {
+        return {
+            id: accountM.id,
+            username: accountM.username,
+            firstname: accountM.firstname,
+            lastname: accountM.lastname,
+        };
+    }
     static fromNestedModelToNestedDto(account: NestedAccountM): NestedAccountDto {
         return {
             id: account.id,
