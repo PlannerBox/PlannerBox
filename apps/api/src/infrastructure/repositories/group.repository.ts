@@ -4,7 +4,6 @@ import { Group } from "../entities/Group.entity";
 import { Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
-import { GroupMapper } from "../mappers/group.mapper";
 import { NotFoundException } from "@nestjs/common";
 
 export class GroupRepository implements IGroupRepository {
@@ -47,6 +46,15 @@ export class GroupRepository implements IGroupRepository {
         group.color = groupM.color;
 
         return this.groupRepository.update(group.id, group);
-        
+    }
+
+    async deleteGroup(groupId: string): Promise<any> {
+        const group = await this.groupRepository.findOne({ where: { id: groupId }});
+
+        if (!group) {
+            throw new NotFoundException('Group not found');
+        }
+
+        return this.groupRepository.delete(group.id);
     }
 }

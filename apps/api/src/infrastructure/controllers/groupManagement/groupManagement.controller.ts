@@ -13,6 +13,7 @@ import { GroupDto, NewGroupDto, NewGroupMemberDto } from "./groupDto.class";
 import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase";
 import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase";
 import { JsonResult } from "../../helpers/JsonResult";
+import { DeleteGroupUseCase } from "../../../usecases/group/deleteGroup.usecase";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -33,6 +34,9 @@ export class GroupManagementController {
 
         @Inject(UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY)
         private readonly updateGroupUseCase: UseCaseProxy<UpdateGroupUseCase>,
+
+        @Inject(UsecasesProxyModule.DELETE_GROUP_USECASES_PROXY)
+        private readonly deleteGroupUseCase: UseCaseProxy<DeleteGroupUseCase>
     ) {}
 
     @Get('group/summary')
@@ -153,5 +157,22 @@ export class GroupManagementController {
     async removeMember(@Param('groupId') groupId: string, @Param('accountId') accountId: string): Promise<any> {
         await this.addMemberUseCase.getInstance().removeMember(groupId, accountId);
         return JsonResult.Convert('Member successfully removed');
+    }
+
+    @Delete('group/:groupId/delete')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Group successfully deleted',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Group not found',
+    })
+    @ApiOperation({ description: 'Delete a group' })
+    async deleteGroup(@Param('groupId') groupId: string): Promise<any> {
+        await this.deleteGroupUseCase.getInstance().deleteGroup(groupId);
+        return JsonResult.Convert('Group successfully deleted');
     }
 }

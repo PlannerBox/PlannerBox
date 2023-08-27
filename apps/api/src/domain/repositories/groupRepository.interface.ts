@@ -7,4 +7,5 @@ export interface IGroupRepository {
     findReferee(refereeID: string): Promise<any>;
     createGroup(group: GroupM): Promise<any>;
     updateGroup(group: GroupM): Promise<any>;
+    deleteGroup(groupId: string): Promise<any>;
 }
