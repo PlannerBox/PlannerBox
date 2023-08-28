@@ -10,6 +10,7 @@ import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import { AccountMapper } from '../mappers/account.mapper';
+import { FormationMode } from '../../domain/models/enums/formationMode.enum';
 
 
 @Injectable()
@@ -114,7 +115,6 @@ export class AccountRepository implements IAccountRepository {
   }
 
   private async linkAccountToSubClass(account: AccountM): Promise<Account> {
-
     const accountEntity = AccountMapper.fromModelToEntity(account);
         accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({
           where: {

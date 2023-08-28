@@ -4,7 +4,8 @@ import { IAccountRepository } from "../../domain/repositories/accountRepository.
 import Role from "../../domain/models/enums/role.enum";
 import { IRolePermissionsRepository } from "../../domain/repositories/rolePermissionsRepository.interface";
 import Permission from "../../domain/models/enums/permission.type";
-import { FormationMode } from "../../domain/models/enums/formationMode.enum";
+import { AccountMapper } from "../../infrastructure/mappers/account.mapper";
+import { NestedAccountM } from "../../domain/models/account";
 
 export class AccountManagementUseCases {
     constructor(
@@ -63,6 +64,7 @@ export class AccountManagementUseCases {
     async getAllAccounts(): Promise<any> {
         return await this.accountRepository.getAllAccounts();
     }
+
     async deleteAccount(id: string): Promise<any> {
         const account=await this.accountRepository.findAccountById(id);
         if(account.active){
