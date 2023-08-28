@@ -12,9 +12,8 @@ import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum
 import { HasRole } from "../../decorators/has-role.decorator";
 import { RolesGuard } from "../../common/guards/roles.guard";
 import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
-import { GenericUserAccountDto, UserAccountWithoutPasswordDto } from "./userAccountDto.class";
+import { GenericUserAccountDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
-import { FormationMode } from "../../../domain/models/enums/formationMode.enum";
 import { StudentAccountDto } from "./studentAccountDto.class";
 
 @Controller('user-management')
@@ -112,7 +111,7 @@ export class UserManagementController {
         return JsonResult.Convert(`Role permissions updated`);
     }
 
-    @Get('users')
+    @Get('all')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'get all users (0 filter 0 pagination at the moment)' })

@@ -1,5 +1,6 @@
-import { AccountM } from "../../domain/models/account";
+import { AccountM, NestedAccountM } from "../../domain/models/account";
 import { AuthSignUpDto } from "../controllers/auth/authSignUpDto.class";
+import { NestedAccountDto } from "../controllers/groupManagement/nestedAccountDto.class";
 import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
 import { Account } from "../entities/Account.entity";
 
@@ -16,7 +17,8 @@ export class AccountMapper {
             lastLogin: accountM.lastLogin,
             hashRefreshToken: accountM.hashRefreshToken,
             active: accountM.active,
-            rolePermissions: accountM.rolePermissions
+            rolePermissions: accountM.rolePermissions,
+            groups: accountM.groups,
         };
     }
 
@@ -33,7 +35,8 @@ export class AccountMapper {
             hashRefreshToken: account.hashRefreshToken,
             active: account.active,
             role: account.rolePermissions.role,
-            rolePermissions: account.rolePermissions
+            rolePermissions: account.rolePermissions,
+            groups: account.groups,
         };
     }
 
@@ -63,7 +66,7 @@ export class AccountMapper {
         };
     }
 
-    static fromSignupDtoToNewAccount(newAccountDto: AuthSignUpDto): AccountM {
+    static fromSignupDtoToModel(newAccountDto: AuthSignUpDto): AccountM {
         return {
             username: newAccountDto.username,
             password: newAccountDto.password,
@@ -87,6 +90,32 @@ export class AccountMapper {
             birthPlace: userAccountDto.birthPlace,
             active: userAccountDto.active,
             role: userAccountDto.role,
+        };
+    }
+
+    static fromEntityToNestedModel(account: Account): NestedAccountM {
+        return {
+            id: account.id,
+            username: account.username,
+            firstname: account.firstname,
+            lastname: account.lastname,
+        };
+    }
+
+    static fromModelToNestedModel(accountM: AccountM): NestedAccountM {
+        return {
+            id: accountM.id,
+            username: accountM.username,
+            firstname: accountM.firstname,
+            lastname: accountM.lastname,
+        };
+    }
+    static fromNestedModelToNestedDto(account: NestedAccountM): NestedAccountDto {
+        return {
+            id: account.id,
+            username: account.username,
+            firstname: account.firstname,
+            lastname: account.lastname,
         };
     }
 }
