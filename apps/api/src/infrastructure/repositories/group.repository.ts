@@ -15,16 +15,20 @@ export class GroupRepository implements IGroupRepository {
         private readonly groupMembersRepository: Repository<GroupMembers>
     ) {}
 
-    createGroup(group: GroupM): Promise<any> {
-        return this.groupRepository.save({
+    async createGroup(group: GroupM): Promise<any> {
+        return await this.groupRepository.save({
             name: group.name,
             color: group.color,
             groupMembers: group.groupMembers,
         });
     }
 
-    findGroup(groupID: string): Promise<any> {
-        return this.groupRepository.findOne({ where: { id: groupID }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
+    async findGroup(groupID: string): Promise<any> {
+        return await this.groupRepository.findOne({ where: { id: groupID }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
+    }
+
+    async findGroupBy(id: string, name: string): Promise<any> {
+        return await this.groupRepository.findOne({ where: { id: id, name: name }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
     }
 
     async findReferee(refereeID: string): Promise<any> {

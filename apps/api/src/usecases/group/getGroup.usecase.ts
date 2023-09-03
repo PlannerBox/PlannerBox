@@ -31,4 +31,14 @@ export class GetGroupUseCase {
 
         return GroupMapper.fromEntityToModel(group);
     }
+
+    async findGroupDetailsByAccount(id: string, name: string): Promise<any> {
+        let group = await this.groupRepository.findGroupBy(id, name);
+
+        if (!group) {
+            throw new BadRequestException(`group with id ${id} and name ${name} not found`);
+        }
+
+        return GroupMapper.fromEntityToModel(group);
+    }
 }

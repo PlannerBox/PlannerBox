@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inject, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inject, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
@@ -77,6 +77,23 @@ export class GroupManagementController {
     async getGroupDetails(@Param('groupId') groupId: string): Promise<GroupDetailDto> {
         const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetails(groupId);
 
+        return GroupMapper.fromModelToDetailDto(group);
+    }
+
+    @Get('group/details')
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns details of a specific group',
+        type: GroupDetailDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns details of a specific group' })
+    async getGroupDetailsByAccount(@Query('id') id: string, @Query('name') name: string): Promise<GroupDetailDto> {
+        const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name);
         return GroupMapper.fromModelToDetailDto(group);
     }
 
