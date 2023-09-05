@@ -17,6 +17,7 @@ export class AuthPasswordDto {
   @Matches(
     /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{10,})(?!.*(.)\1{2,})/,
     { message: 'Mot de passe trop faible' },
+    { message: 'Mot de passe trop faible' },
   )
   readonly password: string;
 }
