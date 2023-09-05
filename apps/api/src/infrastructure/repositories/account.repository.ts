@@ -15,6 +15,9 @@ import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import { AccountMapper } from '../mappers/account.mapper';
+import { FormationMode } from '../../domain/models/enums/formationMode.enum';
+import { FilterOperator, FilterSuffix, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
+
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -158,9 +161,11 @@ export class AccountRepository implements IAccountRepository {
     );
   }
 
+
   async deleteAccount(id: string): Promise<void> {
     await this.accountEntityRepository.delete({ id: id });
   }
+
 
   async getAllAccounts(): Promise<AccountWithoutPassword[]> {
     const accountEntities = await this.accountEntityRepository.find();
