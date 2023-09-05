@@ -5,10 +5,10 @@ import {
   IsNotEmpty,
   IsString,
   Matches,
-  MaxLength
+  MaxLength,
 } from 'class-validator';
-import Role from '../../../domain/models/enums/role.enum';
 import { FormationMode } from '../../../domain/models/enums/formationMode.enum';
+import Role from '../../../domain/models/enums/role.enum';
 
 export class AuthPasswordDto {
   @ApiProperty({ required: true })

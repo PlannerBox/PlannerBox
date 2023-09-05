@@ -8,6 +8,7 @@ import {
 import {
   Button,
   Cascader,
+  DatePicker,
   Form,
   Input,
   Select,
@@ -20,8 +21,12 @@ import { PresetColorType, PresetStatusColorType } from 'antd/es/_util/colors';
 import { LiteralUnion } from 'antd/es/_util/type';
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
+import { SignUpProps, SignUpResponse } from 'api-client';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { FormationMode } from '../../../../../../enums/FormationMode';
+import { Role } from '../../../../../../enums/Role';
+import { useSignUp } from './UsersTab/hooks/useSignUp';
 
 type UsersTabProps = {
   step?: 'list' | 'create';
@@ -212,9 +217,30 @@ const layout = {
 export default function UsersTab({ step = 'list' }: UsersTabProps) {
   const [form] = Form.useForm();
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string>([]);
 
-  const onFinish = (values: any) => {
+  const {
+    mutate: fetchSignUp,
+    isLoading,
+    isSuccess,
+  } = useSignUp({ onSuccess: handleSuccess, onError: handleError });
+
+  function handleSuccess(data: SignUpResponse) {
+    if (!!data) {
+    } else {
+      setErrorMessage(
+        'Une erreur est survenue lors de la connexion. Veuillez réessayer'
+      );
+    }
+  }
+
+  function handleError() {
+    setErrorMessage('Adresse mail');
+  }
+
+  const onFinish = (values: SignUpProps) => {
     console.log(values);
+    fetchSignUp(values);
   };
 
   const onReset = () => {
@@ -265,6 +291,19 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
     [router]
   );
 
+  const onRoleChange = (value: Role) => {
+    if (
+      value === Role.Admin ||
+      value === Role.InternTeacher ||
+      value === Role.ExternTeacher
+    ) {
+      form.setFieldsValue({ formationMode: undefined, groups: undefined });
+    }
+  };
+
+  const userAlreadyCreated =
+    errors.find((error) => error === 'User already created') !== undefined;
+
   return (
     <div>
       {step === 'list' && (
@@ -302,12 +341,16 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
           labelCol={{ style: { width: 200 } }}
           wrapperCol={{ style: { width: '100%' } }}
         >
-          <Form.Item name='type' label='Type' rules={[{ required: true }]}>
-            <Select placeholder='Sélectionner une option' allowClear>
-              <Option value='student'>Apprenant</Option>
-              <Option value='internal_teacher'>Formateur interne</Option>
-              <Option value='external_teacher'>Formateur externe</Option>
-              <Option value='admin'>Administrateur</Option>
+          <Form.Item name='role' label='Type' rules={[{ required: true }]}>
+            <Select
+              placeholder='Sélectionner une option'
+              allowClear
+              onChange={onRoleChange}
+            >
+              <Option value={Role.Student}>Apprenant</Option>
+              <Option value={Role.InternTeacher}>Formateur interne</Option>
+              <Option value={Role.ExternTeacher}>Formateur externe</Option>
+              <Option value={Role.Admin}>Administrateur</Option>
             </Select>
           </Form.Item>
           <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
@@ -321,38 +364,82 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             <Input />
           </Form.Item>
           <Form.Item
-            name='mail'
+            name='username'
             label='Adresse mail'
             rules={[{ required: true, type: 'email' }]}
+            help={
+              userAlreadyCreated
+                ? 'Adresse mail déjà utilisée par un utilisateur'
+                : undefined
+            }
+            status={userAlreadyCreated ? 'error' : undefined}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name='organisational_way'
-            label="Méthode d'organisation"
-            rules={[{ required: true }]}
+            name='password'
+            label='Mot de passe'
+            rules={[{ required: true, type: 'string' }]}
           >
-            <Select placeholder='Sélectionner une option' allowClear>
-              <Option value='standard'>Présentiel</Option>
-              <Option value='full_remote'>Distanciel</Option>
-              <Option value='partial_remote'>
-                Mixte présentiel/distanciel
-              </Option>
-            </Select>
+            <Input type='password' />
           </Form.Item>
           <Form.Item
-            name='groups'
-            label='Groupe(s)'
-            rules={[{ required: false }]}
+            name='birthDate'
+            label='Date de naissance'
+            rules={[{ required: true, type: 'date' }]}
           >
-            <Cascader
-              options={fakeGroupOptions}
-              placeholder='Sélectionner un ou plusieurs groupes'
-              showSearch={{ filter: filterGroups }}
-              onSearch={(value) => console.log(value)}
-              maxTagCount='responsive'
-              multiple
-            />
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            name='birthPlace'
+            label='Lieu de naissance'
+            rules={[{ required: true, type: 'string' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            noStyle
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.role !== currentValues.role
+            }
+          >
+            {({ getFieldValue }) =>
+              getFieldValue('role') === 'student' && (
+                <>
+                  <Form.Item
+                    name='formationMode'
+                    label="Méthode d'organisation"
+                    rules={[{ required: true }]}
+                  >
+                    <Select placeholder='Sélectionner une option' allowClear>
+                      <Option value={FormationMode.Presentiel}>
+                        Présentiel
+                      </Option>
+                      <Option value={FormationMode.Distanciel}>
+                        Distanciel
+                      </Option>
+                      <Option value={FormationMode.Hybride}>
+                        Mixte présentiel/distanciel
+                      </Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name='groups'
+                    label='Groupe(s)'
+                    rules={[{ required: false }]}
+                  >
+                    <Cascader
+                      options={fakeGroupOptions}
+                      placeholder='Sélectionner un ou plusieurs groupes'
+                      showSearch={{ filter: filterGroups }}
+                      onSearch={(value) => console.log(value)}
+                      maxTagCount='responsive'
+                      multiple
+                    />
+                  </Form.Item>
+                </>
+              )
+            }
           </Form.Item>
           <Form.Item
             name='switch'
@@ -361,7 +448,6 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             help={
               'Un compte activé permet à l’utilisateur de se connecter, tandis qu’un compte désactivé bloque sa connexion.'
             }
-            rules={[{ required: true }]}
           >
             <Switch defaultChecked />
           </Form.Item>

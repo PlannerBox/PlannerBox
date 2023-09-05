@@ -3,9 +3,9 @@
 import { Tabs, TabsProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-import GroupsTab from './partials/GroupsTab';
-import PermissionsTab from './partials/PermissionsTab';
-import UsersTab from './partials/UsersTab';
+import GroupsTab from '../GroupsTab';
+import PermissionsTab from '../PermissionsTab';
+import UsersTab from '../UsersTab';
 
 export default function UsersManagementTabs() {
   const pathname = usePathname();

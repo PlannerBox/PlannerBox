@@ -4,5 +4,3 @@ export enum Role {
   ExternTeacher = 'externTeacher',
   InternTeacher = 'internTeacher',
 }
-
-export default Role;

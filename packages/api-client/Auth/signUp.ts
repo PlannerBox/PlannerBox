@@ -1,3 +1,4 @@
+import { Role } from '../../../apps/web/src/enums/Role';
 import { apiCall } from '../utils/api';
 
 export type SignUpProps = {
@@ -6,7 +7,7 @@ export type SignUpProps = {
   password: string;
   birthDate: Date;
   birthPlace: string;
-  role: string;
+  role: Role;
   formationMode: string;
 };
 
