@@ -11,18 +11,18 @@ import Role from '../../../domain/models/enums/role.enum';
 import { FormationMode } from '../../../domain/models/enums/formationMode.enum';
 
 export class AuthPasswordDto {
-  @ApiProperty({ required: true })
-  @IsNotEmpty({ message: 'Password can not be empty' })
-  @IsString()
+  @ApiProperty({ required: true, minLength: 10, pattern: 'doit contenir : majuscules, minuscules, caractères spéciaux' })
+  @IsNotEmpty({ message: 'Le mot de passe ne peut pas être vide' })
+  @IsString({ message: 'Le mot de passe doit être une chaîne de caractères' })
   @Matches(
     /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{10,})(?!.*(.)\1{2,})/,
-    { message: 'password too weak' },
+    { message: 'Mot de passe trop faible' },
   )
   readonly password: string;
 }
 
 export class AuthSignUpDto extends AuthPasswordDto {
-  @IsNotEmpty({ message: 'User name can not be empty' })
+  @IsNotEmpty()
   @IsEmail()
   @IsString()
   readonly username: string;
