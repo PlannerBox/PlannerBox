@@ -15,6 +15,7 @@ import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
 import { GenericUserAccountDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
 import { StudentAccountDto } from "./studentAccountDto.class";
+import { Paginate, PaginateQuery } from "nestjs-paginate";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -115,7 +116,15 @@ export class UserManagementController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'get all users (0 filter 0 pagination at the moment)' })
-    async getAllUsers() {
-        return await this.accountManagementUsecaseProxy.getInstance().getAllAccounts();
+    async getAllUsers(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.accountManagementUsecaseProxy.getInstance().findAll(query);
+    }
+
+    @Get('users/details')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get user details' })
+    async getUserDetails(@Query('id') id: string, @Query('username') username: string, @Query('firstname') firstname: string, @Query('lastname') lastname: string) {
+        return await this.accountManagementUsecaseProxy.getInstance().findAccountDetails(id, username, firstname, lastname);
     }
 }

@@ -6,6 +6,8 @@ import { IRolePermissionsRepository } from "../../domain/repositories/rolePermis
 import Permission from "../../domain/models/enums/permission.type";
 import { AccountMapper } from "../../infrastructure/mappers/account.mapper";
 import { NestedAccountM } from "../../domain/models/account";
+import { Account } from "../../infrastructure/entities/Account.entity";
+import { PaginateQuery, Paginated } from "nestjs-paginate";
 
 export class AccountManagementUseCases {
     constructor(
@@ -65,6 +67,9 @@ export class AccountManagementUseCases {
         return await this.accountRepository.getAllAccounts();
     }
 
+    /// <summary>
+    ///     Delete an account
+    /// </summary>
     async deleteAccount(id: string): Promise<any> {
         const account=await this.accountRepository.findAccountById(id);
         if(account.active){
@@ -72,5 +77,25 @@ export class AccountManagementUseCases {
         }
         const role=account.rolePermissions.role;
         return await this.accountRepository.deleteAccount(id);
+    }
+
+    /// <summary>
+    ///     Find an account
+    /// </summary>
+    async findAccountDetails(id: string, username: string, firstname: string, lastname: string): Promise<any> {
+        let account = await this.accountRepository.findAccountDetails(id, username, firstname, lastname);
+        if (!account) {
+            this.logger.error('AccountManagementUseCases findAccountDetails', 'Account not found')
+            throw new BadRequestException('Account not found');
+        }
+
+        return account;
+    }
+
+    /// <summary>
+    ///    Find accounts with pagination
+    /// </summary>
+    async findAll(query: PaginateQuery): Promise<Paginated<Account>> {
+        return await this.accountRepository.findAll(query);
     }
 }

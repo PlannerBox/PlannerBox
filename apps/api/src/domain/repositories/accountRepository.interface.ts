@@ -1,3 +1,5 @@
+import { PaginateQuery, Paginated } from 'nestjs-paginate';
+import { Account } from '../../infrastructure/entities/Account.entity';
 import { AccountM, AccountWithoutPassword } from '../models/account';
 
 export interface IAccountRepository {
@@ -11,4 +13,6 @@ export interface IAccountRepository {
   resetPassword(username: string, newPassword: string): Promise<void>;
   getAllAccounts(): Promise<AccountWithoutPassword[]>;
   deleteAccount(id: string): Promise<void>;
+  findAccountDetails(id: string, username: string, firstname: string, lastname: string): Promise<AccountWithoutPassword>;
+  findAll(query: PaginateQuery): Promise<Paginated<Account>>
 }

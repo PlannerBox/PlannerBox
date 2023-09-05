@@ -3,15 +3,14 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RolePermissions } from './RolePermissions.entity';
-import { Group } from './Group.entity';
 import { GroupMembers } from './GroupMembers.entity';
+import { PaginateConfig, PaginationType } from 'nestjs-paginate';
+import { AccountWithoutPassword } from '../../domain/models/account';
 
 @Index('Account_pkey', ['id'], { unique: true })
 @Entity('Account', { schema: 'public' })

@@ -11,6 +11,7 @@ import { Teacher } from '../entities/Teacher.entity';
 import Role from '../../domain/models/enums/role.enum';
 import { AccountMapper } from '../mappers/account.mapper';
 import { FormationMode } from '../../domain/models/enums/formationMode.enum';
+import { FilterOperator, FilterSuffix, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
 
 
 @Injectable()
@@ -27,6 +28,35 @@ export class AccountRepository implements IAccountRepository {
     @InjectRepository(Teacher)
     private readonly teacherEntityRepository: Repository<Teacher>,
   ) {}
+
+  async findAll(query: PaginateQuery): Promise<Paginated<Account>> {
+    return paginate(query, this.accountEntityRepository, {
+      sortableColumns: ['id', 'username', 'firstname', 'lastname', 'rolePermissions', 'active', 'groups'],
+      nullSort: 'last',
+      defaultSortBy: [['username', 'DESC']],
+      searchableColumns: ['id', 'username', 'firstname', 'lastname', 'rolePermissions', 'active', 'groups'],
+      filterableColumns: { id: true ,username: true, firstname: true, lastname: true, rolePermissions: true, active: true, groups: true }
+    });
+  }
+
+  async findAccountDetails(id: string, username: string, firstname: string, lastname: string): Promise<AccountWithoutPassword> {
+    const accountEntity = await this.accountEntityRepository.findOne({
+      where: [
+        { id: id },
+        { username: username },
+        { firstname: firstname },
+        { lastname: lastname },
+      ],
+    });
+
+    if (!accountEntity) {
+      return null;
+    }
+
+    const createdAccount = AccountMapper.fromEntityToModel(accountEntity);
+    const { password, ...info } = createdAccount;
+    return info;
+  }
 
   async updateAccount(account: AccountM): Promise<AccountWithoutPassword> {
     const accountEntity = AccountMapper.fromModelToEntity(account);
@@ -103,9 +133,11 @@ export class AccountRepository implements IAccountRepository {
       { password: newPassword },
     );
   }
+
   async deleteAccount(id: string): Promise<void> {
     await this.accountEntityRepository.delete({id: id});
   }
+
   async getAllAccounts(): Promise<AccountWithoutPassword[]> {
     const accountEntities = await this.accountEntityRepository.find();
     return accountEntities.map(accountEntity => {
