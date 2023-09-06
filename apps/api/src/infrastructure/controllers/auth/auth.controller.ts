@@ -12,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOperation,
@@ -80,14 +79,16 @@ export class AuthController {
 
   @Post('signup')
   @ApiBody({ type: AuthSignUpDto })
-  @ApiOperation({ description: 'create a new user account' })
+  @ApiOperation({ description: 'Create a new user account' })
+  @ApiResponse({ status: 200, description: 'Signup successful' })
+  @ApiResponse({ status: 400, description: 'Bad request (user already created or invalid data)' })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
       .execute(newAccount.username);
 
     if (checkUserName) {
-      throw new BadRequestException('User already created');
+      throw new BadRequestException('L\'adresse mail est déjà utilisée');
     }
 
     const account = await this.signUpUsecaseProxy
@@ -107,7 +108,7 @@ export class AuthController {
       refreshTokenCookie,
     ]);
 
-    return JsonResult.Convert('Signup successful');
+    return JsonResult.Convert('Compte créé');
   }
 
   @Post('logout')
@@ -116,7 +117,7 @@ export class AuthController {
   async logout(@Req() request: any) {
     const cookie = await this.logoutUsecaseProxy.getInstance().execute();
     request.res.setHeader('Set-Cookie', cookie);
-    return JsonResult.Convert('Logout successful');
+    return JsonResult.Convert('Déconnexion réussie');
   }
 
   @Get('is-authenticated')
@@ -157,7 +158,7 @@ export class AuthController {
 
     // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
     return JsonResult.Convert(
-      `If your mail is correct you should recieve a mail at the address : ${mail}`,
+      `Si l'adresse mail ${mail} existe, un mail de réinitialisation de mot de passe a été envoyé`,
     );
   }
 
@@ -172,15 +173,17 @@ export class AuthController {
       .getInstance()
       .resetPassword(token, accountPassword.password);
 
-    return JsonResult.Convert('the password has been changed');
+    return JsonResult.Convert('Le mot de passe a été modifié');
   }
 
   @Get('is-valid/:token')
   @HttpCode(200)
   @ApiOperation({ description: 'check if the reset password token is valid' })
+  @ApiResponse({ status: 200, description: 'Token is valid' })
+  @ApiResponse({ status: 400, description: 'Token is not valid' })
   async isValidToken(@Param('token') token: string) {
     const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
 
-    return response.statusCode ? response : JsonResult.Convert('The token is valid');
+    return response.statusCode ? response : JsonResult.Convert('Le token est valide');
   }
 }

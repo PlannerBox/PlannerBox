@@ -35,6 +35,9 @@ export class UserManagementController {
     @Get('is-active')
     @HttpCode(200)
     @ApiOperation({ description: 'check if the given account is active' })
+    @ApiResponse({ status: 200, description: 'State of the account' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
     async isValidAccount(@Query('username') username: string) {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
     }
@@ -45,6 +48,9 @@ export class UserManagementController {
     @ApiBody({ type: GenericUserAccountDto })
     @ApiOperation({ description: 'update user account' })
     @HttpCode(200)
+    @ApiResponse({ status: 200, description: 'Account updated' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (role not found)' })
     async updateAccount(@Body() userAccount: GenericUserAccountDto, @Req() request: any) {
         let AccountWithoutPassword;
         if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
@@ -67,6 +73,9 @@ export class UserManagementController {
     @HasPermissions(UsersPermissions.Delete)
     @HttpCode(200)
     @ApiOperation({ description: 'delete an inactive account' })
+    @ApiResponse({ status: 200, description: 'Account delete' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
     async deleteAccount(@Query('id') id: string) {
         await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
         return JsonResult.Convert('Account delete');
@@ -77,6 +86,9 @@ export class UserManagementController {
     @Post('/student/update')
     @ApiOperation({ description: 'update a student account (not really usefull, prefer user-management/update route)' })
     @HttpCode(200)
+    @ApiResponse({ status: 200, description: 'Account updated' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (role not found)' })
     async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
         const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
         return AccountWithoutPassword;
@@ -88,15 +100,20 @@ export class UserManagementController {
     @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'invert account state' })
+    @ApiResponse({ status: 200, description: 'Account state updated' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
     async updateAccountState(@Query('username') username: string) {
         const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
-        return JsonResult.Convert(`Account ${ !response ? 'de' : '' }activated`);
+        return JsonResult.Convert(`Le compte a été ${ !response ? 'des' : '' }activaté`);
     }
 
     @Get('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'get role permissions of the connected user' })
+    @ApiResponse({ status: 200, description: 'Role permissions' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
     async getRolePermissions(@Req() request: any) {
         return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
     }
@@ -105,11 +122,13 @@ export class UserManagementController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'update permissions for given roles' })
+    @ApiResponse({ status: 200, description: 'Permissions updated' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
     async updateRolePermissions(@Body() rolesPermissions: RolesPermissionsDto[], @Req() request: any) {
         rolesPermissions.forEach(async rolePermission => {
             await this.accountManagementUsecaseProxy.getInstance().updateRolePermissions(rolePermission.role, rolePermission.permissions);
         });
-        return JsonResult.Convert(`Role permissions updated`);
+        return JsonResult.Convert(`Permissions mises à jour`);
     }
 
     @Get('all')
@@ -124,6 +143,9 @@ export class UserManagementController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'get user details' })
+    @ApiResponse({ status: 200, description: 'User details' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
     async getUserDetails(@Query('id') id: string, @Query('username') username: string, @Query('firstname') firstname: string, @Query('lastname') lastname: string) {
         return await this.accountManagementUsecaseProxy.getInstance().findAccountDetails(id, username, firstname, lastname);
     }
