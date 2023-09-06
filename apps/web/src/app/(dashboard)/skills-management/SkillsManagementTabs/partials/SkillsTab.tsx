@@ -1,21 +1,21 @@
 'use client';
 
 import { EditOutlined, MoreOutlined } from '@ant-design/icons';
-import { Button, Space } from 'antd';
-import Table, { ColumnsType } from 'antd/es/table';
+import { Button, Form, Input, Popover, Space, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 
 type SkillsTabProps = {
   step?: 'list';
 };
 
-interface DataType {
+interface SkillsDataType {
   key: string;
   name: string;
   internal_teachers: number;
   external_teachers: number;
 }
 
-const columns: ColumnsType<DataType> = [
+const skillsColumns: ColumnsType<SkillsDataType> = [
   {
     title: 'Nom',
     dataIndex: 'name',
@@ -43,7 +43,7 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const data: DataType[] = [
+const skillsData: SkillsDataType[] = [
   {
     key: '1',
     name: 'Big Data',
@@ -64,7 +64,56 @@ const data: DataType[] = [
   },
 ];
 
+type SkillFieldType = {
+  name?: string;
+};
+
 export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
+  const [form] = Form.useForm<SkillFieldType>();
+  const skillNameValue = Form.useWatch('name', form);
+
+  const onSkillCreationFinish = (values: any) => {
+    console.log('Success:', values);
+  };
+
+  const onSkillCreationFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const onSkillCreationReset = () => {
+    form.resetFields();
+  };
+
+  const addSkillPopoverContent = () => (
+    <Form
+      name='basic'
+      initialValues={{}}
+      onFinish={onSkillCreationFinish}
+      onFinishFailed={onSkillCreationFinishFailed}
+      autoComplete='off'
+      form={form}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--spacing-12)',
+      }}
+    >
+      <Form.Item<SkillFieldType> name='name' style={{ margin: 0 }}>
+        <Input />
+      </Form.Item>
+
+      <Form.Item style={{ margin: 0 }}>
+        <Button
+          type='primary'
+          htmlType='submit'
+          disabled={(skillNameValue?.length || 0) <= 0}
+        >
+          Créer
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+
   return (
     <div>
       {step === 'list' && (
@@ -77,9 +126,21 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
               margin: 'var(--spacing-16) var(--spacing-8)',
             }}
           >
-            <Button type='primary'>Créer une compétence</Button>
+            <Popover
+              placement='leftTop'
+              title='Nom de la compétence'
+              content={addSkillPopoverContent}
+              trigger='click'
+              onOpenChange={onSkillCreationReset}
+            >
+              <Button type='primary'>Créer une compétence</Button>
+            </Popover>
           </div>
-          <Table columns={columns} dataSource={data} />
+          <Table
+            columns={skillsColumns}
+            dataSource={skillsData}
+            scroll={{ x: 150 }}
+          />
         </>
       )}
     </div>
