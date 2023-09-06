@@ -81,10 +81,7 @@ export class AuthController {
   @ApiBody({ type: AuthSignUpDto })
   @ApiOperation({ description: 'Create a new user account' })
   @ApiResponse({ status: 200, description: 'Signup successful' })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request (user already created or invalid data)',
-  })
+  @ApiResponse({ status: 400, description: 'Bad request (user already created or invalid data)' })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
@@ -198,8 +195,6 @@ export class AuthController {
       .getInstance()
       .tokenIsValid(token);
 
-    return response.statusCode
-      ? response
-      : JsonResult.Convert('Le token est valide');
+    return response.statusCode ? response : JsonResult.Convert('Le token est valide');
   }
 }

@@ -14,11 +14,7 @@ export class AuthPasswordDto {
   @ApiProperty({ required: true, minLength: 10 })
   @IsNotEmpty({ message: 'Le mot de passe ne peut pas être vide' })
   @IsString({ message: 'Le mot de passe doit être une chaîne de caractères' })
-  @Matches(
-    /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{10,})(?!.*(.)\1{2,})/,
-    { message: 'Mot de passe trop faible' },
-    { message: 'Mot de passe trop faible' },
-  )
+  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{10,})(?!.*(.)\1{2,})/, { message: 'Mot de passe trop faible' })
   readonly password: string;
 }
 
@@ -59,11 +55,7 @@ export class AuthSignUpDto extends AuthPasswordDto {
   @IsNotEmpty({ message: 'Le rôle ne peut pas être vide' })
   readonly role: Role;
 
-  @ApiProperty({
-    required: false,
-    enum: FormationMode,
-    enumName: 'FormationMode',
-  })
+  @ApiProperty({ required: false, enum: FormationMode, enumName: 'FormationMode' })
   readonly formationMode?: FormationMode;
 
   // Ajouter la liste des groupes (ids) dans lequel ajouter le nouveau compte (key: groups)
