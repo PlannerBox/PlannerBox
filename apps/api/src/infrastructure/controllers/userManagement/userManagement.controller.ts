@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Inject, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
@@ -134,7 +134,12 @@ export class UserManagementController {
     @Get('all')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
-    @ApiOperation({ description: 'get all users (0 filter 0 pagination at the moment)' })
+    @ApiOperation({ description: 'get all users with pagination' })
+    @ApiResponse({ status: 200, description: 'Users list' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiQuery({ name: 'page', required: false, type: Number })
+    @ApiQuery({ name: 'limit', required: false, type: Number })
+    @ApiQuery({ name: 'filter', required: false, type: String })
     async getAllUsers(@Paginate() query: PaginateQuery): Promise<any> {
         return await this.accountManagementUsecaseProxy.getInstance().findAll(query);
     }
