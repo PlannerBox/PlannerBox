@@ -2,6 +2,8 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
+import { PaginateQuery, Paginated } from "nestjs-paginate";
+import { Group } from "../../infrastructure/entities/Group.entity";
 
 export class GetGroupUseCase {
     constructor(
@@ -40,5 +42,9 @@ export class GetGroupUseCase {
         }
 
         return GroupMapper.fromEntityToModel(group);
+    }
+
+    async findGroupPaginatedList(query: PaginateQuery): Promise<Paginated<Group>> {
+        return await this.groupRepository.findPaginated(query);
     }
 }

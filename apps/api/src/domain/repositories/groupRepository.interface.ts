@@ -1,3 +1,4 @@
+import { PaginateQuery, Paginated } from "nestjs-paginate";
 import { Group } from "../../infrastructure/entities/Group.entity";
 import { GroupM } from "../models/group";
 
@@ -9,4 +10,5 @@ export interface IGroupRepository {
     createGroup(group: GroupM): Promise<any>;
     updateGroup(group: GroupM): Promise<any>;
     deleteGroup(groupId: string): Promise<any>;
+    findPaginated(query: PaginateQuery): Promise<Paginated<Group>>;
 }

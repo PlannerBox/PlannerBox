@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -61,4 +62,15 @@ export class GroupRepository implements IGroupRepository {
 
         return this.groupRepository.delete(group.id);
     }
+
+    async findPaginated(query: PaginateQuery): Promise<Paginated<Group>> {
+        return await paginate(query, this.groupRepository, {
+            sortableColumns: ['id', 'name', 'color', 'groupMembers'],
+            nullSort: 'last',
+            defaultSortBy: [['name', 'DESC']],
+            searchableColumns: ['id', 'name', 'color', 'groupMembers'],
+            filterableColumns: { id: true ,name: true, color: true, groupMembers: true }
+        });
+    }
+
 }

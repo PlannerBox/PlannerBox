@@ -30,7 +30,7 @@ export class AccountRepository implements IAccountRepository {
   ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<Account>> {
-    return paginate(query, this.accountEntityRepository, {
+    return await paginate(query, this.accountEntityRepository, {
       sortableColumns: ['id', 'username', 'firstname', 'lastname', 'rolePermissions', 'active', 'groups'],
       nullSort: 'last',
       defaultSortBy: [['username', 'DESC']],

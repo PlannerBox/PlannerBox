@@ -14,6 +14,7 @@ import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase"
 import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase";
 import { JsonResult } from "../../helpers/JsonResult";
 import { DeleteGroupUseCase } from "../../../usecases/group/deleteGroup.usecase";
+import { Paginate, PaginateQuery } from "nestjs-paginate";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -200,5 +201,22 @@ export class GroupManagementController {
     async deleteGroup(@Param('groupId') groupId: string): Promise<any> {
         await this.deleteGroupUseCase.getInstance().deleteGroup(groupId);
         return JsonResult.Convert('Group successfully deleted');
+    }
+
+
+    @Get('group/paginated-list')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns a paginated list of all groups',
+    })
+    @ApiResponse({
+        status: 204,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns a paginated list of all groups' })
+    async getGroupPaginatedList(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
     }
 }
