@@ -64,4 +64,8 @@ export class GetGroupUseCase {
         groupList.data = summaryGroup;
         return groupList;
     }
+
+    async findGroupPaginatedList(query: PaginateQuery): Promise<Paginated<Group>> {
+        return await this.groupRepository.findPaginated(query);
+    }
 }

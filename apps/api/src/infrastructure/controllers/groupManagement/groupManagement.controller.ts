@@ -232,4 +232,21 @@ export class GroupManagementController {
         await this.deleteGroupUseCase.getInstance().deleteGroup(groupId);
         return JsonResult.Convert('Group successfully deleted');
     }
+
+
+    @Get('group/paginated-list')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns a paginated list of all groups',
+    })
+    @ApiResponse({
+        status: 204,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns a paginated list of all groups' })
+    async getGroupPaginatedList(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
+    }
 }
