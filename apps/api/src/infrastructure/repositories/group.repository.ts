@@ -97,4 +97,23 @@ export class GroupRepository implements IGroupRepository {
         });
     }
 
+    async findPaginatedManually(pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>> {
+        const queryBuilder = this.groupRepository.createQueryBuilder('group');
+
+        queryBuilder.leftJoinAndSelect('group.groupMembers', 'groupMembers');
+        queryBuilder.leftJoinAndSelect('groupMembers.account', 'account');
+
+        queryBuilder.orderBy('groupMembers.isOwner', 'DESC');
+        queryBuilder.addOrderBy('account.firstname', 'ASC');
+        queryBuilder.skip(pageOptionsDto.skip);
+        queryBuilder.take(pageOptionsDto.take);
+
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+
+        const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+        return new PageDto(entities, pageMetaDto);
+    }
+
 }

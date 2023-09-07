@@ -54,10 +54,10 @@ export class GroupManagementController {
     })
 
     @ApiOperation({ description: 'Returns a summary of all groups' })
-    async getGroupSummaryList(): Promise<any> {
-        const groups = await this.getGroupUsecasesProxy.getInstance().findGroupList();
+    async getGroupSummaryList(@Query() pageOptionsDto: PageOptionsDto): Promise<any> {
+        const groups = await this.getGroupUsecasesProxy.getInstance().findPaginateGroupList(pageOptionsDto);
 
-        if (groups.length === 0) {
+        if (groups.meta.itemCount === 0) {
             throw new HttpException('No group found', HttpStatus.NO_CONTENT);
         }
 
