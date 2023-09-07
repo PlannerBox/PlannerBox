@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inj
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GroupDetailDto } from "./groupDetailDto.class";
 import { GroupMapper } from "../../mappers/group.mapper";
 import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
@@ -15,6 +15,8 @@ import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase"
 import { JsonResult } from "../../helpers/JsonResult";
 import { DeleteGroupUseCase } from "../../../usecases/group/deleteGroup.usecase";
 import { Paginate, PaginateQuery } from "nestjs-paginate";
+import { PageOptionsDto } from "../../pagination/pageOptions.dto";
+import { UUID } from "crypto";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -93,9 +95,12 @@ export class GroupManagementController {
         description: 'No group found',
     })
     @ApiOperation({ description: 'Returns details of a specific group' })
-    async getGroupDetailsByAccount(@Query('id') id: string, @Query('name') name: string): Promise<GroupDetailDto> {
-        const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name);
-        return GroupMapper.fromModelToDetailDto(group);
+    async getGroupDetailsByAccount(@Query('id') id: UUID, @Query('name') name: string, @Query() pageOptionsDto: PageOptionsDto): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name, pageOptionsDto);
+    }
+
+    async getPaginatedGroupDetailsByAccount(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
     }
 
     @Get('user/summary')

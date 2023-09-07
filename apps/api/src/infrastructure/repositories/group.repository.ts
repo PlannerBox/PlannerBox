@@ -6,6 +6,9 @@ import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
+import { PageDto } from "../pagination/page.dto";
+import { PageOptionsDto } from "../pagination/pageOptions.dto";
+import { PageMetaDto } from "../pagination/pageMeta.dto";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -28,8 +31,28 @@ export class GroupRepository implements IGroupRepository {
         return await this.groupRepository.findOne({ where: { id: groupID }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
     }
 
-    async findGroupBy(id: string, name: string): Promise<any> {
-        return await this.groupRepository.findOne({ where: { id: id, name: name }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
+    async findGroupBy(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>> {
+        const queryBuilder = this.groupRepository.createQueryBuilder('group');
+
+        queryBuilder.leftJoinAndSelect('group.groupMembers', 'groupMembers');
+        queryBuilder.leftJoinAndSelect('groupMembers.account', 'account');
+
+        if (id) 
+            queryBuilder.where('group.id = :id', { id: id });
+        if (name)
+            queryBuilder.where('group.name like :name', { name: `%${name}%` });
+
+        queryBuilder.orderBy('groupMembers.isOwner', 'DESC');
+        queryBuilder.addOrderBy('account.firstname', 'ASC');
+        queryBuilder.skip(pageOptionsDto.skip);
+        queryBuilder.take(pageOptionsDto.take);
+
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+
+        const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+        return new PageDto(entities, pageMetaDto);
     }
 
     async findReferee(refereeID: string): Promise<any> {
@@ -65,11 +88,12 @@ export class GroupRepository implements IGroupRepository {
 
     async findPaginated(query: PaginateQuery): Promise<Paginated<Group>> {
         return await paginate(query, this.groupRepository, {
+            loadEagerRelations: true,
             sortableColumns: ['id', 'name', 'color', 'groupMembers'],
             nullSort: 'last',
             defaultSortBy: [['name', 'DESC']],
             searchableColumns: ['id', 'name', 'color', 'groupMembers'],
-            filterableColumns: { id: true ,name: true, color: true, groupMembers: true }
+            filterableColumns: { id: true ,name: true, color: true, groupMembers: true },
         });
     }
 

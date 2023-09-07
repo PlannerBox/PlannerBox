@@ -4,6 +4,7 @@ import { IGroupRepository } from "../../domain/repositories/groupRepository.inte
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 import { PaginateQuery, Paginated } from "nestjs-paginate";
 import { Group } from "../../infrastructure/entities/Group.entity";
+import { PageOptionsDto } from "../../infrastructure/pagination/pageOptions.dto";
 
 export class GetGroupUseCase {
     constructor(
@@ -34,17 +35,20 @@ export class GetGroupUseCase {
         return GroupMapper.fromEntityToModel(group);
     }
 
-    async findGroupDetailsByAccount(id: string, name: string): Promise<any> {
-        let group = await this.groupRepository.findGroupBy(id, name);
+    async findGroupDetailsByAccount(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<any> {
+        let group = await this.groupRepository.findGroupBy(id, name, pageOptionsDto);
 
         if (!group) {
             throw new BadRequestException(`group with id ${id} and name ${name} not found`);
         }
-
-        return GroupMapper.fromEntityToModel(group);
+        return group;
     }
 
     async findGroupPaginatedList(query: PaginateQuery): Promise<Paginated<Group>> {
         return await this.groupRepository.findPaginated(query);
     }
+/*
+    async findGroupPaginatedListByAccount(query: PaginateQuery): Promise<Paginated<Group>> {
+        return await this.groupRepository.findPaginatedByAccount(query);
+    }*/
 }
