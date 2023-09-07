@@ -54,6 +54,28 @@ export class GroupRepository implements IGroupRepository {
         const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
         return new PageDto(entities, pageMetaDto);
+    async findGroupBy(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>> {
+        const queryBuilder = this.groupRepository.createQueryBuilder('group');
+
+        queryBuilder.leftJoinAndSelect('group.groupMembers', 'groupMembers');
+        queryBuilder.leftJoinAndSelect('groupMembers.account', 'account');
+
+        if (id) 
+            queryBuilder.where('group.id = :id', { id: id });
+        if (name)
+            queryBuilder.where('group.name like :name', { name: `%${name}%` });
+
+        queryBuilder.orderBy('groupMembers.isOwner', 'DESC');
+        queryBuilder.addOrderBy('account.firstname', 'ASC');
+        queryBuilder.skip(pageOptionsDto.skip);
+        queryBuilder.take(pageOptionsDto.take);
+
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+
+        const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+        return new PageDto(entities, pageMetaDto);
     }
 
     async findReferee(refereeID: string): Promise<any> {

@@ -94,18 +94,9 @@ export class GroupManagementController {
         description: 'No group found',
     })
     @ApiOperation({ description: 'Returns details of a specific group' })
-<<<<<<< HEAD
-    async getGroupDetailsByAccount(@Query('id') id: UUID, @Query('name') name: string, @Query() pageOptionsDto: PageOptionsDto): Promise<any> {
-        return await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name, pageOptionsDto);
-    }
-
-    async getPaginatedGroupDetailsByAccount(@Paginate() query: PaginateQuery): Promise<any> {
-        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
-=======
     async getGroupDetailsByAccount(@Query('id') id: string, @Query('name') name: string): Promise<GroupDetailDto> {
         const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name);
         return GroupMapper.fromModelToDetailDto(group);
->>>>>>> 5ee962b (select group by name)
     }
 
     @Get('user/summary')
@@ -231,22 +222,5 @@ export class GroupManagementController {
     async deleteGroup(@Param('groupId') groupId: string): Promise<any> {
         await this.deleteGroupUseCase.getInstance().deleteGroup(groupId);
         return JsonResult.Convert('Group successfully deleted');
-    }
-
-
-    @Get('group/paginated-list')
-    @UseGuards(JwtAuthGuard)
-    @HttpCode(200)
-    @ApiResponse({
-        status: 200,
-        description: 'Returns a paginated list of all groups',
-    })
-    @ApiResponse({
-        status: 204,
-        description: 'No group found',
-    })
-    @ApiOperation({ description: 'Returns a paginated list of all groups' })
-    async getGroupPaginatedList(@Paginate() query: PaginateQuery): Promise<any> {
-        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
     }
 }
