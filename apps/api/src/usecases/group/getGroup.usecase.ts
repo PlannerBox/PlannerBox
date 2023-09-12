@@ -5,6 +5,7 @@ import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 import { PaginateQuery, Paginated } from "nestjs-paginate";
 import { Group } from "../../infrastructure/entities/Group.entity";
 import { PageOptionsDto } from "../../infrastructure/pagination/pageOptions.dto";
+import { GroupDetailDto } from "../../infrastructure/controllers/groupManagement/groupDetailDto.class";
 
 export class GetGroupUseCase {
     constructor(
@@ -53,10 +54,14 @@ export class GetGroupUseCase {
     }
 
     async findGroupPaginatedList(query: PaginateQuery): Promise<Paginated<Group>> {
-        return await this.groupRepository.findPaginated(query);
+        let groupList = await this.groupRepository.findPaginated(query);
+        this.logger.log('GetGroupUseCase', `Found ${groupList.meta.totalItems} groups`);
+        let summaryGroup = [];
+        summaryGroup = groupList.data.map(group => {
+            return GroupMapper.fromModelToDetailDto(group);
+        });
+
+        groupList.data = summaryGroup;
+        return groupList;
     }
-/*
-    async findGroupPaginatedListByAccount(query: PaginateQuery): Promise<Paginated<Group>> {
-        return await this.groupRepository.findPaginatedByAccount(query);
-    }*/
 }

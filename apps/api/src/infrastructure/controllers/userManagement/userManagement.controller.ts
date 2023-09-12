@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Inject, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AccountManagementUseCases } from "../../../usecases/auth/accountManagement.usecases";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
@@ -11,11 +11,14 @@ import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
 import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum";
 import { HasRole } from "../../decorators/has-role.decorator";
 import { RolesGuard } from "../../common/guards/roles.guard";
-import { RolesPermissionsDto } from "./RolesPermissionsDto.class";
-import { GenericUserAccountDto } from "./userAccountDto.class";
+import { RolesPermissionsDto } from "./rolesPermissionsDto.class";
+import { GenericUserAccountDto, AccountSummaryDto } from "./userAccountDto.class";
 import { UpdateAccountUseCase } from "../../../usecases/account/updateAccount.usecase";
-import { StudentAccountDto } from "./studentAccountDto.class";
+import { StudentAccountDetailedDto } from "./studentAccountDto.class";
 import { Paginate, PaginateQuery } from "nestjs-paginate";
+import { AccountMapper } from "../../mappers/account.mapper";
+import { Account } from "../../entities/Account.entity";
+import { AccountWithoutPassword } from "../../../domain/models/account";
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -32,14 +35,57 @@ export class UserManagementController {
     ) 
     {}
 
+    @Get('user/list-paginated')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get paginated users list (with nestjs pagination)' })
+    @ApiResponse({ status: 200, description: 'Users list', type: AccountSummaryDto })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'the page number to return' }) 
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'the number of items per page' })
+    @ApiQuery({ name: 'filter.name', required: false, type: String, description: 'add a filter on the property student.name (check nestjs paginate doc for more details)' })
+    async getAllUsers(@Paginate() query: PaginateQuery): Promise<any> {
+        let accountList = await this.accountManagementUsecaseProxy.getInstance().findAll(query);
+
+        let summaryAccount = [];
+
+        accountList.data.forEach((account: Account) => {
+            summaryAccount.push(AccountMapper.fromAccountEntityToAccountSummaryDto(account));
+        });
+
+        accountList.data = summaryAccount;
+        return accountList;
+    }
+
+    @Get('users/details/:accountId')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get specific user account details' })
+    @ApiResponse({ status: 200, description: 'User details', type: GenericUserAccountDto })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 404, description: 'Account not found' })
+    async getUserDetails(@Param('accountId') accountId: string) {
+        return await this.accountManagementUsecaseProxy.getInstance().findAccountDetails(accountId);
+    }
+
     @Get('is-active')
     @HttpCode(200)
     @ApiOperation({ description: 'check if the given account is active' })
     @ApiResponse({ status: 200, description: 'State of the account' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
+    @ApiResponse({ status: 404, description: 'Account not found' })
     async isValidAccount(@Query('username') username: string) {
         return await this.accountManagementUsecaseProxy.getInstance().accountIsValid(username);
+    }
+
+    @Get('role-permissions')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(200)
+    @ApiOperation({ description: 'get role permissions of the connected user' })
+    @ApiResponse({ status: 200, description: 'Role permissions' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    async getRolePermissions(@Req() request: any) {
+        return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
     }
 
     @Post('update')
@@ -50,7 +96,7 @@ export class UserManagementController {
     @HttpCode(200)
     @ApiResponse({ status: 200, description: 'Account updated' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (role not found)' })
+    @ApiResponse({ status: 404, description: 'Account not found' })
     async updateAccount(@Body() userAccount: GenericUserAccountDto, @Req() request: any) {
         let AccountWithoutPassword;
         if(request.user.permissions.some(permission=>{return UsersPermissions.UpdateAll==permission})){
@@ -67,57 +113,34 @@ export class UserManagementController {
         
         return AccountWithoutPassword;
     }
-
-    @Delete('delete')
-    @HasRole(Role.Admin)
-    @HasPermissions(UsersPermissions.Delete)
-    @HttpCode(200)
-    @ApiOperation({ description: 'delete an inactive account' })
-    @ApiResponse({ status: 200, description: 'Account delete' })
-    @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
-    async deleteAccount(@Query('id') id: string) {
-        await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
-        return JsonResult.Convert('Account delete');
-    }
     
+    @Post('/student/update')
     @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @Post('/student/update')
     @ApiOperation({ description: 'update a student account (not really usefull, prefer user-management/update route)' })
     @HttpCode(200)
     @ApiResponse({ status: 200, description: 'Account updated' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (role not found)' })
-    async updateStudentAccount(@Body() studentAccount: StudentAccountDto, @Req() request: any) {
+    @ApiResponse({ status: 404, description: 'Role not found' })
+    async updateStudentAccount(@Body() studentAccount: StudentAccountDetailedDto, @Req() request: any) {
         const AccountWithoutPassword = await this.updateAccountUseCase.getInstance().updateStudentAccount(studentAccount);
         return AccountWithoutPassword;
     }
 
+    @Post('account-state')
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
-    @Post('account-state')
     @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
     @HttpCode(200)
     @ApiOperation({ description: 'invert account state' })
     @ApiResponse({ status: 200, description: 'Account state updated' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
+    @ApiResponse({ status: 404, description: 'Account not found' })
     async updateAccountState(@Query('username') username: string) {
         const response = await this.accountManagementUsecaseProxy.getInstance().updateAccountState(username);
         return JsonResult.Convert(`Le compte a été ${ !response ? 'des' : '' }activaté`);
     }
 
-    @Get('role-permissions')
-    @UseGuards(JwtAuthGuard)
-    @HttpCode(200)
-    @ApiOperation({ description: 'get role permissions of the connected user' })
-    @ApiResponse({ status: 200, description: 'Role permissions' })
-    @ApiResponse({ status: 401, description: 'Unauthorized' })
-    async getRolePermissions(@Req() request: any) {
-        return await this.accountManagementUsecaseProxy.getInstance().getRolePermissions(request.user.role);
-    }
-    
     @Post('role-permissions')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
@@ -131,27 +154,17 @@ export class UserManagementController {
         return JsonResult.Convert(`Permissions mises à jour`);
     }
 
-    @Get('all')
-    @UseGuards(JwtAuthGuard)
+    @Delete('delete')
+    @HasRole(Role.Admin)
+    @HasPermissions(UsersPermissions.Delete)
     @HttpCode(200)
-    @ApiOperation({ description: 'get all users with pagination' })
-    @ApiResponse({ status: 200, description: 'Users list' })
+    @ApiOperation({ description: 'delete an inactive account' })
+    @ApiResponse({ status: 200, description: 'Account delete' })
+    @ApiResponse({ status: 400, description: 'Account is active and cannot be deleted' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    @ApiQuery({ name: 'filter', required: false, type: String })
-    async getAllUsers(@Paginate() query: PaginateQuery): Promise<any> {
-        return await this.accountManagementUsecaseProxy.getInstance().findAll(query);
-    }
-
-    @Get('users/details')
-    @UseGuards(JwtAuthGuard)
-    @HttpCode(200)
-    @ApiOperation({ description: 'get user details' })
-    @ApiResponse({ status: 200, description: 'User details' })
-    @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 400, description: 'Bad request (account not found)' })
-    async getUserDetails(@Query('id') id: string, @Query('username') username: string, @Query('firstname') firstname: string, @Query('lastname') lastname: string) {
-        return await this.accountManagementUsecaseProxy.getInstance().findAccountDetails(id, username, firstname, lastname);
+    @ApiResponse({ status: 404, description: 'Account not found' })
+    async deleteAccount(@Query('id') id: string) {
+        await this.accountManagementUsecaseProxy.getInstance().deleteAccount(id);
+        return JsonResult.Convert('Account delete');
     }
 }

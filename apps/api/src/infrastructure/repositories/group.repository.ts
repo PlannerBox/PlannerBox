@@ -9,6 +9,7 @@ import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 import { PageDto } from "../pagination/page.dto";
 import { PageOptionsDto } from "../pagination/pageOptions.dto";
 import { PageMetaDto } from "../pagination/pageMeta.dto";
+import { group } from "console";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -80,34 +81,39 @@ export class GroupRepository implements IGroupRepository {
         const group = await this.groupRepository.findOne({ where: { id: groupId }});
 
         if (!group) {
-            throw new BadRequestException('Group not found');
+            throw new NotFoundException('Group not found');
         }
 
         return this.groupRepository.delete(group.id);
     }
 
     async findPaginated(query: PaginateQuery): Promise<Paginated<Group>> {
-        return await paginate(query, this.groupRepository, {
-            loadEagerRelations: true,
-            sortableColumns: ['id', 'name', 'color', 'groupMembers'],
-            nullSort: 'last',
-            defaultSortBy: [['name', 'DESC']],
-            searchableColumns: ['id', 'name', 'color', 'groupMembers'],
-            filterableColumns: { id: true ,name: true, color: true, groupMembers: true },
-        });
-    }
-
-    async findPaginatedManually(pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>> {
         const queryBuilder = this.groupRepository.createQueryBuilder('group');
 
         queryBuilder.leftJoinAndSelect('group.groupMembers', 'groupMembers');
         queryBuilder.leftJoinAndSelect('groupMembers.account', 'account');
 
+        return await paginate<Group>(query, queryBuilder, {
+            loadEagerRelations: true,
+            sortableColumns: ['id', 'name', 'color', 'groupMembers'],
+            nullSort: 'last',
+            defaultSortBy: [['groupMembers.isOwner', 'DESC']],
+            searchableColumns: ['id', 'name', 'color', 'groupMembers'],
+            filterableColumns: { id: true ,name: true, color: true, groupMembers: true },
+            relations: {groupMembers: { account: true }},
+        });
+    }
+
+    async findPaginatedManually(pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>> {
+        const queryBuilder = this.groupRepository.createQueryBuilder();
+
+        queryBuilder.select('group');
+        queryBuilder.from(Group, 'group');
+
         queryBuilder.orderBy('groupMembers.isOwner', 'DESC');
-        queryBuilder.addOrderBy('account.firstname', 'ASC');
         queryBuilder.skip(pageOptionsDto.skip);
         queryBuilder.take(pageOptionsDto.take);
-
+        
         const itemCount = await queryBuilder.getCount();
         const { entities } = await queryBuilder.getRawAndEntities();
 

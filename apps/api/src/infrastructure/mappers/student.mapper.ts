@@ -1,5 +1,5 @@
 import { StudentM } from "../../domain/models/student";
-import { StudentAccountDto } from "../controllers/userManagement/studentAccountDto.class";
+import { StudentAccountDetailedDto } from "../controllers/userManagement/studentAccountDto.class";
 import { GenericUserAccountDto } from "../controllers/userManagement/userAccountDto.class";
 import { Student } from "../entities/Student.entity";
 import { AccountMapper } from "./account.mapper";
@@ -21,7 +21,7 @@ export class StudentMapper {
         }
     }
 
-    static fromDtoToModel(studentDto: StudentAccountDto): StudentM {
+    static fromDtoToModel(studentDto: StudentAccountDetailedDto): StudentM {
         return {
             studentId: studentDto.studentId,
             formationMode: studentDto.formationMode,
