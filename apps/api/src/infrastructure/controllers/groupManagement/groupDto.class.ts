@@ -27,14 +27,12 @@ export class NewGroupDto extends GroupDto {
 }
 
 export class GroupMemberSummary {
-  @ApiProperty({ type: String, description: 'Group id' })
-  groupId: string;
-  @ApiProperty({ type: String, description: 'Group name' })
-  groupName: string;
-  @ApiProperty({ type: String, description: 'User status in the group' })
-  isOwner: boolean;
-  @ApiProperty({ type: Number, description: 'Number of members in the group' })
-  groupMemberCount: number;
-  @ApiProperty({ type: String, description: 'Group color' })
-  color: string;
+    @ApiProperty({ type: String, description: 'Group id' })
+    groupId: string;
+    @ApiProperty({ type: String, description: 'Group name' })
+    groupName: string;
+    @ApiProperty({ type: String, description: 'User status in the group' })
+    isOwner: boolean;
+    @ApiProperty({ type: Number, description: 'Number of members in the group' })
+    groupMemberCount: number;
 }
