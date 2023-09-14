@@ -3,6 +3,7 @@ import { ISkillRepository } from "../../domain/repositories/skillRepository.inte
 import { Skill } from "../entities/Skill.entity";
 import { Repository } from "typeorm";
 import { SkillM } from "../../domain/models/skill";
+import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 
 export class SkillRepository implements ISkillRepository {
     constructor(
@@ -10,19 +11,33 @@ export class SkillRepository implements ISkillRepository {
         private readonly skillRepository: Repository<Skill>
     ) {}
 
-    findSkillById(skillId: string): Promise<SkillM> {
-        throw new Error("Method not implemented.");
+    async findSkillById(skillId: string): Promise<SkillM> {
+        return await this.skillRepository.findOne({ where: { id: skillId } });
     }
-    findSkillByName(skillName: string): Promise<SkillM> {
-        throw new Error("Method not implemented.");
+    
+    async findSkillByName(skillName: string): Promise<SkillM> {
+        return await this.skillRepository.findOne({ where: { name: skillName } });
     }
+
     async createSkill(skill: SkillM): Promise<SkillM> {
         return await this.skillRepository.save(skill);
     }
-    updateSkill(skill: SkillM): Promise<SkillM> {
-        throw new Error("Method not implemented.");
+
+    async upsertSkill(skill: SkillM): Promise<SkillM> {
+        return await this.skillRepository.save(skill);
     }
-    deleteSkill(skillId: string): Promise<SkillM> {
-        throw new Error("Method not implemented.");
+    
+    async deleteSkill(skillId: string){
+        await this.skillRepository.delete(skillId);
+    }
+
+    async findSkills(query: PaginateQuery): Promise<Paginated<SkillM>> {
+        const queryBuilder = this.skillRepository.createQueryBuilder('skill');
+
+        return await paginate<SkillM>(query, queryBuilder, {
+            sortableColumns: ['name'],
+            searchableColumns: ['name'],
+            defaultSortBy: [['name', 'ASC']]
+        });
     }
 }
