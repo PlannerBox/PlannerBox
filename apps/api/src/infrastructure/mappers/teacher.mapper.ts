@@ -1,13 +1,15 @@
 import { TeacherM } from "../../domain/models/teacher";
 import { Teacher } from "../entities/Teacher.entity";
 import { AccountMapper } from "./account.mapper";
+import { SkillMapper } from "./skill.mapper";
 
 export class TeacherMapper {
-    static fromModelToEntity(teacherM): Teacher {
+    static fromModelToEntity(teacherM: TeacherM): Teacher {
         return {
             id: teacherM.teacherId,
             intern: teacherM.intern,
-            account: AccountMapper.fromModelToEntity(teacherM)
+            account: AccountMapper.fromModelToEntity(teacherM),
+            skills: []
         }
     }
 

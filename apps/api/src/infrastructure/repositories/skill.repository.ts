@@ -11,11 +11,11 @@ export class SkillRepository implements ISkillRepository {
         private readonly skillRepository: Repository<Skill>
     ) {}
 
-    async findSkillById(skillId: string): Promise<SkillM> {
+    async findSkillById(skillId: string): Promise<Skill> {
         return await this.skillRepository.findOne({ where: { id: skillId } });
     }
     
-    async findSkillByName(skillName: string): Promise<SkillM> {
+    async findSkillByName(skillName: string): Promise<Skill> {
         return await this.skillRepository.findOne({ where: { name: skillName } });
     }
 
@@ -31,13 +31,16 @@ export class SkillRepository implements ISkillRepository {
         await this.skillRepository.delete(skillId);
     }
 
-    async findSkills(query: PaginateQuery): Promise<Paginated<SkillM>> {
+    async findSkills(query: PaginateQuery): Promise<Paginated<Skill>> {
         const queryBuilder = this.skillRepository.createQueryBuilder('skill');
 
-        return await paginate<SkillM>(query, queryBuilder, {
+        queryBuilder.leftJoinAndSelect('skill.teachers', 'teachers');
+        return await paginate<Skill>(query, queryBuilder, {
+            loadEagerRelations: true,
             sortableColumns: ['name'],
             searchableColumns: ['name'],
-            defaultSortBy: [['name', 'ASC']]
+            defaultSortBy: [['name', 'ASC']],
+            relations: { teachers: true }
         });
     }
 }

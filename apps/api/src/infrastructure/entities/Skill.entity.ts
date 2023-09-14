@@ -1,4 +1,5 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Teacher } from "./Teacher.entity";
 
 @Index('Skill_pkey', ['id'], { unique: true })
 @Entity('Skill', { schema: 'public' })
@@ -8,4 +9,7 @@ export class Skill {
 
     @Column({ type: 'varchar', name: 'name', length: 100 })
     name: string;
+
+    @ManyToMany(() => Teacher, teacher => teacher.skills)
+    teachers: Teacher[];
 }
