@@ -34,13 +34,14 @@ export class SkillRepository implements ISkillRepository {
     async findSkills(query: PaginateQuery): Promise<Paginated<Skill>> {
         const queryBuilder = this.skillRepository.createQueryBuilder('skill');
 
-        queryBuilder.leftJoinAndSelect('skill.teachers', 'teachers');
+        queryBuilder.leftJoinAndSelect('skill.teacherSkills', 'teacherSkills');
+        queryBuilder.leftJoinAndSelect('teacherSkills.teacher', 'teacher');
         return await paginate<Skill>(query, queryBuilder, {
             loadEagerRelations: true,
             sortableColumns: ['name'],
             searchableColumns: ['name'],
             defaultSortBy: [['name', 'ASC']],
-            relations: { teachers: true }
+            relations: { teacherSkills: { teacher: true } }
         });
     }
 }

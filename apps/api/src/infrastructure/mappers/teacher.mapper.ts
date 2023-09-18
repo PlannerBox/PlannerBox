@@ -9,7 +9,7 @@ export class TeacherMapper {
             id: teacherM.teacherId,
             intern: teacherM.intern,
             account: AccountMapper.fromModelToEntity(teacherM),
-            skills: []
+            teacherSkills: []
         }
     }
 

@@ -23,8 +23,8 @@ export class SkillMapper {
         const skillDto = new SkillDto();
         skillDto.id = skill.id;
         skillDto.name = skill.name;
-        skillDto.externTeachersNumber = skill.teachers.filter(teacher => !teacher.intern).length;
-        skillDto.internTeachersNumber = skill.teachers.filter(teacher => teacher.intern).length;
+        skillDto.externTeachersNumber = skill.teacherSkills.filter(ts => !ts.teacher.intern).length;
+        skillDto.internTeachersNumber = skill.teacherSkills.filter(ts => ts.teacher.intern).length;
         return skillDto;
     }
 }

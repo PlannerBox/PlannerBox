@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Account } from './Account.entity';
 import { Skill } from './Skill.entity';
+import { TeacherSkills } from './TeacherSkills.entity';
 
 @Index('Teacher_pkey', ['id'], { unique: true })
 @Entity('Teacher', { schema: 'public' })
@@ -25,7 +26,6 @@ export class Teacher {
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 
-  @ManyToMany(() => Skill, (skill) => skill.teachers, { eager: true, cascade: true })
-  @JoinTable()
-  skills: Skill[];
+  @OneToMany(() => TeacherSkills, teacherSkills => teacherSkills.teacher)
+  teacherSkills: TeacherSkills[];
 }
