@@ -1,11 +1,10 @@
-import { HttpStatus, NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { ISkillRepository } from "../../domain/repositories/skillRepository.interface";
 import { SkillDto } from "../../infrastructure/controllers/skillManagement/skillDto.class";
 import { SkillMapper } from "../../infrastructure/mappers/skill.mapper";
-import { PaginateQuery } from "nestjs-paginate";
 
-export class CreateSkillUseCase {
+export class UpsertSkillUseCase {
     constructor(
         private readonly skillRepository: ISkillRepository,
         private readonly logger: ILogger
@@ -35,35 +34,5 @@ export class CreateSkillUseCase {
         this.logger.log('CreateSkillUseCase', `Skill ${newSkill.name} updated`);
         
         return newSkill;
-    }
-
-    async deleteSkill(skillId: string): Promise<any> {
-        await this.skillRepository.findSkillById(skillId);
-
-        if (!skillId) {
-            throw new NotFoundException('Skill not found');
-        }
-
-        this.skillRepository.deleteSkill(skillId);
-
-        this.logger.log('CreateSkillUseCase', `Skill ${skillId} deleted`);
-        
-        return true;
-    }
-
-    async getAllSkills(query: PaginateQuery): Promise<any> {
-        const skills = await this.skillRepository.findSkills(query);
-
-        if (!skills) {
-            throw HttpStatus.NO_CONTENT;
-        }
-        
-        // Map to DTO
-        let skillsDto = [];
-        skillsDto = skills.data.map(skill => { return SkillMapper.fromEntityToDto(skill)});
-
-        skills.data = skillsDto;
-
-        return skills;
     }
 }

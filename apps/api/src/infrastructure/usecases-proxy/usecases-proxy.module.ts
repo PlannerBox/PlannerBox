@@ -40,8 +40,10 @@ import { CreateGroupUseCase } from '../../usecases/group/createGroup.usecase';
 import { UpdateGroupUseCase } from '../../usecases/group/updateGroup.usecase';
 import { GroupMemberRepository } from '../repositories/groupMemberRepository';
 import { DeleteGroupUseCase } from '../../usecases/group/deleteGroup.usecase';
-import { CreateSkillUseCase } from '../../usecases/skill/createSkill.usecase';
+import { UpsertSkillUseCase } from '../../usecases/skill/upsertSkill.usecase';
 import { SkillRepository } from '../repositories/skill.repository';
+import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
+import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
 
 @Module({
   imports: [
@@ -78,7 +80,9 @@ export class UsecasesProxyModule {
   static DELETE_GROUP_USECASES_PROXY = 'DeleteGroupUseCasesProxy';  
 
   // SkillManagement
-  static CREATE_SKILL_USECASES_PROXY = 'CreateSkillUseCasesProxy';
+  static UPSERT_SKILL_USECASES_PROXY = 'UpsertSkillUseCasesProxy';
+  static FIND_SKILL_USECASES_PROXY = 'FindSkillUseCasesProxy';
+  static DELETE_SKILL_USECASES_PROXY = 'DeleteSkillUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -298,13 +302,35 @@ export class UsecasesProxyModule {
         },
         {
           inject: [SkillRepository, LoggerService],
-          provide: UsecasesProxyModule.CREATE_SKILL_USECASES_PROXY,
+          provide: UsecasesProxyModule.UPSERT_SKILL_USECASES_PROXY,
           useFactory: (
             skillRepository: SkillRepository,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new CreateSkillUseCase(skillRepository, logger),
+              new UpsertSkillUseCase(skillRepository, logger),
+            ),
+        },
+        {
+          inject: [SkillRepository, LoggerService],
+          provide: UsecasesProxyModule.FIND_SKILL_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new FindSkillUseCase(skillRepository, logger),
+            ),
+        },
+        {
+          inject: [SkillRepository, LoggerService],
+          provide: UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new DeleteSkillUseCase(skillRepository, logger),
             ),
         },
       ],
@@ -326,7 +352,9 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY,
         UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY,
         UsecasesProxyModule.DELETE_GROUP_USECASES_PROXY,
-        UsecasesProxyModule.CREATE_SKILL_USECASES_PROXY,
+        UsecasesProxyModule.UPSERT_SKILL_USECASES_PROXY,
+        UsecasesProxyModule.FIND_SKILL_USECASES_PROXY,
+        UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
       ],
     };
   }

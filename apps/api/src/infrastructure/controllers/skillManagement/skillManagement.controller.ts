@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post } from "@nestjs/common";
-import { CreateSkillUseCase } from "../../../usecases/skill/createSkill.usecase";
+import { UpsertSkillUseCase } from "../../../usecases/skill/upsertSkill.usecase";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SkillDto } from "./skillDto.class";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
+import { FindSkillUseCase } from "../../../usecases/skill/findSkill.usecase";
+import { DeleteSkillUseCase } from "../../../usecases/skill/deleteSkill.usecase";
 
 @Controller('skill-management')
 @ApiTags('skill-management')
@@ -14,8 +16,12 @@ import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 })
 export class SkillManagementController {
     constructor(
-        @Inject(UsecasesProxyModule.CREATE_SKILL_USECASES_PROXY)
-        private readonly createSkillUseCase: UseCaseProxy<CreateSkillUseCase>,
+        @Inject(UsecasesProxyModule.UPSERT_SKILL_USECASES_PROXY)
+        private readonly createSkillUseCase: UseCaseProxy<UpsertSkillUseCase>,
+        @Inject(UsecasesProxyModule.FIND_SKILL_USECASES_PROXY)
+        private readonly findSkillUseCase: UseCaseProxy<FindSkillUseCase>,
+        @Inject(UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY)
+        private readonly deleteSkillUseCase: UseCaseProxy<DeleteSkillUseCase>
     ) {}
 
     @Get('skill/all')
@@ -23,7 +29,7 @@ export class SkillManagementController {
     @ApiResponse({ status: 204, description: '0 skills found' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async getAllSkills(@Paginate() query: PaginateQuery): Promise<Paginated<SkillDto>> {
-        return await this.createSkillUseCase.getInstance().getAllSkills(query);
+        return await this.findSkillUseCase.getInstance().getAllSkills(query);
     }
 
     @Post('skill/create')
@@ -49,6 +55,6 @@ export class SkillManagementController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill not found' })
     async deleteSkill(@Param('skillId') skillId: string): Promise<any> {
-        return await this.createSkillUseCase.getInstance().deleteSkill(skillId);
+        return await this.deleteSkillUseCase.getInstance().deleteSkill(skillId);
     }
 }
