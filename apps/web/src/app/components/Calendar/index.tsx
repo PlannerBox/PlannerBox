@@ -3,31 +3,26 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { Badge, Button, Segmented, Tooltip } from 'antd';
+import { Badge, Button, Segmented } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
 import { useRef, useState } from 'react';
+import Event from './partials/Event';
 import styles from './styles.module.scss';
 
 export type CalendarProps = {
   events?: EventSourceInput;
 };
 
-function renderEventContent(eventInfo: EventContentArg) {
-  return (
-    <Tooltip title={eventInfo.event.title} trigger='hover'>
-      <Badge
-        color={eventInfo.backgroundColor}
-        text={eventInfo.event.title}
-        style={{ padding: '0 8px', overflow: 'hidden' }}
-      />
-    </Tooltip>
-  );
-}
+export type CalendarViewMode = 'dayGridDay' | 'dayGridWeek' | 'dayGridMonth';
 
 const Calendar = ({ events }: CalendarProps) => {
   const calendarRef = useRef<FullCalendar | null>(null);
   const calendarAPI = calendarRef?.current?.getApi();
-  const [viewMode, setViewMode] = useState<string | number>('dayGridMonth');
+  const [viewMode, setViewMode] = useState<CalendarViewMode>('dayGridMonth');
+
+  const renderEventContent = (eventInfo: EventContentArg) => (
+    <Event eventInfo={eventInfo} viewMode={viewMode} />
+  );
 
   const handleTodayClick = () => {
     calendarAPI?.today();
@@ -42,8 +37,8 @@ const Calendar = ({ events }: CalendarProps) => {
   };
 
   const handleViewModeChange = (newViewMode: SegmentedValue) => {
-    setViewMode(newViewMode);
-    calendarAPI?.changeView(newViewMode as string);
+    setViewMode(newViewMode as CalendarViewMode);
+    calendarAPI?.changeView(newViewMode as CalendarViewMode);
   };
 
   return (
@@ -77,6 +72,10 @@ const Calendar = ({ events }: CalendarProps) => {
         weekends={false}
         selectable={true}
       />
+      <div className={styles.caption}>
+        <Badge color='pink' text='Remises à niveau' />
+        <Badge color='cyan' text='Formations' />
+      </div>
     </div>
   );
 };
