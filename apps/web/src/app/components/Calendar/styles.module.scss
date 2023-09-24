@@ -1,0 +1,13 @@
+.headerToolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  margin-bottom: var(--spacing-12);
+
+  .headerToolbarActionsGroup {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-8);
+  }
+}

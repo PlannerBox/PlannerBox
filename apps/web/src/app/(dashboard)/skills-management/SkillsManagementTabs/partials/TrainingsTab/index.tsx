@@ -1,11 +1,7 @@
 'use client';
 
-import { EventContentArg } from '@fullcalendar/core';
-import frLocale from '@fullcalendar/core/locales/fr';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import FullCalendar from '@fullcalendar/react';
-import { Badge, Button } from 'antd';
+import { Button } from 'antd';
+import Calendar from '../../../../../components/Calendar';
 import styles from './styles.module.scss';
 
 type TrainingsTabProps = {
@@ -33,18 +29,6 @@ export default function TrainingsTab({ step = 'list' }: TrainingsTabProps) {
   ];
   // End of Fake Data
 
-  function renderEventContent(eventInfo: EventContentArg) {
-    return (
-      <>
-        <Badge
-          color={eventInfo.backgroundColor}
-          text={eventInfo.event.title}
-          style={{ padding: '0 8px', overflow: 'hidden' }}
-        />
-      </>
-    );
-  }
-
   return (
     <div className={styles.trainingsTab}>
       {step === 'list' && (
@@ -61,15 +45,7 @@ export default function TrainingsTab({ step = 'list' }: TrainingsTabProps) {
               Planifier une remise à niveau/formation
             </Button>
           </div>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView='dayGridMonth'
-            weekends={false}
-            events={trainings}
-            eventContent={renderEventContent}
-            locale={frLocale}
-            selectable={true}
-          />
+          <Calendar events={trainings} />
         </>
       )}
     </div>
