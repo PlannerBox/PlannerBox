@@ -171,6 +171,18 @@ importers:
       '@ant-design/icons':
         specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
+      '@fullcalendar/core':
+        specifier: ^6.1.8
+        version: 6.1.8
+      '@fullcalendar/daygrid':
+        specifier: ^6.1.8
+        version: 6.1.8(@fullcalendar/core@6.1.8)
+      '@fullcalendar/interaction':
+        specifier: ^6.1.8
+        version: 6.1.8(@fullcalendar/core@6.1.8)
+      '@fullcalendar/react':
+        specifier: ^6.1.8
+        version: 6.1.8(@fullcalendar/core@6.1.8)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/query-core':
         specifier: ^4.29.19
         version: 4.29.19
@@ -866,6 +878,40 @@ packages:
     resolution: {integrity: sha512-LxcyMGxwmTh2lY9FwHPGWOHmYFCZvbrFCBZL4FzSSsxsRPuhrYUg/49/0KDfW8tnIEaEHtfmn6+NPN+1DqaNmA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fullcalendar/core@6.1.8:
+    resolution: {integrity: sha512-i8JBIvZCWGO9dsMEDcx9bnsQZ9PtGSJdOXGgWbhLaGq2iq41OBdp9g9gM4b/Otv2oK8bL5Gl6CsMmb/HkDtA6Q==}
+    dependencies:
+      preact: 10.12.1
+    dev: false
+
+  /@fullcalendar/daygrid@6.1.8(@fullcalendar/core@6.1.8):
+    resolution: {integrity: sha512-kCZxQFKb9Vqa3CZRX0v7rMSJ2mlTt4gDpyLfiNJKxUAq7W51uKurPaFZWicaXy1ESHVBxKNlbx5uNjBpyu50JQ==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.8
+    dependencies:
+      '@fullcalendar/core': 6.1.8
+    dev: false
+
+  /@fullcalendar/interaction@6.1.8(@fullcalendar/core@6.1.8):
+    resolution: {integrity: sha512-r6W4E9ohaA87M2uPSlmpE2WT7Fzu7LN0u2pE6D/tThruCEaAPbN8Pw5+sqclsuyTIL09mg0eSJm/ggJekTabSA==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.8
+    dependencies:
+      '@fullcalendar/core': 6.1.8
+    dev: false
+
+  /@fullcalendar/react@6.1.8(@fullcalendar/core@6.1.8)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-E8GQSQyZHkjpwxQW5Vci7iZgN7f33ntuRcvfGii4Fn35t9VHGz2SEyKAWXpVf38elcKTZKVgajU9ipStd+1LEg==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.8
+      react: ^16.7.0 || ^17 || ^18
+      react-dom: ^16.7.0 || ^17 || ^18
+    dependencies:
+      '@fullcalendar/core': 6.1.8
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@humanwhocodes/config-array@0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}
@@ -9597,6 +9643,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       xtend: 4.0.2
+    dev: false
+
+  /preact@10.12.1:
+    resolution: {integrity: sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==}
     dev: false
 
   /prelude-ls@1.1.2:

@@ -2,6 +2,7 @@
 
 import { Tabs, TabsProps } from 'antd';
 import SkillsTab from './partials/SkillsTab';
+import TrainingsTab from './partials/TrainingsTab';
 
 export default function UsersManagementTabs() {
   const items: TabsProps['items'] = [
@@ -13,6 +14,7 @@ export default function UsersManagementTabs() {
     {
       key: 'formations',
       label: `Remises à niveau et formations`,
+      children: <TrainingsTab step='list' />,
     },
   ];
 
