@@ -26,4 +26,15 @@ export class NewGroupDto extends GroupDto{
     groupMembers?: NewGroupMemberDto[];
 }
 
+export class GroupMemberSummary {
+    @ApiProperty({ type: String, description: 'Group id' })
+    groupId: string;
+    @ApiProperty({ type: String, description: 'Group name' })
+    groupName: string;
+    @ApiProperty({ type: String, description: 'User status in the group' })
+    isOwner: boolean;
+    @ApiProperty({ type: Number, description: 'Number of members in the group' })
+    groupMemberCount: number;
+}
+
 

@@ -9,15 +9,23 @@ export class GroupMemberRepository implements IGroupMemberRepository{
         private readonly groupMembersRepository: Repository<GroupMembers>
     ) {}
 
-    upsertGroupMember(groupId: string, accountId: string, isOwner: boolean): Promise<any> {
-        return this.groupMembersRepository.save({
+    async upsertGroupMember(groupId: string, accountId: string, isOwner: boolean): Promise<any> {
+        return await this.groupMembersRepository.save({
             groupId: groupId,
             accountId: accountId,
             isOwner: isOwner
         });
     }
 
-    removeGroupMember(groupId: string, accountId: string): Promise<any> {
-        return this.groupMembersRepository.delete({ groupId: groupId, accountId: accountId });
+    async removeGroupMember(groupId: string, accountId: string): Promise<any> {
+        return await this.groupMembersRepository.delete({ groupId: groupId, accountId: accountId });
+    }
+
+    async findGroupMember(groupId: string, accountId: string): Promise<any> {
+        return await this.groupMembersRepository.findOne({ where: { groupId: groupId, accountId: accountId } });
+    }
+
+    async findGroupMemberOwner(groupId: string): Promise<any> {
+        return await this.groupMembersRepository.findOne({ where: { groupId: groupId, isOwner: true } });
     }
 }

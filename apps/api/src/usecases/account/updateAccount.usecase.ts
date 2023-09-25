@@ -3,8 +3,8 @@ import { AccountWithoutPassword, AccountM } from "../../domain/models/account";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../../infrastructure/controllers/userManagement/userAccountDto.class";
-import { BadRequestException } from "@nestjs/common";
-import { StudentAccountDto } from "../../infrastructure/controllers/userManagement/studentAccountDto.class";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { StudentAccountDetailedDto } from "../../infrastructure/controllers/userManagement/studentAccountDto.class";
 import { StudentM } from "../../domain/models/student";
 import { IStudentRepository } from "../../domain/repositories/studentRepository.interface";
 import { StudentMapper } from "../../infrastructure/mappers/student.mapper";
@@ -39,16 +39,16 @@ export class UpdateAccountUseCase {
                 const adminAccount = AccountMapper.fromGenericDtoToModel(userAccountDto);
                 return await this.updateAdmin(adminAccount);
             default:
-                throw new BadRequestException('Role not found');
+                throw new NotFoundException('Role not found');
         }
     }
 
-    async updateStudentAccount(studentAccountDto: StudentAccountDto): Promise<any> {
+    async updateStudentAccount(studentAccountDto: StudentAccountDetailedDto): Promise<any> {
         const student = await this.studentRepository.findStudentById(studentAccountDto.studentId);
 
         if (!student) {
             this.logger.error('UpdateAccountUseCases updateStudentAccount', 'Account not found')
-            throw new BadRequestException('Account not found');
+            throw new NotFoundException('Account not found');
         }
 
         const studentAccount = StudentMapper.fromDtoToModel(studentAccountDto);
@@ -69,7 +69,7 @@ export class UpdateAccountUseCase {
 
         if (!student) {
             this.logger.error('UpdateAccountUseCases updateStudentAccount', 'Account not found')
-            throw new BadRequestException('Account not found');
+            throw new NotFoundException('Account not found');
         }
 
         student.username = studentM.username;
@@ -88,7 +88,7 @@ export class UpdateAccountUseCase {
 
         if (!teacher) {
             this.logger.error('UpdateAccountUseCases updateTeacher', 'Account not found')
-            throw new BadRequestException('Account not found');
+            throw new NotFoundException('Account not found');
         }
 
         teacher.username = teacherM.username;
@@ -109,7 +109,7 @@ export class UpdateAccountUseCase {
 
         if (!admin) {
             this.logger.error('UpdateAccountUseCases updateAdmin', 'Account not found')
-            throw new BadRequestException('Account not found');
+            throw new NotFoundException('Account not found');
         }
 
         admin.username = adminAccount.username;

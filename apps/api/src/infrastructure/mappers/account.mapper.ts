@@ -1,8 +1,10 @@
 import { AccountM, NestedAccountM } from "../../domain/models/account";
 import { AuthSignUpDto } from "../controllers/auth/authSignUpDto.class";
 import { NestedAccountDto } from "../controllers/groupManagement/nestedAccountDto.class";
-import { GenericUserAccountDto, UserAccountDto, UserAccountWithoutPasswordDto } from "../controllers/userManagement/userAccountDto.class";
+import { GenericUserAccountDto, UserAccountDto, AccountSummaryDto, UserAccountWithoutPasswordDto, UserAccountSummaryDto } from "../controllers/userManagement/userAccountDto.class";
 import { Account } from "../entities/Account.entity";
+import { GroupMapper } from "./group.mapper";
+import { GroupMemberMapper } from "./groupMember.mapper";
 
 export class AccountMapper {
     static fromModelToEntity(accountM: AccountM): Account {
@@ -116,6 +118,20 @@ export class AccountMapper {
             username: account.username,
             firstname: account.firstname,
             lastname: account.lastname,
+        };
+    }
+
+    static fromAccountEntityToAccountSummaryDto(account: Account): AccountSummaryDto {
+        return {
+            id: account.id,
+            username: account.username,
+            firstname: account.firstname,
+            lastname: account.lastname,
+            birthDate: account.birthDate,
+            birthPlace: account.birthPlace,
+            active: account.active,
+            role: account.rolePermissions.role,
+            groups: account.groups ? account.groups.map(group => GroupMemberMapper.fromEntityToSummary(group)) : undefined,
         };
     }
 }

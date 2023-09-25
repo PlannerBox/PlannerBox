@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -20,7 +20,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
 
   // pipes
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    exceptionFactory: (errors) => {
+      const result = errors.map((error) => ({
+        property: error.property,
+        message: error.constraints[Object.keys(error.constraints)[0]],
+      }));
+      return new BadRequestException(result);
+    },
+  }));
 
   // CORS Policy
   app.enableCors();

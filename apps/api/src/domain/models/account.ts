@@ -31,3 +31,11 @@ export class NestedAccountM {
   firstname: string;
   lastname: string;
 }
+
+export class UserAccountDetailsM extends AccountM {
+  studentId?: string;
+  formationMode?: FormationMode;
+  teacherId?: string;
+  intern?: boolean;
+  adminId?: string;
+}
