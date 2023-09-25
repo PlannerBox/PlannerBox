@@ -188,9 +188,10 @@ const filterByRoleData = [
 ];
 
 export default function UsersTab({ step = 'list' }: UsersTabProps) {
+  const [openForm, setOpenForm] = useState(false);
   const [dimensions, setDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window?.innerWidth || 0,
+    height: window?.innerHeight || 0,
   });
 
   const handleResize = () => {
@@ -199,6 +200,15 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
       height: window.innerHeight,
     });
   };
+
+  const closeForm = () => {
+    setOpenForm(false);
+  };
+
+  const handleOpenFormChange = (newOpen: boolean) => {
+    setOpenForm(newOpen);
+  };
+
   useEffect(() => {
     window.addEventListener('resize', handleResize, false);
   }, []);
@@ -223,8 +233,10 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             <Popover
               placement={dimensions.width >= 650 ? 'leftTop' : 'bottomRight'}
               title='Créer un utilisateur'
-              content={<UserCreation />}
+              content={<UserCreation closePopover={() => closeForm()} />}
               trigger='click'
+              open={openForm}
+              onOpenChange={handleOpenFormChange}
             >
               <Button type='primary'>Créer un utilisateur</Button>
             </Popover>
