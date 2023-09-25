@@ -50,11 +50,7 @@ export default function UsersManagementTabs() {
     {
       key: 'users',
       label: `Utilisateurs`,
-      children: (
-        <UsersTab
-          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
-        />
-      ),
+      children: <UsersTab step='list' />,
     },
     {
       key: 'groups',
