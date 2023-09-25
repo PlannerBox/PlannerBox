@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inject, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Inject, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { GetGroupUseCase } from "../../../usecases/group/getGroup.usecase";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GroupDetailDto } from "./groupDetailDto.class";
 import { GroupMapper } from "../../mappers/group.mapper";
 import { JwtAuthGuard } from "../../common/guards/jwtAuth.guard";
@@ -14,6 +14,11 @@ import { CreateGroupUseCase } from "../../../usecases/group/createGroup.usecase"
 import { UpdateGroupUseCase } from "../../../usecases/group/updateGroup.usecase";
 import { JsonResult } from "../../helpers/JsonResult";
 import { DeleteGroupUseCase } from "../../../usecases/group/deleteGroup.usecase";
+import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
+import { PageOptionsDto } from "../../pagination/pageOptions.dto";
+import { UUID } from "crypto";
+import { Group } from "../../entities/Group.entity";
+import { PageDto } from "../../pagination/page.dto";
 
 @Controller('group-management')
 @ApiTags('group-management')
@@ -39,35 +44,32 @@ export class GroupManagementController {
         private readonly deleteGroupUseCase: UseCaseProxy<DeleteGroupUseCase>
     ) {}
 
-    @Get('group/summary')
+    @Get('group/list-paginated')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiResponse({
         status: 200,
-        description: 'Returns a summary of all groups',
+        description: 'Returns a paginated list of groups',
+        type: GroupDetailDto,
     })
     @ApiResponse({
         status: 204,
         description: 'No group found',
     })
-
-    @ApiOperation({ description: 'Returns a summary of all groups' })
-    async getGroupSummaryList(): Promise<any> {
-        const groups = await this.getGroupUsecasesProxy.getInstance().findGroupList();
-
-        if (groups.length === 0) {
-            throw new HttpException('No group found', HttpStatus.NO_CONTENT);
-        }
-
-        return groups;
+    @ApiOperation({ description: 'Returns a paginated list of all groups (nestjs pagination)' })
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'the page number to return' }) 
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'the number of items per page' })
+    @ApiQuery({ name: 'filter.name', required: false, type: String, description: 'add a filter on the property group.name (check nestjs paginate doc for more details)' })
+    async getGroupPaginatedList(@Paginate() query: PaginateQuery): Promise<Paginated<Group>> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
     }
-
 
     @Get('group/:groupId/details')
     @HttpCode(200)
     @ApiResponse({
         status: 200,
-        description: 'Returns details of a group',
-        type: GroupDetailDto
+        description: 'Returns details of a specific group',
+        type: GroupDetailDto,
     })
     @ApiResponse({
         status: 400,
@@ -80,12 +82,32 @@ export class GroupManagementController {
         return GroupMapper.fromModelToDetailDto(group);
     }
 
+    @Get('group/details')
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns details of a specific group',
+        type: GroupDetailDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns details of a specific group' })
+    async getGroupDetailsByAccount(@Query('id') id: UUID, @Query('name') name: string, @Query() pageOptionsDto: PageOptionsDto): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name, pageOptionsDto);
+    }
+
+    async getPaginatedGroupDetailsByAccount(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
+    }
+
     @Get('user/summary')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @ApiResponse({
         status: 200,
-        description: 'Returns a summary list of all users',
+        description: 'Returns a summary list of all users (used to add a member to a group)',
         type: NestedAccountDto,
     })
     @ApiResponse({
@@ -125,7 +147,7 @@ export class GroupManagementController {
         description: 'Group successfully updated',
     })
     @ApiResponse({
-        status: 400,
+        status: 404,
         description: 'Group not found',
     })
     @ApiOperation({ description: 'Update group informations (name & color)' })
@@ -134,7 +156,7 @@ export class GroupManagementController {
         return JsonResult.Convert('Group successfully updated');
     }
 
-    @Post('group/:groupId/manage-member')
+    @Post('group/:groupId/add')
     @UseGuards(JwtAuthGuard)
     @HttpCode(204)
     @ApiResponse({
@@ -142,13 +164,33 @@ export class GroupManagementController {
         description: 'Member successfully added',
     })
     @ApiResponse({
-        status: 400,
+        status: 404,
         description: 'Group or member not found',
     })
-    @ApiOperation({ description: 'Add or Update a member to a group, if it\'s a new user, it will be added to the group, otherwise the user already exists and the "isOwner" boolean can be updated' })
+    @ApiOperation({ description: 'Add a member to a group' })
     async addMember(@Param('groupId') groupId: string, @Body() newGroupMemberDto: NewGroupMemberDto): Promise<any> {
         await this.addMemberUseCase.getInstance().addMember(groupId, newGroupMemberDto);
         return JsonResult.Convert('Member successfully added');
+    }
+
+    @Post('group/:groupId/update/:accountId')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Member status successfully updated',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Group or member not found',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'A group can only have one owner',
+    })
+    async updateMember(@Param('groupId') groupId: string, @Param('accountId') accountId: string): Promise<any> {
+        await this.addMemberUseCase.getInstance().updateMember(groupId, accountId);
+        return JsonResult.Convert('Member status successfully updated');
     }
 
     @Delete('group/:groupId/remove-member/:accountId')
@@ -159,7 +201,7 @@ export class GroupManagementController {
         description: 'Member successfully removed',
     })
     @ApiResponse({
-        status: 400,
+        status: 404,
         description: 'Group or member not found',
     })
     @ApiOperation({ description: 'Remove a member from a group' })
@@ -176,7 +218,7 @@ export class GroupManagementController {
         description: 'Group successfully deleted',
     })
     @ApiResponse({
-        status: 400,
+        status: 404,
         description: 'Group not found',
     })
     @ApiOperation({ description: 'Delete a group' })

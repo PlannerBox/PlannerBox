@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { NestedAccountM } from "../../domain/models/account";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
@@ -40,29 +40,47 @@ export class AddMemberUseCase {
         const group = await this.groupRepository.findGroup(groupId);
 
         if (!group) {
-            throw new BadRequestException('No group found');
+            throw new NotFoundException('No group found');
         }
 
         const account = await this.accountRepository.findAccountById(newGroupMemberDto.accountId);
 
         if (!account) {
-            throw new BadRequestException('No account found');
+            throw new NotFoundException('No account found');
         }
 
         return this.groupMemberRepository.upsertGroupMember(group.id, account.id, newGroupMemberDto.isOwner);
+    }
+
+    async updateMember(groupId: string, accountId: string): Promise<any> {
+        const groupMember = await this.groupMemberRepository.findGroupMember(groupId, accountId);
+        
+        if (!groupMember) {
+            throw new NotFoundException('No group member found');
+        }
+
+        // Si le membre n'est pas le propriétaire, c'est qu'on veut le passer propriétaire donc on vériie qu'il n'y a pas déjà un propriétaire
+        if (!groupMember.isOwner) {
+            const groupOwner = await this.groupMemberRepository.findGroupMemberOwner(groupId);
+            if (groupOwner) {
+                throw new BadRequestException('A group can only have one owner');
+            }
+        }
+
+        return this.groupMemberRepository.upsertGroupMember(groupId, accountId, !groupMember.isOwner);
     }
 
     async removeMember(groupId: string, accountId: string): Promise<any> {
         const group = await this.groupRepository.findGroup(groupId);
 
         if (!group) {
-            throw new BadRequestException('No group found');
+            throw new NotFoundException('No group found');
         }
 
         const account = await this.accountRepository.findAccountById(accountId);
 
         if (!account) {
-            throw new BadRequestException('No account found');
+            throw new NotFoundException('No account found');
         }
 
         return this.groupMemberRepository.removeGroupMember(group.id, account.id);
