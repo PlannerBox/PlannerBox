@@ -3,8 +3,7 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { Badge, Button, Segmented } from 'antd';
-import { SegmentedValue } from 'antd/es/segmented';
+import { Badge, Button, Radio, RadioChangeEvent } from 'antd';
 import { useRef, useState } from 'react';
 import Event from './partials/Event';
 import styles from './styles.module.scss';
@@ -36,9 +35,10 @@ const Calendar = ({ events }: CalendarProps) => {
     calendarAPI?.next();
   };
 
-  const handleViewModeChange = (newViewMode: SegmentedValue) => {
-    setViewMode(newViewMode as CalendarViewMode);
-    calendarAPI?.changeView(newViewMode as CalendarViewMode);
+  const handleViewModeChange = (event: RadioChangeEvent) => {
+    const newViewMode: CalendarViewMode = event.target.value;
+    setViewMode(newViewMode);
+    calendarAPI?.changeView(newViewMode);
   };
 
   return (
@@ -50,15 +50,14 @@ const Calendar = ({ events }: CalendarProps) => {
           <Button onClick={handleNextClick}>{'>'}</Button>
         </div>
         <div className={styles.headerToolbarActionsGroup}>
-          <Segmented
-            options={[
-              { label: 'Jour', value: 'dayGridDay' },
-              { label: 'Semaine', value: 'dayGridWeek' },
-              { label: 'Mois', value: 'dayGridMonth' },
-            ]}
+          <Radio.Group
             value={viewMode}
-            onChange={(v) => handleViewModeChange(v)}
-          />
+            onChange={(e) => handleViewModeChange(e)}
+          >
+            <Radio.Button value='dayGridDay'>Jour</Radio.Button>
+            <Radio.Button value='dayGridWeek'>Semaine</Radio.Button>
+            <Radio.Button value='dayGridMonth'>Mois</Radio.Button>
+          </Radio.Group>
         </div>
       </div>
       <FullCalendar
