@@ -1,4 +1,5 @@
 import { GroupMembersM } from "../../domain/models/groupMembers";
+import { GroupMemberSummary } from "../controllers/groupManagement/groupDto.class";
 import { GroupMembersDto } from "../controllers/groupManagement/groupMembersDto.class";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { AccountMapper } from "./account.mapper";
@@ -20,5 +21,14 @@ export class GroupMemberMapper {
             isOwner: groupMemberM.isOwner,
             account: groupMemberM.account ? AccountMapper.fromNestedModelToNestedDto(groupMemberM.account) : undefined
         }
+    }
+
+    static fromEntityToSummary(groupMember: GroupMembers): GroupMemberSummary {
+        return {
+            groupId: groupMember.groupId,
+            groupName: groupMember.group.name,
+            isOwner: groupMember.isOwner,
+            groupMemberCount: groupMember.group.groupMembers.length
+        };
     }
 }

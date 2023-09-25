@@ -13,6 +13,6 @@ export class Group {
     @Column('character varying', { name: 'color', nullable: false, length: 50 })
     color: string;
 
-    @OneToMany(() => GroupMembers, (groupMembers) => groupMembers.group, { cascade: true })
+    @OneToMany(() => GroupMembers, (groupMembers) => groupMembers.group, { cascade: true, eager: true })
     groupMembers: GroupMembers[];
 }
