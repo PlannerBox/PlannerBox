@@ -5,8 +5,7 @@ import { Button, Popover, Select, Space, Table, Tag } from 'antd';
 import { PresetColorType, PresetStatusColorType } from 'antd/es/_util/colors';
 import { LiteralUnion } from 'antd/es/_util/type';
 import { ColumnsType } from 'antd/es/table';
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import UserCreation from './UsersTab/partials/UserCreation';
 
 type UsersTabProps = {
@@ -189,14 +188,20 @@ const filterByRoleData = [
 ];
 
 export default function UsersTab({ step = 'list' }: UsersTabProps) {
-  const router = useRouter();
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
-  const shallowRedirect = useCallback(
-    (key: string) => {
-      router.push(`/users-management/${key}`, { shallow: true });
-    },
-    [router]
-  );
+  const handleResize = () => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  useEffect(() => {
+    window.addEventListener('resize', handleResize, false);
+  }, []);
 
   return (
     <div>
@@ -216,7 +221,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
               options={filterByRoleData}
             />
             <Popover
-              placement='leftTop'
+              placement={dimensions.width >= 650 ? 'leftTop' : 'bottomRight'}
               title='Créer un utilisateur'
               content={<UserCreation />}
               trigger='click'

@@ -9,9 +9,10 @@ import {
 } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
 import { SignUpProps, SignUpResponse } from 'api-client';
-import { FormationMode } from '../../../../../../../../enums/FormationMode';
-import { Role } from '../../../../../../../../enums/Role';
-import { useSignUp } from '../hooks/useSignUp';
+import { FormationMode } from '../../../../../../../../../enums/FormationMode';
+import { Role } from '../../../../../../../../../enums/Role';
+import { useSignUp } from '../../hooks/useSignUp';
+import styles from './styles.module.scss';
 
 const { Option } = Select;
 
@@ -81,12 +82,10 @@ const UserCreation = () => {
   };
 
   const onRoleChange = (value: Role) => {
-    if (
-      value === Role.Admin ||
-      value === Role.InternTeacher ||
-      value === Role.ExternTeacher
-    ) {
+    if (value === Role.Admin) {
       form.setFieldsValue({ formationMode: undefined, groups: undefined });
+    } else if (value === Role.InternTeacher || value === Role.ExternTeacher) {
+      form.setFieldsValue({ formationMode: undefined });
     }
   };
 
@@ -107,6 +106,7 @@ const UserCreation = () => {
       style={{ maxWidth: '100%' }}
       labelCol={{ style: { width: 200 } }}
       wrapperCol={{ style: { width: '100%' } }}
+      className={styles.userCreation}
     >
       <Form.Item name='role' label='Type' rules={[{ required: true }]}>
         <Select
@@ -166,39 +166,45 @@ const UserCreation = () => {
           prevValues.role !== currentValues.role
         }
       >
-        {({ getFieldValue }) =>
-          getFieldValue('role') === 'student' && (
-            <>
-              <Form.Item
-                name='formationMode'
-                label="Méthode d'organisation"
-                rules={[{ required: true }]}
-              >
-                <Select placeholder='Sélectionner une option' allowClear>
-                  <Option value={FormationMode.Presentiel}>Présentiel</Option>
-                  <Option value={FormationMode.Distanciel}>Distanciel</Option>
-                  <Option value={FormationMode.Hybride}>
-                    Mixte présentiel/distanciel
-                  </Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name='groups'
-                label='Groupe(s)'
-                rules={[{ required: false }]}
-              >
-                <Cascader
-                  options={fakeGroupOptions}
-                  placeholder='Sélectionner un ou plusieurs groupes'
-                  showSearch={{ filter: filterGroups }}
-                  onSearch={(value) => console.log(value)}
-                  maxTagCount='responsive'
-                  multiple
-                />
-              </Form.Item>
-            </>
-          )
-        }
+        {({ getFieldValue }) => (
+          <>
+            {getFieldValue('role') === Role.Student && (
+              <>
+                <Form.Item
+                  name='formationMode'
+                  label="Méthode d'organisation"
+                  rules={[{ required: true }]}
+                >
+                  <Select placeholder='Sélectionner une option' allowClear>
+                    <Option value={FormationMode.Presentiel}>Présentiel</Option>
+                    <Option value={FormationMode.Distanciel}>Distanciel</Option>
+                    <Option value={FormationMode.Hybride}>
+                      Mixte présentiel/distanciel
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </>
+            )}
+            {getFieldValue('role') === Role.Student ||
+              getFieldValue('role') === Role.InternTeacher ||
+              (getFieldValue('role') === Role.ExternTeacher && (
+                <Form.Item
+                  name='groups'
+                  label='Groupe(s)'
+                  rules={[{ required: false }]}
+                >
+                  <Cascader
+                    options={fakeGroupOptions}
+                    placeholder='Sélectionner un ou plusieurs groupes'
+                    showSearch={{ filter: filterGroups }}
+                    onSearch={(value) => console.log(value)}
+                    maxTagCount='responsive'
+                    multiple
+                  />
+                </Form.Item>
+              ))}
+          </>
+        )}
       </Form.Item>
       <Form.Item
         name='switch'
