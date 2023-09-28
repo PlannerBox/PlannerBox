@@ -1,108 +1,63 @@
 'use client';
 
-import { EditOutlined, MoreOutlined } from '@ant-design/icons';
-import { Button, Popover, Select, Space, Table, Tag } from 'antd';
-import { PresetColorType, PresetStatusColorType } from 'antd/es/_util/colors';
-import { LiteralUnion } from 'antd/es/_util/type';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  EditOutlined,
+  MoreOutlined,
+} from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  Button,
+  Dropdown,
+  MenuProps,
+  Popover,
+  Select,
+  Space,
+  Table,
+  Tag,
+  notification,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { ListUsersProps, UserGroupData } from 'api-client';
+import {
+  ListUsersProps,
+  ToggleUserStateResponse,
+  UserGroupData,
+} from 'api-client';
 import { Role } from 'api-client/enums/Role';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useListUsers } from '../../../../../../hooks/useListUsers';
+import { useToggleUserState } from '../../../../../../hooks/useToggleUserState';
 import UserCreation from './UsersTab/partials/UserCreation';
 
 type UsersTabProps = {
   step?: 'list';
 };
 
-type GroupType = {
-  name: string;
-  color: LiteralUnion<PresetColorType | PresetStatusColorType>;
+type OpenNotificationProps = {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
 };
 
-interface DataType {
-  key: string;
-  lastname: string;
-  firstname: string;
-  mail: string;
-  groups: UserGroupData[];
-}
-
-const columns: ColumnsType<DataType> = [
-  {
-    title: 'Nom',
-    dataIndex: 'lastname',
-    key: 'lastname',
-  },
-  {
-    title: 'Prénom',
-    dataIndex: 'firstname',
-    key: 'firstname',
-  },
-  {
-    title: 'Adresse mail',
-    dataIndex: 'mail',
-    key: 'mail',
-    responsive: ['md'],
-  },
-  {
-    title: 'Groupe(s)',
-    key: 'groups',
-    dataIndex: 'groups',
-    responsive: ['md'],
-    render: (_, { groups }) => (
-      <>
-        {groups.map((group) => {
-          return (
-            <Tag color={group.color} key={group.groupId}>
-              {group.groupName.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: 'Actions',
-    key: 'action',
-    render: (_, record) => (
-      <Space size='middle'>
-        <EditOutlined />
-        <MoreOutlined />
-      </Space>
-    ),
-  },
-];
-
-const filterByRoleData = [
-  {
-    value: Role.Any,
-    label: "Tous les types d'utilisateurs",
-  },
-  {
-    value: Role.Admin,
-    label: 'Administrateurs',
-  },
-  {
-    value: Role.InternTeacher,
-    label: 'Formateurs internes',
-  },
-  {
-    value: Role.ExternTeacher,
-    label: 'Formateurs externes',
-  },
-  {
-    value: Role.Student,
-    label: 'Apprenants',
-  },
-];
-
 export default function UsersTab({ step = 'list' }: UsersTabProps) {
-  const [openForm, setOpenForm] = useState(false);
-  const [dimensions, setDimensions] = useState({
-    width: window?.innerWidth || 0,
-    height: window?.innerHeight || 0,
-  });
+  const queryClient = useQueryClient();
+
+  const [notificationApi, notificationContextHolder] =
+    notification.useNotification();
+
+  const openNotification = ({
+    title,
+    description,
+    icon,
+  }: OpenNotificationProps) => {
+    notificationApi.open({
+      message: title,
+      description: description,
+      icon: icon,
+      placement: 'top',
+    });
+  };
 
   const [listUsersOptions, setListUsersOptions] = useState<ListUsersProps>({
     filter: undefined,
@@ -114,12 +69,164 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
   const data: DataType[] = usersList
     ? usersList.data.map((user) => ({
         key: user.id,
+        username: user.username,
         lastname: user.lastname,
         firstname: user.firstname,
         mail: user.username,
         groups: user.groups,
+        active: user.active,
       }))
     : [];
+
+  const { mutate: toggleState } = useToggleUserState({
+    onSuccess: handleToggleStateSuccess,
+    onError: handleError,
+  });
+
+  function handleToggleStateSuccess(data: ToggleUserStateResponse) {
+    if (!!data) {
+      openNotification({
+        title: "Etat de l'utilisateur mis à jour avec succès !",
+        icon: <CheckCircleOutlined />,
+      });
+      queryClient.invalidateQueries({ queryKey: ['listUsers'] });
+    } else {
+      openNotification({
+        title:
+          "Une erreur est survenue lors de la mise à jour de l'état de l'utilisateur !",
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  }
+
+  function handleError() {
+    openNotification({
+      title:
+        "Une erreur est survenue lors de la mise à jour de l'état de l'utilisateur !",
+      icon: <CloseCircleOutlined />,
+    });
+  }
+
+  const getMoreOptions: (
+    username: string,
+    active: boolean
+  ) => MenuProps['items'] = (username: string, active: boolean) => {
+    if (active) {
+      return [
+        {
+          key: '1',
+          label: (
+            <a onClick={() => toggleState({ username })}>
+              Désactiver le compte
+            </a>
+          ),
+        },
+      ];
+    }
+
+    return [
+      {
+        key: '1',
+        label: <a>Réactiver le compte</a>,
+      },
+      {
+        key: '2',
+        label: <a>Supprimer définitivement le compte</a>,
+      },
+    ];
+  };
+
+  interface DataType {
+    key: string;
+    username: string;
+    lastname: string;
+    firstname: string;
+    mail: string;
+    groups: UserGroupData[];
+    active: boolean;
+  }
+
+  const columns: ColumnsType<DataType> = [
+    {
+      title: 'Nom',
+      dataIndex: 'lastname',
+      key: 'lastname',
+    },
+    {
+      title: 'Prénom',
+      dataIndex: 'firstname',
+      key: 'firstname',
+    },
+    {
+      title: 'Adresse mail',
+      dataIndex: 'mail',
+      key: 'mail',
+      responsive: ['md'],
+    },
+    {
+      title: 'Groupe(s)',
+      key: 'groups',
+      dataIndex: 'groups',
+      responsive: ['md'],
+      render: (_, { groups }) => (
+        <>
+          {groups.map((group) => {
+            return (
+              <Tag color={group.color} key={group.groupId}>
+                {group.groupName.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'action',
+      render: (_, record) => (
+        <Space size='middle'>
+          <EditOutlined />
+          <Dropdown
+            menu={{ items: getMoreOptions(record.username, record.active) }}
+            placement='bottomRight'
+            arrow={{ pointAtCenter: true }}
+            trigger={['click']}
+          >
+            <MoreOutlined />
+          </Dropdown>
+        </Space>
+      ),
+    },
+  ];
+
+  const filterByRoleData = [
+    {
+      value: Role.Any,
+      label: "Tous les types d'utilisateurs",
+    },
+    {
+      value: Role.Admin,
+      label: 'Administrateurs',
+    },
+    {
+      value: Role.InternTeacher,
+      label: 'Formateurs internes',
+    },
+    {
+      value: Role.ExternTeacher,
+      label: 'Formateurs externes',
+    },
+    {
+      value: Role.Student,
+      label: 'Apprenants',
+    },
+  ];
+
+  const [openForm, setOpenForm] = useState(false);
+  const [dimensions, setDimensions] = useState({
+    width: window?.innerWidth || 0,
+    height: window?.innerHeight || 0,
+  });
 
   const handleResize = () => {
     setDimensions({
@@ -154,6 +261,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
     <div>
       {step === 'list' && (
         <>
+          {notificationContextHolder}
           <div
             style={{
               display: 'flex',
