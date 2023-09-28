@@ -1,3 +1,4 @@
+import { AccountType } from '../UserManagement';
 import { addQueryParams, apiCall } from '../utils/api';
 
 type FilterType = {
@@ -9,17 +10,6 @@ export type ListGroupsProps = {
   limit?: number;
 };
 
-export type AccountType = {
-  id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  birthDate: string;
-  birthPlace: string;
-  lastLogin: null;
-  active: true;
-};
-
 export type GroupMemberType = {
   groupId: string;
   accountId: string;
@@ -27,7 +17,7 @@ export type GroupMemberType = {
   account: AccountType;
 };
 
-type GroupData = {
+export type GroupData = {
   id: string;
   name: string;
   color: string;

@@ -5,7 +5,10 @@ import { Button, Popover, Select, Space, Table, Tag } from 'antd';
 import { PresetColorType, PresetStatusColorType } from 'antd/es/_util/colors';
 import { LiteralUnion } from 'antd/es/_util/type';
 import { ColumnsType } from 'antd/es/table';
+import { ListUsersProps, UserGroupData } from 'api-client';
+import { Role } from 'api-client/enums/Role';
 import { useEffect, useState } from 'react';
+import { useListUsers } from '../../../../../../hooks/useListUsers';
 import UserCreation from './UsersTab/partials/UserCreation';
 
 type UsersTabProps = {
@@ -22,96 +25,8 @@ interface DataType {
   lastname: string;
   firstname: string;
   mail: string;
-  groups: GroupType[];
+  groups: UserGroupData[];
 }
-
-const fakeGroups = [
-  {
-    name: 'MS2D-AL',
-    color: 'green',
-  },
-  {
-    name: 'Bac+5',
-    color: 'blue',
-  },
-  {
-    name: '2023',
-    color: 'red',
-  },
-  {
-    name: 'BGs',
-    color: 'yellow',
-  },
-];
-
-const fakeUsers = [
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    groups: fakeGroups.slice(0, Math.floor(Math.random() * fakeGroups.length)),
-  },
-];
 
 const columns: ColumnsType<DataType> = [
   {
@@ -138,9 +53,10 @@ const columns: ColumnsType<DataType> = [
     render: (_, { groups }) => (
       <>
         {groups.map((group) => {
+          console.log({ group });
           return (
-            <Tag color={group.color} key={group.name}>
-              {group.name.toUpperCase()}
+            <Tag color={group.color} key={group.groupId}>
+              {group.groupName.toUpperCase()}
             </Tag>
           );
         })}
@@ -159,30 +75,25 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const data: DataType[] = fakeUsers.map((user, index) => ({
-  key: index.toString(),
-  ...user,
-}));
-
 const filterByRoleData = [
   {
-    value: 'all',
-    label: 'Tous types',
+    value: null,
+    label: "Tous les types d'utilisateurs",
   },
   {
-    value: 'admin',
+    value: Role.Admin,
     label: 'Administrateurs',
   },
   {
-    value: 'internal_teacher',
+    value: Role.InternTeacher,
     label: 'Formateurs internes',
   },
   {
-    value: 'external_teacher',
+    value: Role.ExternTeacher,
     label: 'Formateurs externes',
   },
   {
-    value: 'student',
+    value: Role.Student,
     label: 'Apprenants',
   },
 ];
@@ -193,6 +104,22 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
     width: window?.innerWidth || 0,
     height: window?.innerHeight || 0,
   });
+
+  const [listUsersOptions, setListUsersOptions] = useState<ListUsersProps>({
+    filter: undefined,
+    limit: 15,
+  });
+
+  const { data: usersList } = useListUsers(listUsersOptions);
+  const data: DataType[] = usersList
+    ? usersList.data.map((user) => ({
+        key: user.id,
+        lastname: user.lastname,
+        firstname: user.firstname,
+        mail: user.username,
+        groups: user.groups,
+      }))
+    : [];
 
   const handleResize = () => {
     setDimensions({
@@ -207,6 +134,15 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
 
   const handleOpenFormChange = (newOpen: boolean) => {
     setOpenForm(newOpen);
+  };
+
+  const handleFilterByRole = (value: Role) => {
+    setListUsersOptions((old) => ({
+      filter: {
+        role: value,
+        ...old,
+      },
+    }));
   };
 
   useEffect(() => {
@@ -226,9 +162,10 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             }}
           >
             <Select
-              defaultValue='all'
+              defaultValue={null}
               bordered={false}
               options={filterByRoleData}
+              onChange={handleFilterByRole}
             />
             <Popover
               placement={dimensions.width >= 650 ? 'leftTop' : 'bottomRight'}
@@ -241,7 +178,20 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
               <Button type='primary'>Créer un utilisateur</Button>
             </Popover>
           </div>
-          <Table columns={columns} dataSource={data} scroll={{ x: 150 }} />
+          <Table
+            columns={columns}
+            dataSource={data}
+            scroll={{ x: 150 }}
+            pagination={{
+              total: usersList?.meta.pageCount,
+              onChange: (page, pageSize) => {
+                setListUsersOptions((old) => ({
+                  filter: old.filter,
+                  limit: old.limit,
+                }));
+              },
+            }}
+          />
         </>
       )}
     </div>

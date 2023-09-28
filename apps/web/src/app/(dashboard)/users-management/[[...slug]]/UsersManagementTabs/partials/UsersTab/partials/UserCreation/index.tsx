@@ -11,9 +11,9 @@ import {
 } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
 import { ListGroupsProps, SignUpProps, SignUpResponse } from 'api-client';
+import { Role } from 'api-client/enums/Role';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormationMode } from '../../../../../../../../../enums/FormationMode';
-import { Role } from '../../../../../../../../../enums/Role';
 import { useListGroups } from '../../../../../../../../../hooks/useListGroups';
 import { useSignUp } from '../../../../../../../../../hooks/useSignUp';
 import styles from './styles.module.scss';
@@ -30,25 +30,6 @@ interface Group {
   label: string;
   disabled?: boolean;
 }
-
-const fakeGroupOptions: Group[] = [
-  {
-    value: 'MS2D-AL',
-    label: 'MS2D-AL',
-  },
-  {
-    value: 'Bac+5',
-    label: 'Bac+5',
-  },
-  {
-    value: '2023',
-    label: '2023',
-  },
-  {
-    value: 'BGs',
-    label: 'BGs',
-  },
-];
 
 export type UserCreationProps = {
   closePopover: () => void;

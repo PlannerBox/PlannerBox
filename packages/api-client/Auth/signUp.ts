@@ -1,4 +1,4 @@
-import { Role } from '../../../apps/web/src/enums/Role';
+import { Role } from '../enums/Role';
 import { apiCall } from '../utils/api';
 
 export type SignUpProps = {
