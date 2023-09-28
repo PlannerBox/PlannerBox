@@ -1,11 +1,11 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './infrastructure/common/interceptors/logger.interceptor';
 import { LoggerService } from './infrastructure/logger/logger.service';
-import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
@@ -20,18 +20,23 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
 
   // pipes
-  app.useGlobalPipes(new ValidationPipe({
-    exceptionFactory: (errors) => {
-      const result = errors.map((error) => ({
-        property: error.property,
-        message: error.constraints[Object.keys(error.constraints)[0]],
-      }));
-      return new BadRequestException(result);
-    },
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors) => {
+        const result = errors.map((error) => ({
+          property: error.property,
+          message: error.constraints[Object.keys(error.constraints)[0]],
+        }));
+        return new BadRequestException(result);
+      },
+    }),
+  );
 
   // CORS Policy
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.WEBSITE_URL,
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .addBearerAuth(

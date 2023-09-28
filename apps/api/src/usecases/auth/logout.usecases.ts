@@ -3,7 +3,7 @@ export class LogoutUseCases {
 
   async execute(): Promise<string[]> {
     return [
-      'Authentication=; HttpOnly; Path=/; Max-Age=0',
+      'session=; HttpOnly; Path=/; Max-Age=0',
       'Refresh=; HttpOnly; Path=/; Max-Age=0',
     ];
   }

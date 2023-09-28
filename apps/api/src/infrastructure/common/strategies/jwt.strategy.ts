@@ -1,11 +1,12 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { LoginUseCases } from '../../../usecases/auth/login.usecases';
+import { removeAfterSemicolon } from '../../helpers/removeAfterSemicolon';
 import { LoggerService } from '../../logger/logger.service';
+import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
+import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          return request?.cookies?.Authentication;
+          return removeAfterSemicolon(request?.cookies?.session);
         },
       ]),
       secretOrKey: process.env.JWT_SECRET,
