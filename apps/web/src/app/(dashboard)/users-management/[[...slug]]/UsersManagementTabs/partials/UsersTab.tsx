@@ -194,7 +194,9 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             arrow={{ pointAtCenter: true }}
             trigger={['click']}
           >
-            <MoreOutlined />
+            <Button type='text'>
+              <MoreOutlined />
+            </Button>
           </Dropdown>
         </Space>
       ),
