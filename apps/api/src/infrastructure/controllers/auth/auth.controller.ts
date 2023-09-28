@@ -91,7 +91,13 @@ export class AuthController {
       .execute(newAccount.username);
 
     if (checkUserName) {
-      throw new BadRequestException("L'adresse mail est déjà utilisée");
+      const result = [
+        {
+          property: 'username',
+          message: "Le nom d'utilisateur est déjà utilisé",
+        },
+      ];
+      throw new BadRequestException(result);
     }
 
     const account = await this.signUpUsecaseProxy
