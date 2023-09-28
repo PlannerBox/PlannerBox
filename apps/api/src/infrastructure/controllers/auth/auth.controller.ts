@@ -86,7 +86,6 @@ export class AuthController {
     description: 'Bad request (user already created or invalid data)',
   })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
-    console.log({ newAccount });
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
       .execute(newAccount.username);

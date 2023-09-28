@@ -58,7 +58,6 @@ const listUsers = async (
   props: ListUsersProps,
   session: string
 ): Promise<ListUsersResponse> => {
-  console.log('listUsers');
   let url = `${process.env.NEXT_PUBLIC_API_URL}/api/user-management/user/list-paginated`;
   if (props.limit !== undefined) {
     url = addQueryParams(url, 'limit', props.limit.toString());

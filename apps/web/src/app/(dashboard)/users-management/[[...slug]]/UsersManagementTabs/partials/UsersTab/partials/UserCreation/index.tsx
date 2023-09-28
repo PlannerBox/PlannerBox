@@ -1,4 +1,5 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Cascader,
@@ -73,12 +74,13 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
     limit: 1000,
   });
 
+  const queryClient = useQueryClient();
+
   const {
     data: groupsList,
     isLoading: isGroupsListLoading,
     refetch: refetchListGroups,
   } = useListGroups({});
-  console.log({ groupsList });
 
   const groupOptions: Group[] | undefined = groupsList
     ? groupsList.data.map((group) => ({
@@ -95,6 +97,7 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
       });
       closePopover();
       form.resetFields();
+      queryClient.invalidateQueries({ queryKey: ['listUsers'] });
     } else {
       openNotification({
         title: "Une erreur est survenue lors de la création de l'utilisateur !",
