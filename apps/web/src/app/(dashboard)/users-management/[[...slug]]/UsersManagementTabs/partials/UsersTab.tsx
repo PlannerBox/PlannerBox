@@ -127,7 +127,9 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
     return [
       {
         key: '1',
-        label: <a>Réactiver le compte</a>,
+        label: (
+          <a onClick={() => toggleState({ username })}>Réactiver le compte</a>
+        ),
       },
       {
         key: '2',
