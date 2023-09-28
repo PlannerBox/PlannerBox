@@ -8,6 +8,7 @@ type FilterType = {
 export type ListUsersProps = {
   filter?: FilterType;
   limit?: number;
+  page?: number;
 };
 
 export type AccountType = {
@@ -42,12 +43,10 @@ export type UserData = {
 };
 
 type MetaData = {
-  page: number;
-  take: number;
-  itemCount: number;
-  pageCount: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
+  itemsPerPage: number;
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
 };
 
 export type ListUsersResponse = {
@@ -60,16 +59,21 @@ const listUsers = async (
   session: string
 ): Promise<ListUsersResponse> => {
   let url = `${process.env.NEXT_PUBLIC_API_URL}/api/user-management/user/list-paginated`;
+  console.log({ props });
+  if (props.limit !== undefined) {
+    url = addQueryParams(url, 'limit', props.limit.toString());
+  }
+
+  if (props.page !== undefined) {
+    url = addQueryParams(url, 'page', props.page.toString());
+  }
+
   if (props.filter?.role) {
     url = addQueryParams(
       url,
       'filter.rolePermissions.role',
       `$eq:${props.filter.role}`
     );
-  }
-
-  if (props.limit !== undefined) {
-    url = addQueryParams(url, 'limit', props.limit.toString());
   }
 
   return await apiCall(url, {

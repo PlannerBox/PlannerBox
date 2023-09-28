@@ -53,7 +53,6 @@ const columns: ColumnsType<DataType> = [
     render: (_, { groups }) => (
       <>
         {groups.map((group) => {
-          console.log({ group });
           return (
             <Tag color={group.color} key={group.groupId}>
               {group.groupName.toUpperCase()}
@@ -77,7 +76,7 @@ const columns: ColumnsType<DataType> = [
 
 const filterByRoleData = [
   {
-    value: null,
+    value: Role.Any,
     label: "Tous les types d'utilisateurs",
   },
   {
@@ -107,7 +106,8 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
 
   const [listUsersOptions, setListUsersOptions] = useState<ListUsersProps>({
     filter: undefined,
-    limit: 15,
+    limit: 3,
+    page: 1,
   });
 
   const { data: usersList } = useListUsers(listUsersOptions);
@@ -138,9 +138,10 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
 
   const handleFilterByRole = (value: Role) => {
     setListUsersOptions((old) => ({
+      limit: old.limit,
+      page: 1,
       filter: {
         role: value,
-        ...old,
       },
     }));
   };
@@ -162,7 +163,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             }}
           >
             <Select
-              defaultValue={null}
+              defaultValue={Role.Any}
               bordered={false}
               options={filterByRoleData}
               onChange={handleFilterByRole}
@@ -183,11 +184,13 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             dataSource={data}
             scroll={{ x: 150 }}
             pagination={{
-              total: usersList?.meta.pageCount,
+              total: usersList?.meta.totalPages,
+              pageSize: listUsersOptions.limit,
               onChange: (page, pageSize) => {
                 setListUsersOptions((old) => ({
                   filter: old.filter,
-                  limit: old.limit,
+                  limit: pageSize,
+                  page: page,
                 }));
               },
             }}
