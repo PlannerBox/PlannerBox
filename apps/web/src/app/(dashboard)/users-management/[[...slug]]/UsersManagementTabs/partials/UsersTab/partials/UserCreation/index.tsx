@@ -10,8 +10,8 @@ import {
   notification,
 } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
-import { SignUpProps, SignUpResponse } from 'api-client';
-import { ReactNode } from 'react';
+import { ListGroupsProps, SignUpProps, SignUpResponse } from 'api-client';
+import { ReactNode, useEffect, useState } from 'react';
 import { FormationMode } from '../../../../../../../../../enums/FormationMode';
 import { Role } from '../../../../../../../../../enums/Role';
 import { useListGroups } from '../../../../../../../../../hooks/useListGroups';
@@ -86,9 +86,17 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
   } = useSignUp({ onSuccess: handleSuccess, onError: handleError });
 
   const userAlreadyCreated = false;
-  const { data: groupsList, isLoading: isGroupsListLoading } = useListGroups(
-    {}
-  );
+
+  const [listGroupsOptions, setListGroupsOptions] = useState<ListGroupsProps>({
+    filter: undefined,
+    limit: 1000,
+  });
+
+  const {
+    data: groupsList,
+    isLoading: isGroupsListLoading,
+    refetch: refetchListGroups,
+  } = useListGroups({});
   console.log({ groupsList });
 
   const groupOptions: Group[] | undefined = groupsList
@@ -122,16 +130,7 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
   }
 
   const onFinish = (values: SignUpProps) => {
-    console.log(values);
     fetchSignUp(values);
-  };
-
-  const onReset = () => {
-    form.resetFields();
-  };
-
-  const onFill = () => {
-    form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
   };
 
   const onRoleChange = (value: Role) => {
@@ -149,6 +148,19 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
           .toLowerCase()
           .indexOf(inputValue.toLowerCase()) > -1
     );
+
+  const handleGroupSearch = (value: string) => {
+    setListGroupsOptions((old) => ({
+      filter: {
+        name: value,
+      },
+      limit: old.limit,
+    }));
+  };
+
+  useEffect(() => {
+    refetchListGroups();
+  }, [listGroupsOptions]);
 
   return (
     <>
@@ -256,7 +268,7 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
                     options={groupOptions}
                     placeholder='Sélectionner un ou plusieurs groupes'
                     showSearch={{ filter: filterGroups }}
-                    onSearch={(value) => console.log(value)}
+                    onSearch={handleGroupSearch}
                     maxTagCount='responsive'
                     multiple
                   />
