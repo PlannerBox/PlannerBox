@@ -58,8 +58,8 @@ const listUsers = async (
   props: ListUsersProps,
   session: string
 ): Promise<ListUsersResponse> => {
+  console.log('listUsers');
   let url = `${process.env.NEXT_PUBLIC_API_URL}/api/user-management/user/list-paginated`;
-  console.log({ props });
   if (props.limit !== undefined) {
     url = addQueryParams(url, 'limit', props.limit.toString());
   }
@@ -68,7 +68,7 @@ const listUsers = async (
     url = addQueryParams(url, 'page', props.page.toString());
   }
 
-  if (props.filter?.role) {
+  if (props.filter?.role && props.filter.role !== Role.Any) {
     url = addQueryParams(
       url,
       'filter.rolePermissions.role',

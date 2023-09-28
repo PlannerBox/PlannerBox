@@ -264,7 +264,7 @@ export class AccountRepository implements IAccountRepository {
       case Role.InternTeacher:
         const createdTeacherAccountEntity =
           await this.teacherEntityRepository.save({
-            account: account,
+            account: accountEntity,
           });
         return createdTeacherAccountEntity.account;
     }

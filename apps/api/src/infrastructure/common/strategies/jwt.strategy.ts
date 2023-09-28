@@ -18,10 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          logger.log(
-            'BLBLBLBLBLBL',
-            removeAfterSemicolon(request?.cookies?.session),
-          );
           return removeAfterSemicolon(request?.cookies?.session);
         },
       ]),

@@ -106,7 +106,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
 
   const [listUsersOptions, setListUsersOptions] = useState<ListUsersProps>({
     filter: undefined,
-    limit: 3,
+    limit: 9,
     page: 1,
   });
 
@@ -123,8 +123,8 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
 
   const handleResize = () => {
     setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: window?.innerWidth,
+      height: window?.innerHeight,
     });
   };
 
@@ -184,7 +184,7 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
             dataSource={data}
             scroll={{ x: 150 }}
             pagination={{
-              total: usersList?.meta.totalPages,
+              total: usersList?.meta.totalItems,
               pageSize: listUsersOptions.limit,
               onChange: (page, pageSize) => {
                 setListUsersOptions((old) => ({

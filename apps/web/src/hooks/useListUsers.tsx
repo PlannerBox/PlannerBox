@@ -4,6 +4,7 @@ import { useCookies } from 'react-cookie';
 
 const useListUsers = (props: ListUsersProps) => {
   const [cookies] = useCookies(['session']);
+  console.log('useListUsers');
   return useQuery({
     queryKey: ['listUsers', props],
     queryFn: () => listUsers(props, cookies['session']),

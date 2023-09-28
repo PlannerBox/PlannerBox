@@ -66,4 +66,7 @@ export class AuthSignUpDto extends AuthPasswordDto {
   readonly formationMode?: FormationMode;
 
   // Ajouter la liste des groupes (ids) dans lequel ajouter le nouveau compte (key: groups)
+  // - si formateur interne/externe, mettre isOwner à true
+  // - si admin ignorer
+  // - si student, mettre isOwner à false
 }
