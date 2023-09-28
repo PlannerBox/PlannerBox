@@ -14,7 +14,8 @@ import { SignUpProps, SignUpResponse } from 'api-client';
 import { ReactNode } from 'react';
 import { FormationMode } from '../../../../../../../../../enums/FormationMode';
 import { Role } from '../../../../../../../../../enums/Role';
-import { useSignUp } from '../../hooks/useSignUp';
+import { useListGroups } from '../../../../../../../../../hooks/useListGroups';
+import { useSignUp } from '../../../../../../../../../hooks/useSignUp';
 import styles from './styles.module.scss';
 
 const { Option } = Select;
@@ -85,6 +86,17 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
   } = useSignUp({ onSuccess: handleSuccess, onError: handleError });
 
   const userAlreadyCreated = false;
+  const { data: groupsList, isLoading: isGroupsListLoading } = useListGroups(
+    {}
+  );
+  console.log({ groupsList });
+
+  const groupOptions: Group[] | undefined = groupsList
+    ? groupsList.data.map((group) => ({
+        value: group.id,
+        label: group.name,
+      }))
+    : [];
 
   function handleSuccess(data: SignUpResponse) {
     if (!!data) {
@@ -240,7 +252,8 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
                   rules={[{ required: false }]}
                 >
                   <Cascader
-                    options={fakeGroupOptions}
+                    loading={isGroupsListLoading}
+                    options={groupOptions}
                     placeholder='Sélectionner un ou plusieurs groupes'
                     showSearch={{ filter: filterGroups }}
                     onSearch={(value) => console.log(value)}

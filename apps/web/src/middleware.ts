@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
         {
           method: 'GET',
           headers: new Headers({
-            Cookie: `Authentication=${accessToken}; HttpOnly; Path=/; Max-Age=${process.env.JWT_EXPIRATION_TIME}`,
+            Cookie: `session=${accessToken}; HttpOnly; Path=/; Max-Age=${process.env.JWT_EXPIRATION_TIME}`,
           }),
         }
       );

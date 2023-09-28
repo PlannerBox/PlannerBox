@@ -21,18 +21,18 @@ import {
 import { IsAuthenticatedUseCases } from '../../../usecases/auth/isAuthenticated.usecases';
 import { LoginUseCases } from '../../../usecases/auth/login.usecases';
 import { LogoutUseCases } from '../../../usecases/auth/logout.usecases';
+import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
 import { SignUpUseCases } from '../../../usecases/auth/signUp.usecases';
 import { JwtAuthGuard } from '../../common/guards/jwtAuth.guard';
 import JwtRefreshGuard from '../../common/guards/jwtRefresh.guard';
 import { LoginGuard } from '../../common/guards/login.guard';
 import { ApiResponseType } from '../../common/swagger/response.decorator';
+import { JsonResult } from '../../helpers/JsonResult';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
 import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
-import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
-import { JsonResult } from '../../helpers/JsonResult';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -72,7 +72,7 @@ export class AuthController {
       refreshTokenCookie,
     ]);
     return {
-      access_token: accessTokenCookie.replace('Authentication=', ''),
+      access_token: accessTokenCookie.replace('session=', ''),
       refresh_token: refreshTokenCookie.replace('Refresh=', ''),
     };
   }
@@ -81,14 +81,17 @@ export class AuthController {
   @ApiBody({ type: AuthSignUpDto })
   @ApiOperation({ description: 'Create a new user account' })
   @ApiResponse({ status: 200, description: 'Signup successful' })
-  @ApiResponse({ status: 400, description: 'Bad request (user already created or invalid data)' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request (user already created or invalid data)',
+  })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
       .execute(newAccount.username);
 
     if (checkUserName) {
-      throw new BadRequestException('L\'adresse mail est déjà utilisée');
+      throw new BadRequestException("L'adresse mail est déjà utilisée");
     }
 
     const account = await this.signUpUsecaseProxy
@@ -122,7 +125,10 @@ export class AuthController {
 
   @Get('is-authenticated')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ description: 'check if user is authenticated while checking if the mail which is in the token exists in the database' })
+  @ApiOperation({
+    description:
+      'check if user is authenticated while checking if the mail which is in the token exists in the database',
+  })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
     const user = await this.isAuthUsecaseProxy
@@ -142,7 +148,7 @@ export class AuthController {
       .getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return {
-      access_token: accessTokenCookie.replace('Authentication=', ''),
+      access_token: accessTokenCookie.replace('session=', ''),
     };
   }
 
@@ -182,8 +188,12 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Token is valid' })
   @ApiResponse({ status: 400, description: 'Token is not valid' })
   async isValidToken(@Param('token') token: string) {
-    const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
+    const response = await this.resetPasswordUsecaseProxy
+      .getInstance()
+      .tokenIsValid(token);
 
-    return response.statusCode ? response : JsonResult.Convert('Le token est valide');
+    return response.statusCode
+      ? response
+      : JsonResult.Convert('Le token est valide');
   }
 }
