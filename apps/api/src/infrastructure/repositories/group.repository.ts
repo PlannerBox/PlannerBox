@@ -20,13 +20,8 @@ export class GroupRepository implements IGroupRepository {
         private readonly groupMembersRepository: Repository<GroupMembers>
     ) {}
 
-    async createGroup(group: GroupM): Promise<any> {
-        return await this.groupRepository.save({
-            name: group.name,
-            color: group.color,
-            type: group.type,
-            groupMembers: group.groupMembers,
-        });
+    async createGroup(group: GroupM): Promise<GroupM> {
+        return await this.groupRepository.save(group);
     }
 
     async findGroup(groupID: string): Promise<any> {

@@ -7,23 +7,26 @@ import { NewGroupDto } from "../../infrastructure/controllers/groupManagement/gr
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { GroupType } from "../../domain/models/enums/groupType.enum";
+import { ICourseRepository } from "../../domain/repositories/courseRepository.interface";
+import { CourseM } from "../../domain/models/course";
 
 export class PlanTrainingUseCase {
     constructor(
         private readonly skillRepository: ISkillRepository,
         private readonly accountRepository: IAccountRepository,
         private readonly groupRepository: IGroupRepository,
+        private readonly courseRepository: ICourseRepository,
         private readonly logger: ILogger
     ) {}
 
     async planTraining(planningSession: PlanningSessionDto): Promise<any> {
 
-        const skills = await this.skillRepository.skillsExists(planningSession.skillIds);
-        if (!skills) {
+        const skillsExists = await this.skillRepository.skillsExists(planningSession.skillIds);
+        if (!skillsExists) {
             throw new NotFoundException('Skill not found');
         }
-        const accounts = await this.accountRepository.accountExists(planningSession.teacherAccountIds);
-        if (!accounts) {
+        const accountsExists = await this.accountRepository.accountExists(planningSession.teacherAccountIds);
+        if (!accountsExists) {
             throw new NotFoundException('Teacher not found');
         }
         
@@ -42,6 +45,23 @@ export class PlanTrainingUseCase {
                 isOwner: false
             });
         });
-        await this.groupRepository.createGroup(GroupMapper.fromNewDtoToModel(formationGroup));        
+
+        const newGroup = await this.groupRepository.createGroup(GroupMapper.fromNewDtoToModel(formationGroup));
+
+        const skills = await this.skillRepository.findSkillsByIds(planningSession.skillIds);
+
+        const course = new CourseM();
+        course.name = 'Formation#' + (groupCounter + 1);
+        course.startDate = planningSession.startDate;
+        course.endDate = planningSession.endDate;
+        course.group = newGroup;
+        course.skills = skills;
+
+        await this.courseRepository.insertCourse(course);
+
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Training planned successfully'
+        };
     }
 }

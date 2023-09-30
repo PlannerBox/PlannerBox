@@ -45,6 +45,7 @@ import { SkillRepository } from '../repositories/skill.repository';
 import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
 import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
 import { PlanTrainingUseCase } from '../../usecases/skill/planTraining.usecase';
+import { CourseRepository } from '../repositories/course.repository';
 
 @Module({
   imports: [
@@ -336,16 +337,17 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [SkillRepository, AccountRepository, GroupRepository, LoggerService],
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, LoggerService],
           provide: UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
           useFactory: (
             skillRepository: SkillRepository,
             accountRepository: AccountRepository,
             groupRepository: GroupRepository,
+            courseRepository: CourseRepository,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, logger),
+              new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, courseRepository, logger),
             ),
         },
       ],

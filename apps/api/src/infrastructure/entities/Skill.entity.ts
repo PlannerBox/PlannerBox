@@ -1,6 +1,6 @@
-import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Teacher } from "./Teacher.entity";
+import { Column, Entity, Index, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeacherSkills } from "./TeacherSkills.entity";
+import { Course } from "./Course.entity";
 
 @Index('Skill_pkey', ['id'], { unique: true })
 @Entity('Skill', { schema: 'public' })
@@ -13,4 +13,7 @@ export class Skill {
 
     @OneToMany(() => TeacherSkills, teacherSkills => teacherSkills.skill)
     teacherSkills: TeacherSkills[];
+
+    @ManyToMany(() => Course, course => course.skills)
+    courses: Course[];
 }

@@ -49,4 +49,8 @@ export class SkillRepository implements ISkillRepository {
         const skills = await this.skillRepository.find({ where: { id: In(skillIds) } });
         return skills.length === skillIds.length;
     }
+
+    async findSkillsByIds(skillIds: string[]): Promise<Skill[]> {
+        return await this.skillRepository.find({ where: { id: In(skillIds) } });
+    }
 }

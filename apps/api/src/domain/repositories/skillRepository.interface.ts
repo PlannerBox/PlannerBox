@@ -10,4 +10,5 @@ export interface ISkillRepository {
     deleteSkill(skillId: string): void;
     findSkills(query: PaginateQuery): Promise<Paginated<Skill>>;
     skillsExists(skillIds: string[]): Promise<boolean>;
+    findSkillsByIds(skillIds: string[]): Promise<Skill[]>;
 }

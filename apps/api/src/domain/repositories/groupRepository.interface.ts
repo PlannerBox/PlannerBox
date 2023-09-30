@@ -10,7 +10,7 @@ export interface IGroupRepository {
     findGroup(groupID: string): Promise<any>;
     findGroupBy(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>>;
     findReferee(refereeID: string): Promise<any>;
-    createGroup(group: GroupM): Promise<any>;
+    createGroup(group: GroupM): Promise<GroupM>;
     updateGroup(group: GroupM): Promise<any>;
     deleteGroup(groupId: string): Promise<any>;
     findPaginated(query: PaginateQuery): Promise<Paginated<Group>>;
