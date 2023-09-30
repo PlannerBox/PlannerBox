@@ -4,12 +4,12 @@ import { Group } from "../entities/Group.entity";
 import { Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 import { PageDto } from "../pagination/page.dto";
 import { PageOptionsDto } from "../pagination/pageOptions.dto";
 import { PageMetaDto } from "../pagination/pageMeta.dto";
-import { group } from "console";
+import GroupType from "../../domain/models/enums/groupType.enum";
 
 export class GroupRepository implements IGroupRepository {
     constructor(
@@ -24,6 +24,7 @@ export class GroupRepository implements IGroupRepository {
         return await this.groupRepository.save({
             name: group.name,
             color: group.color,
+            type: group.type,
             groupMembers: group.groupMembers,
         });
     }
@@ -144,4 +145,7 @@ export class GroupRepository implements IGroupRepository {
         return new PageDto(entities, pageMetaDto);
     }
 
+    async countGroupByType(type: GroupType): Promise<number> {
+        return await this.groupRepository.count({ where: { type: type } });
+    }
 }

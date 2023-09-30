@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { ISkillRepository } from "../../domain/repositories/skillRepository.interface";
 import { Skill } from "../entities/Skill.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { SkillM } from "../../domain/models/skill";
 import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 
@@ -43,5 +43,10 @@ export class SkillRepository implements ISkillRepository {
             defaultSortBy: [['name', 'ASC']],
             relations: { teacherSkills: { teacher: true } }
         });
+    }
+
+    async skillsExists(skillIds: string[]): Promise<boolean> {
+        const skills = await this.skillRepository.find({ where: { id: In(skillIds) } });
+        return skills.length === skillIds.length;
     }
 }

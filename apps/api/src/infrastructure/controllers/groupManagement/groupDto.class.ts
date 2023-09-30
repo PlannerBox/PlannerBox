@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
+import { GroupType } from '../../../domain/models/enums/groupType.enum';
 
 export class GroupDto {
   @ApiProperty({ type: String, description: 'Group id' })
@@ -10,6 +11,9 @@ export class GroupDto {
 
   @ApiProperty({ type: String, description: 'Group color' })
   color: string;
+
+  @ApiProperty({ enum: GroupType, enumName: "GroupType", description: 'Type of the group (default is Class)' })
+  type?: GroupType;
 }
 
 export class NewGroupMemberDto {

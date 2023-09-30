@@ -20,6 +20,7 @@ export class GroupMapper {
             id: group.id,
             name: group.name,
             color: group.color,
+            type: group.type,
             groupMembers: group.groupMembers.map(gm => GroupMemberMapper.fromEntityToModel(gm))
         };
     }
@@ -45,6 +46,7 @@ export class GroupMapper {
         return {
             name: groupDto.name,
             color: groupDto.color,
+            type: groupDto.type,
             groupMembers: groupDto.groupMembers.map(gm => {
                 return {
                     groupId: '',
@@ -59,7 +61,8 @@ export class GroupMapper {
         return {
             id: groupDto.id,
             name: groupDto.name,
-            color: groupDto.color
+            color: groupDto.color,
+            type: groupDto.type
         };
     }
 }

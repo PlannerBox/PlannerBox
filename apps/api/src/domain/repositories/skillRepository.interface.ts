@@ -9,4 +9,5 @@ export interface ISkillRepository {
     upsertSkill(skill: SkillM): Promise<SkillM>;
     deleteSkill(skillId: string): void;
     findSkills(query: PaginateQuery): Promise<Paginated<Skill>>;
+    skillsExists(skillIds: string[]): Promise<boolean>;
 }

@@ -3,6 +3,7 @@ import { Group } from "../../infrastructure/entities/Group.entity";
 import { GroupM } from "../models/group";
 import { PageOptionsDto } from "../../infrastructure/pagination/pageOptions.dto";
 import { PageDto } from "../../infrastructure/pagination/page.dto";
+import GroupType from "../models/enums/groupType.enum";
 
 export interface IGroupRepository {
     findAll(): Promise<Group[]>;
@@ -14,4 +15,5 @@ export interface IGroupRepository {
     deleteGroup(groupId: string): Promise<any>;
     findPaginated(query: PaginateQuery): Promise<Paginated<Group>>;
     findPaginatedManually(pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>>;
+    countGroupByType(type: GroupType): Promise<number>;
 }

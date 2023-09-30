@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import {
   AccountM,
   AccountWithoutPassword,
@@ -124,6 +124,11 @@ export class AccountRepository implements IAccountRepository {
 
     return AccountMapper.fromEntityToModel(accountEntity);
   }
+
+  async accountExists(ids: string[]): Promise<boolean> {
+    const teachers = await this.accountEntityRepository.find({ where: { id: In(ids) } });
+    return teachers.length === ids.length;
+}
 
   async updateLastLogin(username: string): Promise<void> {
     await this.accountEntityRepository.update(

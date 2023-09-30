@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Post } from "@nestjs/common";
 import { UpsertSkillUseCase } from "../../../usecases/skill/upsertSkill.usecase";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
@@ -7,6 +7,8 @@ import { SkillDto } from "./skillDto.class";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 import { FindSkillUseCase } from "../../../usecases/skill/findSkill.usecase";
 import { DeleteSkillUseCase } from "../../../usecases/skill/deleteSkill.usecase";
+import { PlanningSessionDto } from "./planningSessionDto.class";
+import { PlanTrainingUseCase } from "../../../usecases/skill/planTraining.usecase";
 
 @Controller('skill-management')
 @ApiTags('skill-management')
@@ -21,7 +23,9 @@ export class SkillManagementController {
         @Inject(UsecasesProxyModule.FIND_SKILL_USECASES_PROXY)
         private readonly findSkillUseCase: UseCaseProxy<FindSkillUseCase>,
         @Inject(UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY)
-        private readonly deleteSkillUseCase: UseCaseProxy<DeleteSkillUseCase>
+        private readonly deleteSkillUseCase: UseCaseProxy<DeleteSkillUseCase>,
+        @Inject(UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY)
+        private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>
     ) {}
 
     @Get('skill/all')
@@ -48,6 +52,15 @@ export class SkillManagementController {
     async updateSkill(@Body() skill: SkillDto): Promise<any> {
         return await this.createSkillUseCase.getInstance().updateSkill(skill);
     }
+
+    @Post('skill/training/add')
+    @ApiResponse({ status: 200, description: 'Training successfully planned' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
+    @ApiBody({ type: PlanningSessionDto })
+    async addTrainingSession(@Body() planningSession: PlanningSessionDto): Promise<any> {
+        return await this.planTrainingUseCase.getInstance().planTraining(planningSession);
+    }    
 
     @Delete('skill/delete/:skillId')
     @HttpCode(204)

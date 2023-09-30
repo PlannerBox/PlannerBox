@@ -7,6 +7,7 @@ export interface IAccountRepository {
   updateAccountState(username: string, active: boolean): Promise<void>;
   getAccountByUsername(username: string): Promise<AccountM>;
   findAccountById(id: string): Promise<AccountM>;
+  accountExists(ids: string[]): Promise<boolean>;
   updateLastLogin(username: string): Promise<void>;
   updateRefreshToken(username: string, refreshToken: string): Promise<void>;
   createAccount(account: AccountM): Promise<AccountWithoutPassword>;

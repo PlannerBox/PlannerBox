@@ -1,5 +1,6 @@
 import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { GroupMembers } from "./GroupMembers.entity";
+import { GroupType } from "../../domain/models/enums/groupType.enum";
 
 @Index('Group_pkey', ['id'], { unique: true })
 @Entity('Group', { schema: 'public' })
@@ -12,6 +13,9 @@ export class Group {
 
     @Column('character varying', { name: 'color', nullable: false, length: 50 })
     color: string;
+
+    @Column('enum', { name: 'type', nullable: false, enum: GroupType, default: GroupType.Class })
+    type: GroupType;
 
     @OneToMany(() => GroupMembers, (groupMembers) => groupMembers.group, { cascade: true, eager: true })
     groupMembers: GroupMembers[];

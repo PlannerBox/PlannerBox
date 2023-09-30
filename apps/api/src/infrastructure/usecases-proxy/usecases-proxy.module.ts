@@ -44,6 +44,7 @@ import { UpsertSkillUseCase } from '../../usecases/skill/upsertSkill.usecase';
 import { SkillRepository } from '../repositories/skill.repository';
 import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
 import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
+import { PlanTrainingUseCase } from '../../usecases/skill/planTraining.usecase';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ export class UsecasesProxyModule {
   static UPSERT_SKILL_USECASES_PROXY = 'UpsertSkillUseCasesProxy';
   static FIND_SKILL_USECASES_PROXY = 'FindSkillUseCasesProxy';
   static DELETE_SKILL_USECASES_PROXY = 'DeleteSkillUseCasesProxy';
+  static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -333,6 +335,19 @@ export class UsecasesProxyModule {
               new DeleteSkillUseCase(skillRepository, logger),
             ),
         },
+        {
+          inject: [SkillRepository, AccountRepository, GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            accountRepository: AccountRepository,
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, logger),
+            ),
+        },
       ],
       exports: [
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
@@ -355,6 +370,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.UPSERT_SKILL_USECASES_PROXY,
         UsecasesProxyModule.FIND_SKILL_USECASES_PROXY,
         UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
+        UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
       ],
     };
   }
