@@ -23,6 +23,14 @@ import { ResetPasswordUseCases } from '../../usecases/auth/resetPassword.usecase
 import { AccountManagementUseCases } from '../../usecases/auth/accountManagement.usecases';
 import { AdminRepository } from '../repositories/admin.repository';
 import { RolePermissionsRepository } from '../repositories/rolePermissions.repository';
+import { PlaceRepository } from '../repositories/place.repository';
+import { RoomRepository } from '../repositories/room.repository';
+import { PlaceUseCase } from '../../usecases/place/place.usecase';
+import { RoomUseCase } from '../../usecases/room/room.usecase';
+import { MaterialRepository } from '../repositories/material.repository';
+import { MaterialUseCase } from '../../usecases/material/material.usecase';
+import { UseMaterialRoomRepository } from '../repositories/useMaterialRoom.repository';
+import { UseMaterialRoomUseCase } from '../../usecases/material/useMaterialRoom.usecase';
 
 @Module({
   imports: [
@@ -41,7 +49,12 @@ export class UsecasesProxyModule {
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
   static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
-  static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy'
+  static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy';
+  static PLACE_MANAGEMENT_PROXY = 'PlaceManagementProxy';
+  static ROOM_MANAGEMENT_PROXY ='RoomManagementProxy';
+  static MATERIAL_MANAGEMENT_PROXY ='MaterialManagementProxy';
+  static USE_MATERIAL_ROOM_MANAGEMENT_PROXY='UseMaterialRoomManagementProxy';
+
 
   static register(): DynamicModule {
     return {
@@ -155,16 +168,63 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new UpdateAccountUseCase(accountRepository, bcryptService, logger),
             ),
+        },
+        {
+          inject: [PlaceRepository, RoomRepository],
+          provide: UsecasesProxyModule.PLACE_MANAGEMENT_PROXY,
+          useFactory: (
+            placeRepository: PlaceRepository,
+            roomRepository: RoomRepository
+          ) =>
+            new UseCaseProxy(
+              new PlaceUseCase(placeRepository, roomRepository),
+            ),
+        },
+        {
+          inject: [PlaceRepository, RoomRepository],
+          provide: UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
+          useFactory: (
+            placeRepository: PlaceRepository,
+            roomRepository: RoomRepository
+          ) =>
+            new UseCaseProxy(
+              new RoomUseCase(placeRepository, roomRepository),
+            ),
+        },
+        {
+          inject: [MaterialRepository],
+          provide: UsecasesProxyModule.MATERIAL_MANAGEMENT_PROXY,
+          useFactory: (
+            materialRepository: MaterialRepository,
+          ) =>
+            new UseCaseProxy(
+              new MaterialUseCase(materialRepository),
+            ),
+        },
+        {
+          inject: [UseMaterialRoomRepository],
+          provide: UsecasesProxyModule.USE_MATERIAL_ROOM_MANAGEMENT_PROXY,
+          useFactory: (
+            useMaterialRepository: UseMaterialRoomRepository,
+          ) =>
+            new UseCaseProxy(
+              new UseMaterialRoomUseCase(useMaterialRepository),
+            ),
         }
       ],
       exports: [
+        UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
         UsecasesProxyModule.LOGIN_USECASES_PROXY,
         UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY,
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
         UsecasesProxyModule.RESET_PASSWORD_USECASES_PROXY,
         UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
-        UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY
+        UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
+        UsecasesProxyModule.PLACE_MANAGEMENT_PROXY,
+        UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
+        UsecasesProxyModule.MATERIAL_MANAGEMENT_PROXY,
+        UsecasesProxyModule.USE_MATERIAL_ROOM_MANAGEMENT_PROXY
       ],
     };
   }
