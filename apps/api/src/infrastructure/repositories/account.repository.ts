@@ -1,16 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AccountM, AccountWithoutPassword, newAccount } from '../../domain/models/account';
+import { PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
+import { Repository } from 'typeorm';
+import {
+  AccountM,
+  AccountWithoutPassword,
+  UserAccountDetailsM,
+} from '../../domain/models/account';
+import Role from '../../domain/models/enums/role.enum';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { Account } from '../entities/Account.entity';
-import { Repository } from 'typeorm';
-import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Admin } from '../entities/Admin.entity';
+import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
-import Role from '../../domain/models/enums/role.enum';
-import Permission from '../../domain/models/enums/permission.type';
-
+import { AccountMapper } from '../mappers/account.mapper';
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -27,20 +31,70 @@ export class AccountRepository implements IAccountRepository {
     private readonly teacherEntityRepository: Repository<Teacher>,
   ) {}
 
-  async updateAccount(account: AccountM): Promise<AccountWithoutPassword> {
-    const accountEntity = this.toAccountEntity(account);
-    await this.accountEntityRepository.update(
-        accountEntity.id, accountEntity);
+  async findAccount(query: PaginateQuery): Promise<Paginated<Account>> {
+    const queryBuilder =
+      this.accountEntityRepository.createQueryBuilder('account');
 
-    const createdAccount = this.toAccount(accountEntity);
+    queryBuilder.leftJoinAndSelect(
+      'account.rolePermissions',
+      'rolePermissions',
+    );
+    queryBuilder.leftJoinAndSelect('account.groups', 'groups');
+
+    return await paginate<Account>(query, queryBuilder, {
+      loadEagerRelations: true,
+      sortableColumns: [
+        'id',
+        'username',
+        'firstname',
+        'lastname',
+        'rolePermissions',
+        'active',
+        'groups',
+      ],
+      nullSort: 'last',
+      defaultSortBy: [['username', 'ASC']],
+      searchableColumns: [
+        'id',
+        'username',
+        'firstname',
+        'lastname',
+        'rolePermissions',
+        'active',
+        'groups',
+      ],
+      filterableColumns: {
+        id: true,
+        username: true,
+        firstname: true,
+        lastname: true,
+        'rolePermissions.role': true,
+        active: true,
+        groups: true,
+      },
+      relations: {
+        rolePermissions: true,
+        groups: { group: { groupMembers: true } },
+      },
+    });
+  }
+
+  async updateAccount(account: AccountM): Promise<AccountWithoutPassword> {
+    const accountEntity = AccountMapper.fromModelToEntity(account);
+    await this.accountEntityRepository.update(accountEntity.id, accountEntity);
+
+    const createdAccount = AccountMapper.fromEntityToModel(accountEntity);
     const { password, ...info } = createdAccount;
     return info;
   }
-  
+
   async updateAccountState(username: string, active: boolean): Promise<void> {
-    await this.accountEntityRepository.update({ username: username }, { active: active });
+    await this.accountEntityRepository.update(
+      { username: username },
+      { active: active },
+    );
   }
-  
+
   async getAccountByUsername(username: string): Promise<AccountM> {
     const accountEntity: Account = await this.accountEntityRepository.findOne({
       where: {
@@ -51,12 +105,21 @@ export class AccountRepository implements IAccountRepository {
     if (!accountEntity) {
       return null;
     }
-
-    return this.toAccount(accountEntity);
+    return AccountMapper.fromEntityToModel(accountEntity);
   }
 
   async findAccountById(id: string): Promise<AccountM> {
-    return await this.accountEntityRepository.findOneBy({ id });
+    const accountEntity: Account = await this.accountEntityRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!accountEntity) {
+      return null;
+    }
+
+    return AccountMapper.fromEntityToModel(accountEntity);
   }
 
   async updateLastLogin(username: string): Promise<void> {
@@ -80,15 +143,10 @@ export class AccountRepository implements IAccountRepository {
     );
   }
 
-  async createAccount(account: newAccount): Promise<AccountWithoutPassword> {
-    const accountEntity = this.toAccountEntity(account);
-    accountEntity.rolePermissions = await this.rolePermissionsEntityRepository.findOne({
-      where: {
-        role: account.role,
-      },
-    });
-    const createdAccountEntity = await this.linkAccountToSubClass(accountEntity);
-    const createdAccount = this.toAccount(createdAccountEntity);
+  async createAccount(account: AccountM): Promise<AccountWithoutPassword> {
+    const createdAccountEntity = await this.linkAccountToSubClass(account);
+    const createdAccount =
+      AccountMapper.fromEntityToModel(createdAccountEntity);
     const { password, ...info } = createdAccount;
     return info;
   }
@@ -99,66 +157,115 @@ export class AccountRepository implements IAccountRepository {
       { password: newPassword },
     );
   }
+
   async deleteAccount(id: string): Promise<void> {
-    await this.accountEntityRepository.delete({id: id});
+    await this.accountEntityRepository.delete({ id: id });
   }
+
   async getAllAccounts(): Promise<AccountWithoutPassword[]> {
     const accountEntities = await this.accountEntityRepository.find();
-    return accountEntities.map(accountEntity => {
-      const { password, ...info } = this.toAccount(accountEntity);
+    return accountEntities.map((accountEntity) => {
+      const { password, ...info } =
+        AccountMapper.fromEntityToModel(accountEntity);
       return info;
     });
   }
 
-  private toAccount(accountEntity: Account): AccountM {    
-    return {
-      id: accountEntity.id,
-      username: accountEntity.username,
-      password: accountEntity.password,
-      firstname: accountEntity.firstname,
-      lastname: accountEntity.lastname,
-      birthDate: accountEntity.birthDate,
-      birthPlace: accountEntity.birthPlace,
-      lastLogin: accountEntity.lastLogin,
-      hashRefreshToken: accountEntity.hashRefreshToken,
-      active: accountEntity.active,
-      rolePermissions: accountEntity.rolePermissions,
-    }
-  }
+  async findUserAccountDetails(id: string): Promise<UserAccountDetailsM> {
+    const accountEntity = await this.accountEntityRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
 
-  private toAccountEntity(account: AccountM): Account {
-    return {
-      id: account.id,
-      username: account.username,
-      password: account.password,
-      firstname: account.firstname,
-      lastname: account.lastname,
-      birthDate: account.birthDate,
-      birthPlace: account.birthPlace,
-      lastLogin: account.lastLogin,
-      hashRefreshToken: account.hashRefreshToken,
-      active: account.active,
-      rolePermissions: account.rolePermissions,
+    if (!accountEntity) {
+      return null;
     }
-  }
 
-  private async linkAccountToSubClass(account: Account): Promise<Account> {
-    switch (account.rolePermissions.role) {
+    const account = AccountMapper.fromEntityToModel(accountEntity);
+    const userAccountDetails = new UserAccountDetailsM();
+    userAccountDetails.id = account.id;
+    userAccountDetails.username = account.username;
+    userAccountDetails.firstname = account.firstname;
+    userAccountDetails.lastname = account.lastname;
+    userAccountDetails.birthDate = account.birthDate;
+    userAccountDetails.birthPlace = account.birthPlace;
+    userAccountDetails.lastLogin = account.lastLogin;
+    userAccountDetails.hashRefreshToken = account.hashRefreshToken;
+    userAccountDetails.active = account.active;
+    userAccountDetails.role = account.role;
+    userAccountDetails.rolePermissions = account.rolePermissions;
+    userAccountDetails.groups = account.groups;
+
+    switch (account.role) {
       case Role.Admin:
-        const createdAdminAccountEntity = await this.adminEntityRepository.save({
-          account: account,
+        const adminEntity = await this.adminEntityRepository.findOne({
+          where: {
+            account: {
+              id: account.id,
+            },
+          },
         });
+        userAccountDetails.adminId = adminEntity.id;
+        break;
+      case Role.Student:
+        const studentEntity = await this.studentEntityRepository.findOne({
+          where: {
+            account: {
+              id: account.id,
+            },
+          },
+        });
+        userAccountDetails.studentId = studentEntity.id;
+        userAccountDetails.formationMode = studentEntity.formationMode;
+        break;
+      case Role.ExternTeacher:
+      case Role.InternTeacher:
+        const teacherEntity = await this.teacherEntityRepository.findOne({
+          where: {
+            account: {
+              id: account.id,
+            },
+          },
+        });
+        userAccountDetails.teacherId = teacherEntity.id;
+        userAccountDetails.intern = teacherEntity.intern;
+        break;
+    }
+
+    return userAccountDetails;
+  }
+
+  private async linkAccountToSubClass(account: AccountM): Promise<Account> {
+    const accountEntity = AccountMapper.fromModelToEntity(account);
+    accountEntity.rolePermissions =
+      await this.rolePermissionsEntityRepository.findOne({
+        where: {
+          role: account.role,
+        },
+      });
+
+    switch (account.role) {
+      case Role.Admin:
+        const createdAdminAccountEntity = await this.adminEntityRepository.save(
+          {
+            account: accountEntity,
+          },
+        );
         return createdAdminAccountEntity.account;
       case Role.Student:
-        const createdStudentAccountEntity = await this.studentEntityRepository.save({
-          account: account,
-        });
+        const student = new Student();
+        student.account = accountEntity;
+        student.formationMode = account.formationMode;
+        const createdStudentAccountEntity =
+          await this.studentEntityRepository.save(student);
         return createdStudentAccountEntity.account;
       case Role.ExternTeacher:
       case Role.InternTeacher:
-        const createdTeacherAccountEntity = await this.teacherEntityRepository.save({
-          account: account,
-        });
+        const createdTeacherAccountEntity =
+          await this.teacherEntityRepository.save({
+            account: accountEntity,
+          });
         return createdTeacherAccountEntity.account;
     }
   }

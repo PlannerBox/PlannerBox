@@ -3,9 +3,9 @@
 import { Tabs, TabsProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-import GroupsTab from './partials/GroupsTab';
-import PermissionsTab from './partials/PermissionsTab';
-import UsersTab from './partials/UsersTab';
+import GroupsTab from '../GroupsTab';
+import PermissionsTab from '../PermissionsTab';
+import UsersTab from '../UsersTab';
 
 export default function UsersManagementTabs() {
   const pathname = usePathname();
@@ -33,24 +33,29 @@ export default function UsersManagementTabs() {
     ? currentTabPathname
     : 'users';
 
+  const groupStep = useCallback(() => {
+    if (currentTabSplittedPathname[4] === 'manage') {
+      // TODO: Check for ID validity
+      return 'manage';
+    }
+
+    if (currentTabSplittedPathname[3] === 'create') {
+      return 'create';
+    }
+
+    return 'list';
+  }, [currentTabSplittedPathname]);
+
   const items: TabsProps['items'] = [
     {
       key: 'users',
       label: `Utilisateurs`,
-      children: (
-        <UsersTab
-          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
-        />
-      ),
+      children: <UsersTab step='list' />,
     },
     {
       key: 'groups',
       label: `Groupes`,
-      children: (
-        <GroupsTab
-          step={currentTabSplittedPathname[3] === 'create' ? 'create' : 'list'}
-        />
-      ),
+      children: <GroupsTab step={groupStep()} />,
     },
     {
       key: 'permissions',

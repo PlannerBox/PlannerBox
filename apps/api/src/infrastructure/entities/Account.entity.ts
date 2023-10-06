@@ -4,9 +4,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RolePermissions } from './RolePermissions.entity';
+import { GroupMembers } from './GroupMembers.entity';
+import { PaginateConfig, PaginationType } from 'nestjs-paginate';
+import { AccountWithoutPassword } from '../../domain/models/account';
 
 @Index('Account_pkey', ['id'], { unique: true })
 @Entity('Account', { schema: 'public' })
@@ -52,4 +56,7 @@ export class Account {
   @ManyToOne(() => RolePermissions, (rolePermissions) => rolePermissions, { eager: true})
   @JoinColumn([{ name: 'roleId', referencedColumnName: 'id' }])
   rolePermissions: RolePermissions;
+
+  @OneToMany(() => GroupMembers, (groupMembers) => groupMembers.account, { eager: true })
+  groups?: GroupMembers[];
 }

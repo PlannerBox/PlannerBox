@@ -1,4 +1,3 @@
-import { get } from 'http';
 import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
 import {
   IJwtService,
@@ -24,13 +23,13 @@ export class LoginUseCases {
       'LoginUseCases execute',
       `The user ${username} have been logged.`,
     );
-    const payload: IJwtServicePayload = { 
+    const payload: IJwtServicePayload = {
       username: username,
     };
     const secret = this.jwtConfig.getJwtSecret();
     const expiresIn = this.jwtConfig.getJwtExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.jwtConfig.getJwtExpirationTime()}`;
+    return `session=${token}; HttpOnly; Path=/; Max-Age=${this.jwtConfig.getJwtExpirationTime()}`;
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
@@ -68,9 +67,9 @@ export class LoginUseCases {
     }
     return {
       id: user.id,
-      username: user.username, 
+      username: user.username,
       role: user.rolePermissions.role,
-      permissions: user.rolePermissions.permissions
+      permissions: user.rolePermissions.permissions,
     };
   }
 

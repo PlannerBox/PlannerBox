@@ -18,7 +18,7 @@ export const getTypeOrmModuleOptions = (
     synchronize: false,
     schema: config.getDatabaseSchema(),
     migrationsRun: true,
-    migrationsTableName: '_migrations',
+    migrationsTableName: '_MigrationHistory',
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   } as TypeOrmModuleOptions);
 

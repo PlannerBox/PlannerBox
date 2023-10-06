@@ -6,21 +6,26 @@ import {
   Cascader,
   Form,
   Input,
+  Popover,
   Select,
   Space,
   Switch,
   Table,
+  Tag,
+  Typography,
 } from 'antd';
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import UsersList from '../../../../../components/UsersList';
+import { UserElementProps } from '../../../../../components/UsersList/partials/UserElement';
 
 type UsersTabProps = {
-  step?: 'list' | 'create';
+  step?: 'list' | 'create' | 'manage';
 };
 
-interface DataType {
+interface GroupDataType {
   key: string;
   uuid: string;
   name: string;
@@ -61,7 +66,7 @@ const fakeGroups = [
   },
 ];
 
-const columns: ColumnsType<DataType> = [
+const groupColumns: ColumnsType<GroupDataType> = [
   {
     title: 'Nom',
     dataIndex: 'name',
@@ -93,10 +98,149 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const data: DataType[] = fakeGroups.map((group) => ({
+const groupData: GroupDataType[] = fakeGroups.map((group) => ({
   key: group.uuid,
   ...group,
 }));
+
+interface Group {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+const fakeGroupOptions: Group[] = [
+  {
+    value: 'MS2D-AL',
+    label: 'MS2D-AL',
+  },
+  {
+    value: 'Bac+5',
+    label: 'Bac+5',
+  },
+  {
+    value: '2023',
+    label: '2023',
+  },
+  {
+    value: 'BGs',
+    label: 'BGs',
+  },
+];
+
+interface MembersDataType {
+  key: string;
+  lastname: string;
+  firstname: string;
+  mail: string;
+  responsible: boolean;
+}
+
+const fakeGroupMembers: Omit<MembersDataType, 'key'>[] = [
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: true,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+  {
+    lastname: 'Roberto',
+    firstname: 'Alberto',
+    mail: 'alberto@gmail.com',
+    responsible: false,
+  },
+];
+
+const membersColumns: ColumnsType<MembersDataType> = [
+  {
+    title: 'Nom',
+    dataIndex: 'lastname',
+    key: 'lastname',
+  },
+  {
+    title: 'Prénom',
+    dataIndex: 'firstname',
+    key: 'firstname',
+  },
+  {
+    title: 'Adresse mail',
+    dataIndex: 'mail',
+    key: 'mail',
+    render: (_, { mail, responsible }) => (
+      <>
+        {mail}
+        {responsible === true && (
+          <>
+            <Tag color='blue' style={{ marginLeft: 'var(--spacing-12)' }}>
+              Responsable
+            </Tag>
+          </>
+        )}
+      </>
+    ),
+  },
+];
+
+const membersData: MembersDataType[] = fakeGroupMembers
+  .sort((value) => (value.responsible ? -1 : 1))
+  .map((member, index) => ({
+    key: index.toString(),
+    ...member,
+  }));
 
 const { Option } = Select;
 
@@ -129,37 +273,115 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
           .indexOf(inputValue.toLowerCase()) > -1
     );
 
-  interface Group {
-    value: string;
-    label: string;
-    disabled?: boolean;
-  }
-
-  const fakeGroupOptions: Group[] = [
-    {
-      value: 'MS2D-AL',
-      label: 'MS2D-AL',
-    },
-    {
-      value: 'Bac+5',
-      label: 'Bac+5',
-    },
-    {
-      value: '2023',
-      label: '2023',
-    },
-    {
-      value: 'BGs',
-      label: 'BGs',
-    },
-  ];
-
   const shallowRedirect = useCallback(
     (key: string) => {
       router.push(`/users-management/groups/${key}`, { shallow: true });
     },
     [router]
   );
+
+  const { Text } = Typography;
+
+  const addMemberPopoverContent = () => {
+    const [users, setUsers] = useState<UserElementProps[]>([]);
+    const fakeUsers: UserElementProps[] = [
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+      {
+        firstname: 'Roberto',
+        lastname: 'Alberto',
+        email: 'robert@albert.com',
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-12)',
+        }}
+      >
+        <Input
+          placeholder='Rechercher un utilisateur'
+          onChange={(input) =>
+            input.currentTarget.value.length > 0
+              ? setUsers(fakeUsers)
+              : setUsers([])
+          }
+        />
+        <UsersList users={users} />
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -177,7 +399,11 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
               Créer un groupe
             </Button>
           </div>
-          <Table columns={columns} dataSource={data} scroll={{ x: 150 }} />
+          <Table
+            columns={groupColumns}
+            dataSource={groupData}
+            scroll={{ x: 150 }}
+          />
         </>
       )}
       {step === 'create' && (
@@ -275,6 +501,34 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             </Button>
           </Form.Item>
         </Form>
+      )}
+      {step === 'manage' && (
+        <>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              margin: 'var(--spacing-16) var(--spacing-8)',
+            }}
+          >
+            <Text strong>Membres du groupe</Text>
+            <Popover
+              placement='leftTop'
+              title='Sélectionner le membre'
+              content={addMemberPopoverContent}
+              trigger='click'
+            >
+              <Button type='primary'>Ajouter un membre</Button>
+            </Popover>
+          </div>
+          <Table
+            columns={membersColumns}
+            dataSource={membersData}
+            scroll={{ x: 150 }}
+          />
+        </>
       )}
     </div>
   );

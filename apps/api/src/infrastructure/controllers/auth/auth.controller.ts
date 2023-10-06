@@ -12,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOperation,
@@ -22,18 +21,18 @@ import {
 import { IsAuthenticatedUseCases } from '../../../usecases/auth/isAuthenticated.usecases';
 import { LoginUseCases } from '../../../usecases/auth/login.usecases';
 import { LogoutUseCases } from '../../../usecases/auth/logout.usecases';
+import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
 import { SignUpUseCases } from '../../../usecases/auth/signUp.usecases';
 import { JwtAuthGuard } from '../../common/guards/jwtAuth.guard';
 import JwtRefreshGuard from '../../common/guards/jwtRefresh.guard';
 import { LoginGuard } from '../../common/guards/login.guard';
 import { ApiResponseType } from '../../common/swagger/response.decorator';
+import { JsonResult } from '../../helpers/JsonResult';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 import { IsAuthPresenter } from './auth.presenter';
 import { AuthLoginDto } from './authDto.class';
 import { AuthPasswordDto, AuthSignUpDto } from './authSignUpDto.class';
-import { ResetPasswordUseCases } from '../../../usecases/auth/resetPassword.usecases';
-import { JsonResult } from '../../helpers/JsonResult';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -59,7 +58,6 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LoginGuard)
-  @ApiBearerAuth()
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Req() request: any) {
@@ -74,35 +72,52 @@ export class AuthController {
       refreshTokenCookie,
     ]);
     return {
-      access_token: accessTokenCookie.replace('Authentication=', ''),
+      access_token: accessTokenCookie.replace('session=', ''),
       refresh_token: refreshTokenCookie.replace('Refresh=', ''),
     };
   }
 
   @Post('signup')
   @ApiBody({ type: AuthSignUpDto })
-  @ApiOperation({ description: 'signup' })
+  @ApiOperation({ description: 'Create a new user account' })
+  @ApiResponse({ status: 200, description: 'Signup successful' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request (user already created or invalid data)',
+  })
   async signup(@Body() newAccount: AuthSignUpDto, @Req() request: any) {
     const checkUserName = await this.isAuthUsecaseProxy
       .getInstance()
       .execute(newAccount.username);
+
     if (checkUserName) {
-      throw new BadRequestException('User already created');
+      const result = [
+        {
+          property: 'username',
+          message: "Le nom d'utilisateur est déjà utilisé",
+        },
+      ];
+      throw new BadRequestException(result);
     }
+
     const account = await this.signUpUsecaseProxy
       .getInstance()
       .signUp(newAccount);
+
     const accessTokenCookie = await this.loginUsecaseProxy
       .getInstance()
       .getCookieWithJwtToken(account.username);
+
     const refreshTokenCookie = await this.loginUsecaseProxy
       .getInstance()
       .getCookieWithJwtRefreshToken(account.username);
+
     request.res.setHeader('Set-Cookie', [
       accessTokenCookie,
       refreshTokenCookie,
     ]);
-    return JsonResult.Convert('Signup successful');
+
+    return JsonResult.Convert('Compte créé');
   }
 
   @Post('logout')
@@ -111,13 +126,15 @@ export class AuthController {
   async logout(@Req() request: any) {
     const cookie = await this.logoutUsecaseProxy.getInstance().execute();
     request.res.setHeader('Set-Cookie', cookie);
-    return JsonResult.Convert('Logout successful');
+    return JsonResult.Convert('Déconnexion réussie');
   }
 
   @Get('is-authenticated')
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ description: 'is_authenticated' })
+  @ApiOperation({
+    description:
+      'check if user is authenticated while checking if the mail which is in the token exists in the database',
+  })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
     const user = await this.isAuthUsecaseProxy
@@ -130,14 +147,14 @@ export class AuthController {
 
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
-  @ApiBearerAuth()
+  @ApiOperation({ description: 'refresh user JWT' })
   async refresh(@Req() request: any) {
     const accessTokenCookie = await this.loginUsecaseProxy
       .getInstance()
       .getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return {
-      access_token: accessTokenCookie.replace('Authentication=', ''),
+      access_token: accessTokenCookie.replace('session=', ''),
     };
   }
 
@@ -153,7 +170,7 @@ export class AuthController {
 
     // We don't specify if the mail exists or not to the user to avoid giving information to a potential attacker
     return JsonResult.Convert(
-      `If your mail is correct you should recieve a mail at the address : ${mail}`,
+      `Si l'adresse mail ${mail} existe, un mail de réinitialisation de mot de passe a été envoyé`,
     );
   }
 
@@ -168,15 +185,21 @@ export class AuthController {
       .getInstance()
       .resetPassword(token, accountPassword.password);
 
-    return JsonResult.Convert('the password has been changed');
+    return JsonResult.Convert('Le mot de passe a été modifié');
   }
 
   @Get('is-valid/:token')
   @HttpCode(200)
-  @ApiOperation({ description: 'check if a token is valid' })
+  @ApiOperation({ description: 'check if the reset password token is valid' })
+  @ApiResponse({ status: 200, description: 'Token is valid' })
+  @ApiResponse({ status: 400, description: 'Token is not valid' })
   async isValidToken(@Param('token') token: string) {
-    const response = await this.resetPasswordUsecaseProxy.getInstance().tokenIsValid(token);
+    const response = await this.resetPasswordUsecaseProxy
+      .getInstance()
+      .tokenIsValid(token);
 
-    return response.statusCode ? response : JsonResult.Convert('The token is valid');
+    return response.statusCode
+      ? response
+      : JsonResult.Convert('Le token est valide');
   }
 }

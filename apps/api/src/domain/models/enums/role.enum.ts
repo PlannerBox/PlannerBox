@@ -2,7 +2,7 @@ export enum Role {
   Admin = 'admin',
   Student = 'student',
   ExternTeacher = 'externTeacher',
-  InternTeacher = 'internTeacher'
+  InternTeacher = 'internTeacher',
 }
 
 export default Role;

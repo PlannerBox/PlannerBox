@@ -31,7 +31,15 @@ import { MaterialRepository } from '../repositories/material.repository';
 import { MaterialUseCase } from '../../usecases/material/material.usecase';
 import { UseMaterialRoomRepository } from '../repositories/useMaterialRoom.repository';
 import { UseMaterialRoomUseCase } from '../../usecases/material/useMaterialRoom.usecase';
-
+import { StudentRepository } from '../repositories/student.repository';
+import { TeacherRepository } from '../repositories/teacher.repository';
+import { GroupRepository } from '../repositories/group.repository';
+import { GetGroupUseCase } from '../../usecases/group/getGroup.usecase';
+import { AddMemberUseCase } from '../../usecases/group/manageMember.usecase';
+import { CreateGroupUseCase } from '../../usecases/group/createGroup.usecase';
+import { UpdateGroupUseCase } from '../../usecases/group/updateGroup.usecase';
+import { GroupMemberRepository } from '../repositories/groupMemberRepository';
+import { DeleteGroupUseCase } from '../../usecases/group/deleteGroup.usecase';
 @Module({
   imports: [
     LoggerModule,
@@ -48,14 +56,23 @@ export class UsecasesProxyModule {
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
   static SIGNUP_USECASES_PROXY = 'SignUpUseCasesProxy';
   static RESET_PASSWORD_USECASES_PROXY = 'ResetPasswordUseCasesProxy';
+
+  // AccountManagement
   static ACCOUNT_MANAGEMENT_USECASES_PROXY = 'AccountManagementUseCasesProxy';
   static UPDATE_USER_ACCOUNT_PROXY = 'UpdateAccountUseCasesProxy';
+  //Place
   static PLACE_MANAGEMENT_PROXY = 'PlaceManagementProxy';
   static ROOM_MANAGEMENT_PROXY ='RoomManagementProxy';
+  //Material
   static MATERIAL_MANAGEMENT_PROXY ='MaterialManagementProxy';
   static USE_MATERIAL_ROOM_MANAGEMENT_PROXY='UseMaterialRoomManagementProxy';
 
-
+  // GroupManagement
+  static GET_GROUP_USECASES_PROXY = 'GetGroupUseCasesProxy';
+  static ADD_MEMBER_USECASES_PROXY = 'AddMemberUseCasesProxy';
+  static CREATE_GROUP_USECASES_PROXY = 'CreateGroupUseCasesProxy';
+  static UPDATE_GROUP_USECASES_PROXY = 'UpdateGroupUseCasesProxy';
+  static DELETE_GROUP_USECASES_PROXY = 'DeleteGroupUseCasesProxy';  
   static register(): DynamicModule {
     return {
       module: UsecasesProxyModule,
@@ -158,15 +175,18 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [AccountRepository, BcryptService, LoggerService],
+          inject: [AccountRepository, StudentRepository, AdminRepository, TeacherRepository, BcryptService, LoggerService],
           provide: UsecasesProxyModule.UPDATE_USER_ACCOUNT_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
+            studentRepository: StudentRepository,
+            adminRepository: AdminRepository,
+            teacherRepository: TeacherRepository,
             bcryptService: BcryptService,
             logger: LoggerService
           ) =>
             new UseCaseProxy(
-              new UpdateAccountUseCase(accountRepository, bcryptService, logger),
+              new UpdateAccountUseCase(accountRepository, studentRepository, adminRepository, teacherRepository, bcryptService, logger)
             ),
         },
         {
@@ -210,7 +230,63 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new UseMaterialRoomUseCase(useMaterialRepository),
             ),
-        }
+        },
+        {
+          inject: [GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.GET_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new GetGroupUseCase(groupRepository, logger),
+            ),
+        },
+        {
+          inject: [GroupRepository, GroupMemberRepository, AccountRepository, LoggerService],
+          provide: UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            groupMemberRepository: GroupMemberRepository,
+            accountRepository: AccountRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new AddMemberUseCase(groupRepository, groupMemberRepository, accountRepository, logger),
+            ),
+        },
+        {
+          inject: [GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new CreateGroupUseCase(groupRepository, logger),
+            ),
+        },
+        {
+          inject: [GroupRepository, LoggerService],
+          provide: UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository,
+            logger: LoggerService
+          ) =>
+            new UseCaseProxy(
+              new UpdateGroupUseCase(groupRepository, logger),
+            ),
+        },
+        {
+          inject: [GroupRepository],
+          provide: UsecasesProxyModule.DELETE_GROUP_USECASES_PROXY,
+          useFactory: (
+            groupRepository: GroupRepository
+          ) =>
+            new UseCaseProxy(
+              new DeleteGroupUseCase(groupRepository),
+            ),
+        },
       ],
       exports: [
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
@@ -224,7 +300,12 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.PLACE_MANAGEMENT_PROXY,
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
         UsecasesProxyModule.MATERIAL_MANAGEMENT_PROXY,
-        UsecasesProxyModule.USE_MATERIAL_ROOM_MANAGEMENT_PROXY
+        UsecasesProxyModule.USE_MATERIAL_ROOM_MANAGEMENT_PROXY,
+        UsecasesProxyModule.GET_GROUP_USECASES_PROXY,
+        UsecasesProxyModule.ADD_MEMBER_USECASES_PROXY,
+        UsecasesProxyModule.CREATE_GROUP_USECASES_PROXY,
+        UsecasesProxyModule.UPDATE_GROUP_USECASES_PROXY,
+        UsecasesProxyModule.DELETE_GROUP_USECASES_PROXY,
       ],
     };
   }
