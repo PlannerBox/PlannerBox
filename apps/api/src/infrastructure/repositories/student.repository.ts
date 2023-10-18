@@ -28,8 +28,7 @@ export class StudentRepository implements IStudentRepository {
     async updateStudent(student: StudentM): Promise<StudentM> {
         const studentEntity = StudentMapper.fromModeltoEntity(student);
 
-        await this.studentRepository.update(
-            studentEntity.id, studentEntity);
+        await this.studentRepository.save(studentEntity);
 
         return StudentMapper.fromEntityToModel(studentEntity);
     }

@@ -4,6 +4,8 @@ import { Repository } from "typeorm";
 import { ITeacherRepository } from "../../domain/repositories/teacherRepository.interface";
 import { TeacherM } from "../../domain/models/teacher";
 import { TeacherMapper } from "../mappers/teacher.mapper";
+import { NotFoundError } from "rxjs";
+import { NotFoundException } from "@nestjs/common";
 
 export class TeacherRepository implements ITeacherRepository {
     constructor(
@@ -25,12 +27,12 @@ export class TeacherRepository implements ITeacherRepository {
         return TeacherMapper.fromEntityToModel(teacherEntity);
     }
 
-    async updateTeacher(teacher: TeacherM): Promise<TeacherM> {
+    async updateTeacher(teacher: TeacherM): Promise<any> {
+        console.log(teacher);
         const teacherEntity = TeacherMapper.fromModelToEntity(teacher);
+        console.log(teacherEntity);
+        await this.teacherRepository.save(teacherEntity);
 
-        await this.teacherRepository.update(
-            teacherEntity.id, teacherEntity);
-
-        return TeacherMapper.fromEntityToModel(teacherEntity);
+        return teacher;
     }
 }

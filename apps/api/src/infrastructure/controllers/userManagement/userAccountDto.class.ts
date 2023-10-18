@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsEmail, IsNotEmpty, IsString, IsUUID, Matches, MaxLength } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID, Matches, MaxLength } from "class-validator";
 import Role from "../../../domain/models/enums/role.enum";
 import FormationMode from "../../../domain/models/enums/formationMode.enum";
 import { GroupMemberSummary } from "../groupManagement/groupDto.class";
@@ -26,22 +26,22 @@ export class UserAccountWithoutPasswordDto {
   @IsString()
   readonly lastname: string;
 
-  @ApiProperty({ required: true })
+  @IsOptional()
   @IsNotEmpty({ message: 'Birth date cannot be empty' })
   @IsDateString()
   readonly birthDate: Date;
 
-  @ApiProperty({ required: true })
+  @IsOptional()
   @IsString()
   @MaxLength(50, { message: 'Birth place too long' })
   @IsNotEmpty({ message: 'Birth place can not be empty' })
   readonly birthPlace: string;
 
-  @ApiProperty({ required: true })
+  @IsOptional()
   @IsNotEmpty({ message: 'Active cannot be empty' })
   readonly active: boolean;
 
-  @ApiProperty({ required: true })
+  @IsOptional()
   @IsNotEmpty({ message: 'Role cannot be empty' })
   readonly role: Role;
 }

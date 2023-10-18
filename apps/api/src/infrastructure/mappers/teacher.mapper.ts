@@ -1,5 +1,6 @@
 import { TeacherM } from "../../domain/models/teacher";
 import { Teacher } from "../entities/Teacher.entity";
+import { TeacherSkills } from "../entities/TeacherSkills.entity";
 import { AccountMapper } from "./account.mapper";
 import { SkillMapper } from "./skill.mapper";
 
@@ -8,8 +9,8 @@ export class TeacherMapper {
         return {
             id: teacherM.teacherId,
             intern: teacherM.intern,
+            teacherSkills: teacherM.teacherSkills,
             account: AccountMapper.fromModelToEntity(teacherM),
-            teacherSkills: []
         }
     }
 

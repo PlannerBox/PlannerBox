@@ -27,7 +27,8 @@ export class UpdateAccountUseCase {
 
     async updateAccount(userAccountDto: GenericUserAccountDto): Promise<AccountWithoutPassword> {
 
-        switch (userAccountDto.role) {
+        let account = await this.accountRepository.findAccountById(userAccountDto.id);
+        switch (account.role) {
             case 'student':
                 const studentAccount = StudentMapper.fromGenericDtoToModel(userAccountDto);
                 return await this.updateStudent(studentAccount);
@@ -84,22 +85,22 @@ export class UpdateAccountUseCase {
     }
 
     private async updateTeacher(teacherM: TeacherM): Promise<any> {
-        const teacher = await this.teacherRepository.findTeacherById(teacherM.id);
+        const teacher = await this.teacherRepository.findTeacherById(teacherM.teacherId);
 
         if (!teacher) {
             this.logger.error('UpdateAccountUseCases updateTeacher', 'Account not found')
             throw new NotFoundException('Account not found');
         }
 
-        teacher.username = teacherM.username;
-        teacher.firstname = teacherM.firstname;
-        teacher.lastname = teacherM.lastname;
-        teacher.birthDate = teacherM.birthDate;
-        teacher.birthPlace = teacherM.birthPlace;
-        teacher.active = teacherM.active;
-        teacher.role = teacherM.role;
-        teacher.rolePermissions = teacherM.rolePermissions;
-        teacher.intern = teacherM.intern;
+        teacher.username = teacherM.username ?? teacher.username;
+        teacher.firstname = teacherM.firstname ?? teacher.firstname;
+        teacher.lastname = teacherM.lastname ?? teacher.lastname;
+        teacher.birthDate = teacherM.birthDate ?? teacher.birthDate;
+        teacher.birthPlace = teacherM.birthPlace ?? teacher.birthPlace;
+        teacher.active = teacherM.active ?? teacher.active;
+        teacher.role = teacherM.role ?? teacher.role;
+        teacher.rolePermissions = teacherM.rolePermissions ?? teacher.rolePermissions;
+        teacher.intern = teacherM.intern ?? teacher.intern;
 
         return await this.teacherRepository.updateTeacher(teacher);
     }
