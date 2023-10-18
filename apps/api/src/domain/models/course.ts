@@ -1,4 +1,5 @@
 import { Skill } from "../../infrastructure/entities/Skill.entity";
+import CourseType from "./enums/courseType.enum";
 import { GroupM } from "./group";
 
 export class CourseM {
@@ -6,6 +7,7 @@ export class CourseM {
     name: string;
     startDate: Date;
     endDate: Date;
+    type: CourseType;
     group: GroupM;
     skills: Skill[];
 }

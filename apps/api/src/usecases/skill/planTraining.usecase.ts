@@ -23,11 +23,11 @@ export class PlanTrainingUseCase {
 
         const skillsExists = await this.skillRepository.skillsExists(planningSession.skillIds);
         if (!skillsExists) {
-            throw new NotFoundException('Skill not found');
+            throw new NotFoundException('Liste des compétences invalide');
         }
         const accountsExists = await this.accountRepository.accountExists(planningSession.teacherAccountIds);
         if (!accountsExists) {
-            throw new NotFoundException('Teacher not found');
+            throw new NotFoundException('Liste des enseignants invalide');
         }
         
         const groupCounter = await this.groupRepository.countGroupByType(GroupType.Formation);
@@ -36,7 +36,7 @@ export class PlanTrainingUseCase {
         formationGroup.name = 'Formation#' + (groupCounter + 1);
         formationGroup.color = 'blue';
         formationGroup.type = GroupType.Formation;
-
+        
         formationGroup.groupMembers = [];
 
         planningSession.teacherAccountIds.forEach(accountId => {
@@ -55,13 +55,14 @@ export class PlanTrainingUseCase {
         course.startDate = planningSession.startDate;
         course.endDate = planningSession.endDate;
         course.group = newGroup;
+        course.type = planningSession.courseType;
         course.skills = skills;
 
         await this.courseRepository.insertCourse(course);
 
         return {
             statusCode: HttpStatus.OK,
-            message: 'Training planned successfully'
+            message: 'La formation a bien été planifiée'
         };
     }
 }

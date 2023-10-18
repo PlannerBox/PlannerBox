@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDateString, IsUUID } from "class-validator";
 import { UUID } from "crypto";
+import CourseType from "../../../domain/models/enums/courseType.enum";
 
 export class PlanningSessionDto {
     @ApiProperty({ required: false, name: 'id' })
@@ -21,4 +22,7 @@ export class PlanningSessionDto {
     @ApiProperty({ required: true, name: 'endDate' })
     @IsDateString({}, { message: 'endDate doit être une date' })
     endDate: Date;
+
+    @ApiProperty({ required: true, name: 'courseType' })
+    courseType: CourseType;
 }

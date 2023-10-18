@@ -53,6 +53,7 @@ export class SkillManagementController {
         return await this.createSkillUseCase.getInstance().updateSkill(skill);
     }
 
+    // déplacer dans controller eventScheduler
     @Post('skill/training/add')
     @ApiResponse({ status: 200, description: 'Training successfully planned' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
