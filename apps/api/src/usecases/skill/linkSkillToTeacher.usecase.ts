@@ -27,7 +27,6 @@ export class LinkSkillToTeacherUseCase {
             const teacherSkill = new TeacherSkills(teacherSkillsDto.teacherId, skillId);
             teacherSkills.push(teacherSkill);
         });
-
         await this.teacherSkillsRepository.saveTeacherSkills(teacherSkills);
 
         return {

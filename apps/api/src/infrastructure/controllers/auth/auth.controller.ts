@@ -101,19 +101,6 @@ export class AuthController {
       .getInstance()
       .signUp(newAccount);
 
-    const accessTokenCookie = await this.loginUsecaseProxy
-      .getInstance()
-      .getCookieWithJwtToken(account.username);
-
-    const refreshTokenCookie = await this.loginUsecaseProxy
-      .getInstance()
-      .getCookieWithJwtRefreshToken(account.username);
-
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
-
     return JsonResult.Convert('Compte créé');
   }
 

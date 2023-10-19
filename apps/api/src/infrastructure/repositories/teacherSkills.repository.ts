@@ -10,6 +10,7 @@ export class TeacherSkillsRepository implements ITeacherSkillsRepository {
     ) {}
 
     async saveTeacherSkills(teacherSkills: TeacherSkills[]): Promise<any> {
+        await this.teacherSkillsRepository.delete({ teacherId: teacherSkills[0].teacherId });
         return await this.teacherSkillsRepository.save(teacherSkills);
     }
 }
