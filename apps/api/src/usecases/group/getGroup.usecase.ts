@@ -44,15 +44,6 @@ export class GetGroupUseCase {
         return GroupMapper.fromEntityToModel(group);
     }
 
-    async findGroupDetailsByAccount(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<any> {
-        let group = await this.groupRepository.findGroupBy(id, name, pageOptionsDto);
-
-        if (!group) {
-            throw new BadRequestException(`group with id ${id} and name ${name} not found`);
-        }
-        return group;
-    }
-
     async findGroupPaginatedList(query: PaginateQuery): Promise<Paginated<Group>> {
         let groupList = await this.groupRepository.findPaginated(query);
         this.logger.log('GetGroupUseCase', `Found ${groupList.meta.totalItems} groups`);

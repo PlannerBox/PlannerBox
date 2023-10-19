@@ -15,8 +15,6 @@ import { RolePermissions } from '../entities/RolePermissions.entity';
 import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import { AccountMapper } from '../mappers/account.mapper';
-import { FormationMode } from '../../domain/models/enums/formationMode.enum';
-import { FilterOperator, FilterSuffix, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
 
 
 @Injectable()

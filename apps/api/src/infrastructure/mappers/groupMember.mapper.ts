@@ -33,7 +33,6 @@ export class GroupMemberMapper {
       groupName: groupMember.group.name,
       isOwner: groupMember.isOwner,
       groupMemberCount: groupMember.group.groupMembers.length,
-      color: groupMember.group.color,
     };
   }
 }

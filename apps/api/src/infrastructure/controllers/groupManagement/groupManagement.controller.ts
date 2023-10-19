@@ -82,23 +82,6 @@ export class GroupManagementController {
         return GroupMapper.fromModelToDetailDto(group);
     }
 
-    @Get('group/details')
-    @HttpCode(200)
-    @ApiResponse({
-        status: 200,
-        description: 'Returns details of a specific group',
-        type: GroupDetailDto
-    })
-    @ApiResponse({
-        status: 400,
-        description: 'No group found',
-    })
-    @ApiOperation({ description: 'Returns details of a specific group' })
-    async getGroupDetailsByAccount(@Query('id') id: string, @Query('name') name: string): Promise<GroupDetailDto> {
-        const group = await this.getGroupUsecasesProxy.getInstance().findGroupDetailsByAccount(id, name);
-        return GroupMapper.fromModelToDetailDto(group);
-    }
-
     @Get('user/summary')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
