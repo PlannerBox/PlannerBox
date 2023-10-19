@@ -55,8 +55,8 @@ export class AccountManagementUseCases {
     /// <summary>
     ///     Get role permissions
     /// </summary>
-    async getRolePermissions(role: Role): Promise<any> {
-        return await this.rolePermissionsRepository.getRolePermissions(role);
+    async getRolePermissions(): Promise<any> {
+        return await this.rolePermissionsRepository.getRolePermissions();
     }
 
     /// <summary>

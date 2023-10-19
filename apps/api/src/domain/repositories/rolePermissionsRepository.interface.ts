@@ -4,5 +4,5 @@ import Role from "../models/enums/role.enum";
 
 export interface IRolePermissionsRepository {
     updateRolePermissions(role: Role, permissions: Permission[]): Promise<void>;
-    getRolePermissions(role: Role): Promise<RolePermissions>;
+    getRolePermissions(): Promise<RolePermissions[]>;
 }

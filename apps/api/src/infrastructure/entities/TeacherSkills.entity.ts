@@ -4,6 +4,12 @@ import { Skill } from "./Skill.entity";
 
 @Entity('TeacherSkills', { schema: 'public' })
 export class TeacherSkills {
+
+    constructor(teachId: string, skillId: string) {
+        this.teacherId = teachId;
+        this.skillId = skillId;
+    }
+
     @PrimaryGeneratedColumn('uuid', { name: 'id' })
     id: string;
     

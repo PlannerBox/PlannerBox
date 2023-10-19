@@ -14,8 +14,8 @@ export class RolePermissionsRepository implements IRolePermissionsRepository {
         private readonly rolePermissionsRepository: Repository<RolePermissions>
     ) {}
 
-    async getRolePermissions(role: Role): Promise<RolePermissions> {
-        return await this.rolePermissionsRepository.findOne({where: {role: role }});
+    async getRolePermissions(): Promise<RolePermissions[]> {
+        return await this.rolePermissionsRepository.find();
     }
 
     async updateRolePermissions(role: Role, permissions: Permission[]): Promise<void> {

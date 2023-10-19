@@ -3,14 +3,11 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Account } from './Account.entity';
-import { Skill } from './Skill.entity';
 import { TeacherSkills } from './TeacherSkills.entity';
 
 @Index('Teacher_pkey', ['id'], { unique: true })

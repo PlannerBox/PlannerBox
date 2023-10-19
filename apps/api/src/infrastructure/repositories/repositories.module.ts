@@ -27,10 +27,12 @@ import { Skill } from '../entities/Skill.entity';
 import { SkillRepository } from './skill.repository';
 import { Course } from '../entities/Course.entity';
 import { CourseRepository } from './course.repository';
+import { TeacherSkills } from '../entities/TeacherSkills.entity';
+import { TeacherSkillsRepository } from './teacherSkills.repository';
 
 @Module({
-  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course])],
-  providers: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository],
-  exports: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository],
+  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course, TeacherSkills])],
+  providers: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository],
+  exports: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository],
 })
 export class RepositoriesModule {}

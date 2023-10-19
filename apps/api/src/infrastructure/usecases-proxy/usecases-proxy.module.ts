@@ -46,6 +46,8 @@ import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
 import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
 import { PlanTrainingUseCase } from '../../usecases/skill/planTraining.usecase';
 import { CourseRepository } from '../repositories/course.repository';
+import { LinkSkillToTeacherUseCase } from '../../usecases/skill/linkSkillToTeacher.usecase';
+import { TeacherSkillsRepository } from '../repositories/teacherSkills.repository';
 
 @Module({
   imports: [
@@ -86,6 +88,7 @@ export class UsecasesProxyModule {
   static FIND_SKILL_USECASES_PROXY = 'FindSkillUseCasesProxy';
   static DELETE_SKILL_USECASES_PROXY = 'DeleteSkillUseCasesProxy';
   static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
+  static LINK_SKILL_TO_TEACHER_USECASES_PROXY = 'LinkSkillToTeacherUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -350,6 +353,17 @@ export class UsecasesProxyModule {
               new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, courseRepository, logger),
             ),
         },
+        {
+          inject: [TeacherRepository, TeacherSkillsRepository],
+          provide: UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY,
+          useFactory: (
+            teacherRepository: TeacherRepository,
+            teacherSkillsRepository: TeacherSkillsRepository
+          ) =>
+            new UseCaseProxy(
+              new LinkSkillToTeacherUseCase(teacherRepository, teacherSkillsRepository),
+            ),
+        }
       ],
       exports: [
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
@@ -373,6 +387,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.FIND_SKILL_USECASES_PROXY,
         UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
         UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
+        UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY,
       ],
     };
   }

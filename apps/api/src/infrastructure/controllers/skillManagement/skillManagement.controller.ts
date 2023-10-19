@@ -9,6 +9,8 @@ import { FindSkillUseCase } from "../../../usecases/skill/findSkill.usecase";
 import { DeleteSkillUseCase } from "../../../usecases/skill/deleteSkill.usecase";
 import { PlanningSessionDto } from "./planningSessionDto.class";
 import { PlanTrainingUseCase } from "../../../usecases/skill/planTraining.usecase";
+import { TeacherSkillsDto } from "./teacherSkillsDto";
+import { LinkSkillToTeacherUseCase } from "../../../usecases/skill/linkSkillToTeacher.usecase";
 
 @Controller('skill-management')
 @ApiTags('skill-management')
@@ -25,7 +27,9 @@ export class SkillManagementController {
         @Inject(UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY)
         private readonly deleteSkillUseCase: UseCaseProxy<DeleteSkillUseCase>,
         @Inject(UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY)
-        private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>
+        private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>,
+        @Inject(UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY)
+        private readonly linkSkillToTeacherUseCase: UseCaseProxy<LinkSkillToTeacherUseCase>
     ) {}
 
     @Get('skill/all')
@@ -62,6 +66,16 @@ export class SkillManagementController {
     async addTrainingSession(@Body() planningSession: PlanningSessionDto): Promise<any> {
         return await this.planTrainingUseCase.getInstance().planTraining(planningSession);
     }    
+
+    @Post('skill/teacher/add')
+    @HttpCode(200)
+    @ApiResponse({ status: 200, description: 'Skill successfully added to teacher' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
+    @ApiBody({ type: TeacherSkillsDto })
+    async addSkillToTeacher(@Body() teacherSkills: TeacherSkillsDto): Promise<any> {
+        return await this.linkSkillToTeacherUseCase.getInstance().addTeacherSkills(teacherSkills);
+    }
 
     @Delete('skill/delete/:skillId')
     @HttpCode(204)

@@ -14,10 +14,11 @@ export class TeacherMapper {
         }
     }
 
-    static fromEntityToModel(teacher): TeacherM {
+    static fromEntityToModel(teacher: Teacher): TeacherM {
         return {
             teacherId: teacher.id,
             intern: teacher.intern,
+            teacherSkills: teacher.teacherSkills,
             ...AccountMapper.fromEntityToModel(teacher.account)
         }
     }

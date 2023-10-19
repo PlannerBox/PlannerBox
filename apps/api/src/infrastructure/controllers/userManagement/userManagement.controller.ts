@@ -135,13 +135,13 @@ export class UserManagementController {
   @Get('role-permissions')
   @UseGuards(JwtAuthGuard)
   @HttpCode(200)
-  @ApiOperation({ description: 'get role permissions of the connected user' })
+  @ApiOperation({ description: 'get permissions of every role' })
   @ApiResponse({ status: 200, description: 'Role permissions' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getRolePermissions(@Req() request: any) {
     return await this.accountManagementUsecaseProxy
       .getInstance()
-      .getRolePermissions(request.user.role);
+      .getRolePermissions();
   }
 
   @Post('update')

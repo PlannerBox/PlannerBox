@@ -28,11 +28,9 @@ export class TeacherRepository implements ITeacherRepository {
     }
 
     async updateTeacher(teacher: TeacherM): Promise<any> {
-        console.log(teacher);
         const teacherEntity = TeacherMapper.fromModelToEntity(teacher);
         console.log(teacherEntity);
         await this.teacherRepository.save(teacherEntity);
-
         return teacher;
     }
 }
