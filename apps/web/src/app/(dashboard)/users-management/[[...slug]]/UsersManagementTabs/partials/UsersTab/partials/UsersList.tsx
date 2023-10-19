@@ -26,9 +26,9 @@ import {
 } from 'api-client';
 import { Role } from 'api-client/enums/Role';
 import { ReactNode, useEffect, useState } from 'react';
-import { useListUsers } from '../../../../../../hooks/useListUsers';
-import { useToggleUserState } from '../../../../../../hooks/useToggleUserState';
-import UserCreation from './UsersTab/partials/UserCreation';
+import { useListUsers } from '../../../../../../../../hooks/useListUsers';
+import { useToggleUserState } from '../../../../../../../../hooks/useToggleUserState';
+import UserCreation from './UserCreation';
 
 type UsersTabProps = {
   step?: 'list';

@@ -4,6 +4,7 @@ import {
   ToggleUserStateResponse,
   toggleUserState,
 } from 'api-client';
+import { useCookies } from 'react-cookie';
 
 type ToggleUserStateHookOptions = {
   onSuccess?: (data: ToggleUserStateResponse) => void;
@@ -14,9 +15,14 @@ const useToggleUserState = ({
   onSuccess,
   onError,
 }: ToggleUserStateHookOptions) => {
-  return useMutation<ToggleUserStateResponse, unknown, ToggleUserStateProps>({
-    mutationFn: async (data: ToggleUserStateProps) => {
-      return await toggleUserState({ ...data });
+  const [cookies] = useCookies(['session']);
+  return useMutation<
+    ToggleUserStateResponse,
+    unknown,
+    Omit<ToggleUserStateProps, 'session'>
+  >({
+    mutationFn: async (data: Omit<ToggleUserStateProps, 'session'>) => {
+      return await toggleUserState({ ...data, session: cookies['session'] });
     },
     onSuccess: (data) => {
       if (onSuccess) {
