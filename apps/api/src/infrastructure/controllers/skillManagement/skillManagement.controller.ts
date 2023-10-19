@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Pos
 import { UpsertSkillUseCase } from "../../../usecases/skill/upsertSkill.usecase";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
-import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SkillDto } from "./skillDto.class";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 import { FindSkillUseCase } from "../../../usecases/skill/findSkill.usecase";
@@ -33,6 +33,8 @@ export class SkillManagementController {
     ) {}
 
     @Get('skill/all')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ description: 'Get paginated list of all skills (with nestjs paginate)' })
     @ApiResponse({ status: 200, description: 'Get paginated list of all skills (with nestjs paginate)' })
     @ApiResponse({ status: 204, description: '0 skills found' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -41,6 +43,8 @@ export class SkillManagementController {
     }
 
     @Post('skill/create')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Create a new skill' })
     @ApiResponse({ status: 200, description: 'Skill created' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiBody({ type: SkillDto })
@@ -49,6 +53,8 @@ export class SkillManagementController {
     }
 
     @Post('skill/update')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Update an existing skill' })
     @ApiResponse({ status: 200, description: 'Skill updated' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill not found' })
@@ -59,6 +65,8 @@ export class SkillManagementController {
 
     // déplacer dans controller eventScheduler
     @Post('skill/training/add')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Plan a training session (will be moved soon !!!)' })
     @ApiResponse({ status: 200, description: 'Training successfully planned' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
@@ -67,18 +75,20 @@ export class SkillManagementController {
         return await this.planTrainingUseCase.getInstance().planTraining(planningSession);
     }    
 
-    @Post('skill/teacher/add')
+    @Post('skill/teacher/update')
     @HttpCode(200)
-    @ApiResponse({ status: 200, description: 'Skill successfully added to teacher' })
+    @ApiOperation({ description: 'Associate skills to a teacher' })
+    @ApiResponse({ status: 200, description: 'Teacher skill succesfully updated' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
     @ApiBody({ type: TeacherSkillsDto })
-    async addSkillToTeacher(@Body() teacherSkills: TeacherSkillsDto): Promise<any> {
+    async associateSkillToTeacher(@Body() teacherSkills: TeacherSkillsDto): Promise<any> {
         return await this.linkSkillToTeacherUseCase.getInstance().addTeacherSkills(teacherSkills);
     }
 
     @Delete('skill/delete/:skillId')
     @HttpCode(204)
+    @ApiOperation({ description: 'Delete an existing skill' })
     @ApiResponse({ status: 204, description: 'Skill deleted' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill not found' })
