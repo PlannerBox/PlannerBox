@@ -4,5 +4,5 @@ import { UseMaterialRoom } from "../../infrastructure/entities/UseMaterialRoom.e
 export class MaterialM{
     id? : string;
     name : string;
-    useMaterialRoom: UseMaterialRoom[];
+    useMaterialRoom?: UseMaterialRoom[];
 }

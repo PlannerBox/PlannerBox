@@ -13,7 +13,7 @@ import { Material } from "../entities/Material.entity";
 @Injectable()
 export class MaterialRepository implements IMaterialRepository {
     constructor(
-        @InjectRepository(Room)
+        @InjectRepository(Material)
         private readonly materialRepository: Repository<Material>
     ) {}
     async deleteMaterial(id: string) {

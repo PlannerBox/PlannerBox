@@ -6,6 +6,7 @@ import { IPlaceRepository } from "../../domain/repositories/placeRepository.inte
 import { Room } from "../../infrastructure/entities/Room.entity";
 import { RoomM } from "../../domain/models/room";
 import { RoomDto } from "../../infrastructure/controllers/roomManagement/roomDto.class";
+import { NotFoundException } from "@nestjs/common";
 
 
 export class RoomUseCase {
@@ -14,12 +15,18 @@ export class RoomUseCase {
         private readonly roomRepository: IRoomRepository,
         ) { }
         
-    async insertRoom(room: RoomDto){
-        await this.roomRepository.insertRoom(room);
+    async insertRoom(roomM: RoomM, idPlace: string): Promise<any>{
+        let place = await this.placeRepository.getPlace(idPlace);
+        if (!place) {
+            throw new NotFoundException('No place found');
+        }
+       
+
+       return await this.roomRepository.insertRoom(roomM, place);
     }
-    async updateRoom(roomM: RoomM) {
+    async updateRoom(roomM: RoomM) : Promise<any>{
         const room=this.toRoom(roomM);
-        await this.roomRepository.updateRoom(room);
+        return await this.roomRepository.updateRoom(room);
     }
     async getAllRoom(): Promise<RoomM[]> {
         return await this.roomRepository.getAllRoom();
@@ -29,8 +36,8 @@ export class RoomUseCase {
         return await this.roomRepository.getRoom(id);
 
     }
-    async deleteRoom(id: string) {
-        await this.roomRepository.deleteRoom(id);
+    async deleteRoom(id: string) : Promise<any>{
+        return await this.roomRepository.deleteRoom(id);
 
     }
    private toRoom(roomM : RoomM) : Room{

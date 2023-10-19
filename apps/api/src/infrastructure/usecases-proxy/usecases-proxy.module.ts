@@ -222,13 +222,15 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [UseMaterialRoomRepository],
+          inject: [UseMaterialRoomRepository,RoomRepository,MaterialRepository],
           provide: UsecasesProxyModule.USE_MATERIAL_ROOM_MANAGEMENT_PROXY,
           useFactory: (
             useMaterialRepository: UseMaterialRoomRepository,
+            roomRepository: RoomRepository,
+            materialRepository: MaterialRepository
           ) =>
             new UseCaseProxy(
-              new UseMaterialRoomUseCase(useMaterialRepository),
+              new UseMaterialRoomUseCase(useMaterialRepository, materialRepository, roomRepository),
             ),
         },
         {

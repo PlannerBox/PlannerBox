@@ -32,6 +32,7 @@ import { RoomUseCase } from '../../../usecases/room/room.usecase';
 import Role from '../../../domain/models/enums/role.enum';
 import { HasRole } from '../../decorators/has-role.decorator';
 import { PlaceM } from '../../../domain/models/place';
+import { JsonResult } from '../../helpers/JsonResult';
   
   @Controller('place')
   @ApiTags('place')
@@ -56,6 +57,7 @@ import { PlaceM } from '../../../domain/models/place';
     @ApiOperation({ description: 'insert' })
     async insertPlace(@Body() place: PlaceDto, @Req() request: any) {
         await this.placeUseCaseProxy.getInstance().insertPlace(place);
+        return JsonResult.Convert("Place successfully added");
     }
 
     @Delete('delete')
@@ -65,6 +67,7 @@ import { PlaceM } from '../../../domain/models/place';
     @ApiOperation({ description: 'delete' })
     async deletePlace(@Query('id') id: string) {
       await this.placeUseCaseProxy.getInstance().deletePlace(id);
+      return JsonResult.Convert("Place successfully removed");
     }
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
@@ -88,6 +91,7 @@ import { PlaceM } from '../../../domain/models/place';
     @ApiOperation({ description: 'update' })
     async updatePlace(@Body() place: PlaceM, @Req() request: any) {
       await this.placeUseCaseProxy.getInstance().updatePlace(place);
+      return JsonResult.Convert("Place successfully updated");
     }
    
   }

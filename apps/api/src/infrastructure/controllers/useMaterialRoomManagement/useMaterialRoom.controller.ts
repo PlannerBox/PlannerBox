@@ -34,6 +34,7 @@ import { MaterialM } from '../../../domain/models/material';
 import { UseMaterialRoomDto } from './useMaterialRoomDto.class';
 import { UseMaterialRoomUseCase } from '../../../usecases/material/useMaterialRoom.usecase';
 import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
+import { JsonResult } from '../../helpers/JsonResult';
   
   @Controller('useMaterialRoom')
   @ApiTags('useMaterialRoom')
@@ -48,13 +49,14 @@ import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
       private readonly useMaterialRoomUseCaseProxy: UseCaseProxy<UseMaterialRoomUseCase>,
     ) {}
   
-    @Post('insert')
+    @Post('insert/:idRoom/:idMaterial')
     @HasPermissions(UsersPermissions.Add)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: UseMaterialRoomDto })
     @ApiOperation({ description: 'insert' })
-    async insertRoom(@Body() useMaterialRoom: UseMaterialRoomM) { 
-      await this.useMaterialRoomUseCaseProxy.getInstance().insert(useMaterialRoom);  
+    async insertRoom(@Body() useMaterialRoom: UseMaterialRoomM, @Param('idRoom') idRoom: string, @Param('idMaterial') idMaterial: string) : Promise<any>{ 
+      await this.useMaterialRoomUseCaseProxy.getInstance().insert(useMaterialRoom, idRoom, idMaterial);  
+      return JsonResult.Convert("Material successfully added on room");
     }
 
     @Delete('delete')
@@ -62,15 +64,16 @@ import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
     @HasPermissions(UsersPermissions.Delete)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiOperation({ description: 'delete' })
-    async deleteRoom(@Query('id') id: string) {
-      await this.useMaterialRoomUseCaseProxy.getInstance().delete(id);
+    async deleteRoom(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<any>{
+      await this.useMaterialRoomUseCaseProxy.getInstance().delete(roomId,materialId);
+      return JsonResult.Convert("Material successfully removed on room");
     }
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiOperation({ description: 'getOne' })
-    async getPlace(@Query('id') id: string) : Promise<UseMaterialRoomM>{
-      return await this.useMaterialRoomUseCaseProxy.getInstance().get(id);
+    async getPlace(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<UseMaterialRoomM>{
+      return await this.useMaterialRoomUseCaseProxy.getInstance().get(roomId,materialId);
     }
     @Get('getAll')
     @HasPermissions(UsersPermissions.ReadAll)
@@ -85,8 +88,9 @@ import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: UseMaterialRoomDto })
     @ApiOperation({ description: 'update' })
-    async updatePlace(@Body() useMaterialRoom: UseMaterialRoomM, @Req() request: any) {
+    async updatePlace(@Body() useMaterialRoom: UseMaterialRoomM, @Req() request: any) : Promise<any>{
       await this.useMaterialRoomUseCaseProxy.getInstance().update(useMaterialRoom);
+      return JsonResult.Convert("Material successfully updated on room");
     }
    
   }

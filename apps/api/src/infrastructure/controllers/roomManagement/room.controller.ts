@@ -32,6 +32,8 @@ import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { PlaceUseCase } from '../../../usecases/place/place.usecase';
 import { RoomM } from '../../../domain/models/room';
 import { RoomUseCase } from '../../../usecases/room/room.usecase';
+import { json } from 'stream/consumers';
+import { JsonResult } from '../../helpers/JsonResult';
   
   @Controller('room')
   @ApiTags('room')
@@ -48,16 +50,14 @@ import { RoomUseCase } from '../../../usecases/room/room.usecase';
       private readonly roomUseCaseProxy: UseCaseProxy<RoomUseCase>,
     ) {}
   
-    @Post('insert')
+    @Post('insert/:idPlace')
     @HasPermissions(UsersPermissions.Add)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: RoomDto })
     @ApiOperation({ description: 'insert' })
-    async insertRoom(@Body() room: RoomM, @Query('idPlace') idPlace: string) { 
-      const placeM = await this.placeUseCaseProxy.getInstance().getPlace(idPlace);
-      const place=this.placeUseCaseProxy.getInstance().toPlace(placeM);
-      room.place=place;
-      await this.roomUseCaseProxy.getInstance().insertRoom(room);  
+    async insertRoom(@Body() room: RoomM, @Param('idPlace') idPlace: string) { 
+      await this.roomUseCaseProxy.getInstance().insertRoom(room, idPlace); 
+      return JsonResult.Convert("Room successfully added"); 
     }
 
     @Delete('delete')
@@ -67,6 +67,7 @@ import { RoomUseCase } from '../../../usecases/room/room.usecase';
     @ApiOperation({ description: 'delete' })
     async deleteRoom(@Query('id') id: string) {
       await this.roomUseCaseProxy.getInstance().deleteRoom(id);
+      return JsonResult.Convert("Room successfully removed");
     }
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
@@ -90,6 +91,7 @@ import { RoomUseCase } from '../../../usecases/room/room.usecase';
     @ApiOperation({ description: 'update' })
     async updatePlace(@Body() room: RoomM, @Req() request: any) {
       await this.roomUseCaseProxy.getInstance().updateRoom(room);
+      return JsonResult.Convert("Room successfully updated");
     }
    
   }

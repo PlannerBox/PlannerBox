@@ -15,8 +15,8 @@ export class RoomRepository implements IRoomRepository {
         @InjectRepository(Room)
         private readonly roomRepository: Repository<Room>
     ) {}
-    async deleteRoom(id: string) {
-        await this.roomRepository.delete({id : id})
+    async deleteRoom(id: string) : Promise<any>{
+        return await this.roomRepository.delete({id : id})
     }
     async getRoom(id: string): Promise<RoomM> {
         return await this.roomRepository.findOneBy({id : id})
@@ -24,14 +24,14 @@ export class RoomRepository implements IRoomRepository {
     async getAllRoom(): Promise<RoomM[]> {
         return await this.roomRepository.find();
     }
-    async updateRoom(room: Room) {
-        await this.roomRepository.update(room.id, room)
+    async updateRoom(room: Room) : Promise<any>{
+        return await this.roomRepository.update(room.id, room)
     }
    
-   async insertRoom(roomM:RoomM) {
-        const room=this.toRoomEntity(roomM);
-        console.log(room);
-        await this.roomRepository.save(room);
+   async insertRoom(room:Room, place: Place) : Promise<any> {
+ 
+        room.place=place;
+        return await this.roomRepository.save(room);
     
    }
 

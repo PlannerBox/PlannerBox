@@ -8,7 +8,7 @@ export class Place {
     @PrimaryGeneratedColumn('uuid', { name: 'id' })
     id: string;
 
-    @Column('character varying', { unique: true, name: 'city', length: 255 })
+    @Column('character varying', {name: 'city', length: 255 })
     city: string;
 
     @Column('character varying', { name: 'street', length: 255 })
@@ -19,5 +19,5 @@ export class Place {
 
     @OneToMany(() => Room, (room) => room)
     @JoinColumn([{ name: 'roomId', referencedColumnName: 'id' }])
-    room?: Room;
+    room?: Room[];
 }

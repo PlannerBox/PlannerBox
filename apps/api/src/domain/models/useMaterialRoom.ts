@@ -5,7 +5,6 @@ import { Material } from "../../infrastructure/entities/Material.entity";
 
 
 export class UseMaterialRoomM{
-    id? : string;
     number : IntegerType;
     room : Room;
     material: Material;

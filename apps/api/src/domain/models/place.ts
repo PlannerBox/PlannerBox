@@ -6,5 +6,5 @@ export class PlaceM {
     city: string;
     street: string;
     streetNumber: string;
-    room?: Room;
+    room?: Room[];
 }

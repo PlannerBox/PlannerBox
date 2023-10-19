@@ -1,10 +1,12 @@
 import { UseMaterialRoom } from "../../infrastructure/entities/UseMaterialRoom.entity";
+import { MaterialM } from "../models/material";
+import { RoomM } from "../models/room";
 import { UseMaterialRoomM } from "../models/useMaterialRoom";
 
 export interface IUseMaterialRoomRepository{
-    delete(id: string);
-    get(id: string): Promise<UseMaterialRoomM>;
+    delete(roomId: string, materialId: string): Promise<any>;
+    get(roomId: string, materialId: string): Promise<UseMaterialRoomM>;
     getAll(): Promise<UseMaterialRoomM[]>;
-    update(useMaterialRoomM: UseMaterialRoom);
-    insert(useMaterialRoom: UseMaterialRoomM)
+    update(useMaterialRoomM: UseMaterialRoom): Promise<any>;
+    insert(useMaterialRoom: UseMaterialRoomM, room: RoomM, material: MaterialM): Promise<any>;
 }

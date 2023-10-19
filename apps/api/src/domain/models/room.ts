@@ -6,5 +6,5 @@ export class RoomM{
     id? : string;
     name : string;
     place : Place;
-    useMaterialRoom: UseMaterialRoom[];
+    useMaterialRoom?: UseMaterialRoom[];
 }

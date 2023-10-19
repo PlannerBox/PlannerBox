@@ -15,6 +15,6 @@ export class RoomDto {
   readonly place: Place;
 
   @ApiProperty({ required: true })
-  readonly useMaterialRoom: UseMaterialRoom[];
+  readonly useMaterialRoom?: UseMaterialRoom[];
 
 }

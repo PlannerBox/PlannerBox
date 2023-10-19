@@ -12,12 +12,12 @@ export class PlaceUseCase {
         private readonly roomRepository: IRoomRepository,
         ) { }
         
-    async insertPlace(place: PlaceDto) {
-        await this.placeRepository.insertPlace(place);
+    async insertPlace(place: PlaceDto) : Promise<any>{
+        return await this.placeRepository.insertPlace(place);
     }
         
-    async deletePlace(id: string) {
-        await this.placeRepository.deletePlace(id);
+    async deletePlace(id: string): Promise<any> {
+        return await this.placeRepository.deletePlace(id);
     }
 
     async getPlace(id: string): Promise<PlaceM>{
@@ -28,9 +28,9 @@ export class PlaceUseCase {
         return await this.placeRepository.getAllPlace();     
     }
 
-    async updatePlace(placeM:PlaceM) {
+    async updatePlace(placeM:PlaceM) : Promise<any>{
         const place = this.toPlace(placeM);
-        await this.placeRepository.updatePlace(place);
+        return await this.placeRepository.updatePlace(place);
     }
 
     toPlace(placeM : PlaceM) : Place{

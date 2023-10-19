@@ -51,7 +51,7 @@ import { MaterialDto } from './materialDto.class';
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: MaterialDto })
     @ApiOperation({ description: 'insert' })
-    async insertRoom(@Body() material: MaterialM) { 
+    async insertMaterial(@Body() material: MaterialDto) { 
       await this.materialUseCaseProxy.getInstance().insertMaterial(material);  
     }
 
@@ -83,8 +83,8 @@ import { MaterialDto } from './materialDto.class';
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: MaterialDto })
     @ApiOperation({ description: 'update' })
-    async updatePlace(@Body() room: RoomM, @Req() request: any) {
-      await this.materialUseCaseProxy.getInstance().updateMaterial(room);
+    async updatePlace(@Body() materialM: MaterialM, @Req() request: any) {
+      await this.materialUseCaseProxy.getInstance().updateMaterial(materialM);
     }
    
   }

@@ -12,11 +12,11 @@ export class Room {
     @Column('character varying', { name: 'name', length: 255 })
     name: string;
 
-    @ManyToOne(() => Place, (place) => place, { cascade: true, eager: true },)
+    @ManyToOne(() => Place, (place) => place,{ cascade: true, eager: true })
     @JoinColumn([{ name: 'placeId', referencedColumnName: 'id' }])
     place: Place;
 
     @OneToMany(() => UseMaterialRoom, (useMaterialRoom) => useMaterialRoom)
     @JoinColumn([{ name: 'useMaterialRoomId', referencedColumnName: 'id' }])
-    useMaterialRoom: UseMaterialRoom[];
+    useMaterialRoom?: UseMaterialRoom[];
 }

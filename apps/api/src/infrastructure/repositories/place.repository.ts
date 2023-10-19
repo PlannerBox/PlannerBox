@@ -23,30 +23,27 @@ export class PlaceRepository implements IPlaceRepository {
         return await this.placeRepository.find();
     }
 
-    async updatePlace(placeM:PlaceM){
+    async updatePlace(placeM:PlaceM) : Promise<any>{
         const place=this.toPlaceEntity(placeM);
-        await this.placeRepository.update(place.id, place)
+        return await this.placeRepository.update(place.id, place)
     }
    
-   async insertPlace(placeM:PlaceM) {
-    const place=this.toPlaceEntity(placeM);
-    await this.placeRepository.insert(place);
+   async insertPlace(placeM:PlaceM) : Promise<any> {
+        const place=this.toPlaceEntity(placeM);
+        return await this.placeRepository.insert(place);
     
    }
-   async deletePlace(id: string) {
-    await this.placeRepository.delete({id : id})
+   async deletePlace(id: string) : Promise<any>{
+        return await this.placeRepository.delete({id : id})
    }
-
-
 
    toPlaceEntity(placeM:PlaceM) : Place {
-    return{
-        id: placeM.id,
-        city: placeM.city,
-        street: placeM.street,
-        streetNumber: placeM.streetNumber,
-        room: placeM.room,
-    }
-    
+        return{
+            id: placeM.id,
+            city: placeM.city,
+            street: placeM.street,
+            streetNumber: placeM.streetNumber,
+            room: placeM.room,
+        }
    }
 }

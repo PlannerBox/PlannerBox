@@ -18,5 +18,5 @@ export class PlaceDto {
   @IsString()
   readonly streetNumber: string;
 
-  readonly room?: Room;
+  readonly room?: Room[];
 }
