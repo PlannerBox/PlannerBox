@@ -1,6 +1,7 @@
 import { Group } from "../../infrastructure/entities/Group.entity";
 import { GroupMembers } from "../../infrastructure/entities/GroupMembers.entity";
 import { RolePermissions } from "../../infrastructure/entities/RolePermissions.entity";
+import { TeacherSkills } from "../../infrastructure/entities/TeacherSkills.entity";
 import { FormationMode } from "./enums/formationMode.enum";
 import Role from "./enums/role.enum";
 
@@ -37,5 +38,6 @@ export class UserAccountDetailsM extends AccountM {
   formationMode?: FormationMode;
   teacherId?: string;
   intern?: boolean;
+  teacherSkills?: TeacherSkills[];
   adminId?: string;
 }

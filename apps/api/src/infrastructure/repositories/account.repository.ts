@@ -184,6 +184,9 @@ export class AccountRepository implements IAccountRepository {
       where: {
         id: id,
       },
+      relations: {
+        groups: { group: true },
+      },
     });
 
     if (!accountEntity) {
@@ -235,9 +238,11 @@ export class AccountRepository implements IAccountRepository {
               id: account.id,
             },
           },
+          relations: { teacherSkills: { skill: true }}
         });
         userAccountDetails.teacherId = teacherEntity.id;
         userAccountDetails.intern = teacherEntity.intern;
+        userAccountDetails.teacherSkills = teacherEntity.teacherSkills;
         break;
     }
 

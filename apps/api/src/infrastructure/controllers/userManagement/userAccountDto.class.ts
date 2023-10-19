@@ -3,6 +3,7 @@ import { IsDateString, IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID, Matche
 import Role from "../../../domain/models/enums/role.enum";
 import FormationMode from "../../../domain/models/enums/formationMode.enum";
 import { GroupMemberSummary } from "../groupManagement/groupDto.class";
+import { TeacherSkillsM } from "../../../domain/models/teacherSkills";
 
 export class UserAccountWithoutPasswordDto {
   @ApiProperty({ required: false })
@@ -62,7 +63,8 @@ export class GenericUserAccountDto extends UserAccountWithoutPasswordDto {
   readonly teacherId?: string;
   @ApiProperty({ required: false })
   readonly intern?: boolean;
-
+  @ApiProperty({ required: false })
+  readonly teacherSkills?: TeacherSkillsM[];
   @ApiProperty({ required: false })
   readonly adminId?: string;
 }

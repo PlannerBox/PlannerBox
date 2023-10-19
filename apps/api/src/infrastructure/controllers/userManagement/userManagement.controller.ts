@@ -40,6 +40,7 @@ import {
   AccountSummaryDto,
   GenericUserAccountDto,
 } from './userAccountDto.class';
+import { UserAccountDetailsM } from '../../../domain/models/account';
 
 @Controller('user-management')
 @ApiTags('user-management')
@@ -110,7 +111,7 @@ export class UserManagementController {
   @ApiResponse({
     status: 200,
     description: 'User details',
-    type: GenericUserAccountDto,
+    type: UserAccountDetailsM,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Account not found' })
