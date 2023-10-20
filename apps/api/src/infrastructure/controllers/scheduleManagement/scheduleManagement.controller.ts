@@ -1,9 +1,10 @@
-import { Controller, Post, HttpCode, Body, Inject } from "@nestjs/common";
+import { Controller, Post, HttpCode, Body, Inject, BadRequestException, NotImplementedException } from "@nestjs/common";
 import { ApiTags, ApiResponse, ApiOperation, ApiBody } from "@nestjs/swagger";
-import { PlanningSessionDto } from "../skillManagement/planningSessionDto.class";
+import { EventDto } from "./eventDto.class";
 import { PlanTrainingUseCase } from "../../../usecases/skill/planTraining.usecase";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
+import { ScheduleEventDto } from "./scheduleEventDto.class";
 
 @Controller('schedule-management')
 @ApiTags('schedule-management')
@@ -17,14 +18,22 @@ export class ScheduleManagementController {
         private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>,
     ) {}
 
-    @Post('training/add')
+    @Post('event/create')
     @HttpCode(200)
-    @ApiOperation({ description: 'Plan a training session (will be moved soon !!!)' })
-    @ApiResponse({ status: 200, description: 'Training successfully planned' })
+    @ApiOperation({ description: 'Create a new course' })
+    @ApiResponse({ status: 200, description: 'Course successfully planned' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
-    @ApiBody({ type: PlanningSessionDto })
-    async addTrainingSession(@Body() planningSession: PlanningSessionDto): Promise<any> {
-        return await this.planTrainingUseCase.getInstance().planTraining(planningSession);
+    @ApiBody({ type: ScheduleEventDto })
+    async addTrainingSession(@Body() courses: ScheduleEventDto): Promise<any> {
+        switch (courses.parent.eventType) {
+            case 0:
+                throw new NotImplementedException('Class planning is not implemented yet');
+            case 1:
+            case 2:
+                return await this.planTrainingUseCase.getInstance().planTraining(courses);
+            default:
+                throw new BadRequestException('courseType must be 0, 1 or 2');
+        }
     } 
 }
