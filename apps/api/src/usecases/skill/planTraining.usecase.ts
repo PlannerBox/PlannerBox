@@ -21,7 +21,7 @@ export class PlanTrainingUseCase {
 
     async planTraining(planningSession: PlanningSessionDto): Promise<any> {
 
-        const skillsExists = await this.skillRepository.skillsExists(planningSession.skillIds);
+        const skillsExists = await this.skillRepository.skillsExists(planningSession.skills);
         if (!skillsExists) {
             throw new NotFoundException('Liste des compétences invalide');
         }
@@ -48,7 +48,7 @@ export class PlanTrainingUseCase {
 
         const newGroup = await this.groupRepository.createGroup(GroupMapper.fromNewDtoToModel(formationGroup));
 
-        const skills = await this.skillRepository.findSkillsByIds(planningSession.skillIds);
+        const skills = await this.skillRepository.findSkillsByIds(planningSession.skills);
 
         const course = new CourseM();
         course.name = 'Formation#' + (groupCounter + 1);

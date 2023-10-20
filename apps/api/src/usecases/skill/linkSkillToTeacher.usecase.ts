@@ -23,7 +23,7 @@ export class LinkSkillToTeacherUseCase {
 
         // Pour chaque skillId, on ajoute le skill à la liste des skills du teacher
         let teacherSkills: TeacherSkills[] = [];
-        teacherSkillsDto.skillIds.forEach(skillId => {
+        teacherSkillsDto.skills.forEach(skillId => {
             const teacherSkill = new TeacherSkills(teacherSkillsDto.teacherId, skillId);
             teacherSkills.push(teacherSkill);
         });

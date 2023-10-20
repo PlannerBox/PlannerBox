@@ -7,7 +7,7 @@ export class TeacherSkillsDto {
     @IsUUID('4', { message: 'teacherId doit être un UUID' })
     teacherId: UUID;
 
-    @ApiProperty({ required: true, name: 'skillIds', type: [String] })
-    @IsUUID('4', { each: true, message: 'skillIds doit être un tableau de UUIDs' })
-    skillIds: string[];
+    @ApiProperty({ required: true, name: 'skills', type: [String] })
+    @IsUUID('4', { each: true, message: 'skills doit être un tableau de UUIDs' })
+    skills: string[];
 }

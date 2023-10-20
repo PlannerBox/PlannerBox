@@ -9,7 +9,7 @@ export class PlanningSessionDto {
 
     @ApiProperty({ required: true, name: 'skillIds', type: [String] })
     @IsUUID('4', { each: true, message: 'skillIds doit être un tableau de UUIDs' })
-    skillIds: UUID[];
+    skills: UUID[];
 
     @ApiProperty({ required: true, name: 'teacherIds', type: [String] })
     @IsUUID('4', { each: true, message: 'teacherAccountIds doit être un tableau de UUIDs' })
