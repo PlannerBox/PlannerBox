@@ -87,8 +87,10 @@ export class UsecasesProxyModule {
   static UPSERT_SKILL_USECASES_PROXY = 'UpsertSkillUseCasesProxy';
   static FIND_SKILL_USECASES_PROXY = 'FindSkillUseCasesProxy';
   static DELETE_SKILL_USECASES_PROXY = 'DeleteSkillUseCasesProxy';
-  static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
   static LINK_SKILL_TO_TEACHER_USECASES_PROXY = 'LinkSkillToTeacherUseCasesProxy';
+
+  // ScheduleManagement
+  static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
 
   static register(): DynamicModule {
     return {

@@ -7,8 +7,6 @@ import { SkillDto } from "./skillDto.class";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 import { FindSkillUseCase } from "../../../usecases/skill/findSkill.usecase";
 import { DeleteSkillUseCase } from "../../../usecases/skill/deleteSkill.usecase";
-import { PlanningSessionDto } from "./planningSessionDto.class";
-import { PlanTrainingUseCase } from "../../../usecases/skill/planTraining.usecase";
 import { TeacherSkillsDto } from "./teacherSkillsDto";
 import { LinkSkillToTeacherUseCase } from "../../../usecases/skill/linkSkillToTeacher.usecase";
 
@@ -26,8 +24,6 @@ export class SkillManagementController {
         private readonly findSkillUseCase: UseCaseProxy<FindSkillUseCase>,
         @Inject(UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY)
         private readonly deleteSkillUseCase: UseCaseProxy<DeleteSkillUseCase>,
-        @Inject(UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY)
-        private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>,
         @Inject(UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY)
         private readonly linkSkillToTeacherUseCase: UseCaseProxy<LinkSkillToTeacherUseCase>
     ) {}
@@ -61,19 +57,7 @@ export class SkillManagementController {
     @ApiBody({ type: SkillDto })
     async updateSkill(@Body() skill: SkillDto): Promise<any> {
         return await this.createSkillUseCase.getInstance().updateSkill(skill);
-    }
-
-    // déplacer dans controller eventScheduler
-    @Post('skill/training/add')
-    @HttpCode(200)
-    @ApiOperation({ description: 'Plan a training session (will be moved soon !!!)' })
-    @ApiResponse({ status: 200, description: 'Training successfully planned' })
-    @ApiResponse({ status: 401, description: 'Unauthorized' })
-    @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
-    @ApiBody({ type: PlanningSessionDto })
-    async addTrainingSession(@Body() planningSession: PlanningSessionDto): Promise<any> {
-        return await this.planTrainingUseCase.getInstance().planTraining(planningSession);
-    }    
+    }   
 
     @Post('skill/teacher/update')
     @HttpCode(200)
