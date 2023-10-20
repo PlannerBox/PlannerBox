@@ -180,27 +180,6 @@ export class UserManagementController {
     return AccountWithoutPassword;
   }
 
-  @Post('/student/update')
-  @HasPermissions(UsersPermissions.UpdateAll, UsersPermissions.Update)
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @ApiOperation({
-    description:
-      'update a student account (not really usefull, prefer user-management/update route)',
-  })
-  @HttpCode(200)
-  @ApiResponse({ status: 200, description: 'Account updated' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Role not found' })
-  async updateStudentAccount(
-    @Body() studentAccount: StudentAccountDetailedDto,
-    @Req() request: any,
-  ) {
-    const AccountWithoutPassword = await this.updateAccountUseCase
-      .getInstance()
-      .updateStudentAccount(studentAccount);
-    return AccountWithoutPassword;
-  }
-
   @Post('account-state')
   @HasRole(Role.Admin)
   @HasPermissions(UsersPermissions.Update)

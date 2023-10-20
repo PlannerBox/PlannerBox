@@ -27,6 +27,20 @@ export class TeacherRepository implements ITeacherRepository {
         return TeacherMapper.fromEntityToModel(teacherEntity);
     }
 
+    async findTeacherByAccountId(accountId: string): Promise<TeacherM> {
+        const teacherEntity: Teacher = await this.teacherRepository.findOne({
+            where: {
+                account: { id: accountId }
+            }
+        });
+
+        if (!teacherEntity) {
+            return null;
+        }
+
+        return TeacherMapper.fromEntityToModel(teacherEntity);
+    }
+
     async updateTeacher(teacher: TeacherM): Promise<any> {
         const teacherEntity = TeacherMapper.fromModelToEntity(teacher);
         console.log(teacherEntity);

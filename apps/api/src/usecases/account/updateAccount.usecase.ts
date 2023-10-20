@@ -44,29 +44,8 @@ export class UpdateAccountUseCase {
         }
     }
 
-    async updateStudentAccount(studentAccountDto: StudentAccountDetailedDto): Promise<any> {
-        const student = await this.studentRepository.findStudentById(studentAccountDto.studentId);
-
-        if (!student) {
-            this.logger.error('UpdateAccountUseCases updateStudentAccount', 'Account not found')
-            throw new NotFoundException('Account not found');
-        }
-
-        const studentAccount = StudentMapper.fromDtoToModel(studentAccountDto);
-
-        student.username = studentAccount.username;
-        student.firstname = studentAccount.firstname;
-        student.lastname = studentAccount.lastname;
-        student.birthDate = studentAccount.birthDate;
-        student.birthPlace = studentAccount.birthPlace;
-        student.active = studentAccount.active;
-        student.formationMode = studentAccount.formationMode;
-
-        return await this.studentRepository.updateStudent(student);
-    }
-
     private async updateStudent(studentM: StudentM): Promise<any> {
-        const student = await this.studentRepository.findStudentById(studentM.studentId);
+        const student = await this.studentRepository.findStudentByAccountId(studentM.id);
 
         if (!student) {
             this.logger.error('UpdateAccountUseCases updateStudentAccount', 'Account not found')
@@ -85,7 +64,7 @@ export class UpdateAccountUseCase {
     }
 
     private async updateTeacher(teacherM: TeacherM): Promise<any> {
-        const teacher = await this.teacherRepository.findTeacherById(teacherM.teacherId);
+        const teacher = await this.teacherRepository.findTeacherByAccountId(teacherM.teacherId);
 
         if (!teacher) {
             this.logger.error('UpdateAccountUseCases updateTeacher', 'Account not found')
