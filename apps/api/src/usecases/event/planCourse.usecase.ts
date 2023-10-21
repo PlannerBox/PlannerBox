@@ -43,7 +43,7 @@ export class PlanCourseUseCase {
         course.skills = skills;
 
         // Create training session (parent)
-        let parent = await this.courseRepository.insertCourse(course);
+        let parent = await this.courseRepository.upsertCourse(course);
 
         if (!events.children || events.children.length === 0) {
             return {
@@ -62,7 +62,7 @@ export class PlanCourseUseCase {
             childCourse.type = events.parent.eventType;
             childCourse.skills = skills;
             childCourse.parent = parent;
-            await this.courseRepository.insertCourse(childCourse);
+            await this.courseRepository.upsertCourse(childCourse);
         });
 
         return {

@@ -50,6 +50,8 @@ import { LinkSkillToTeacherUseCase } from '../../usecases/skill/linkSkillToTeach
 import { TeacherSkillsRepository } from '../repositories/teacherSkills.repository';
 import { PlanCourseUseCase } from '../../usecases/event/planCourse.usecase';
 import { DeleteEventUseCase } from '../../usecases/event/deleteEvent.usecase';
+import { UpdateEventUseCase } from '../../usecases/event/updateEvent.usecase';
+import { FindEventsUseCase } from '../../usecases/event/findEvents.usecase';
 
 @Module({
   imports: [
@@ -95,6 +97,8 @@ export class UsecasesProxyModule {
   static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
   static PLAN_COURSE_USECASES_PROXY = 'PlanCourseUseCasesProxy';
   static DELETE_EVENT_USECASES_PROXY = 'DeleteEventUseCasesProxy';
+  static UPDATE_EVENT_USECASES_PROXY = 'UpdateEventUseCasesProxy';
+  static FIND_EVENTS_USECASES_PROXY = 'FindEventsUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -393,6 +397,39 @@ export class UsecasesProxyModule {
               new DeleteEventUseCase(courseRepository),
             ),
         },
+        {
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository],
+          provide: UsecasesProxyModule.UPDATE_EVENT_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            accountRepository: AccountRepository,
+            groupRepository: GroupRepository,
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new UpdateEventUseCase(skillRepository, accountRepository, groupRepository, courseRepository),
+            ),
+        },
+        {
+          inject: [CourseRepository],
+          provide: UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY,
+          useFactory: (
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new DeleteEventUseCase(courseRepository),
+            ),
+        },
+        {
+          inject: [CourseRepository],
+          provide: UsecasesProxyModule.FIND_EVENTS_USECASES_PROXY,
+          useFactory: (
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new FindEventsUseCase(courseRepository),
+            ),
+        },
       ],
       exports: [
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
@@ -418,7 +455,9 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
         UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY,
         UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
-        UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY
+        UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY,
+        UsecasesProxyModule.UPDATE_EVENT_USECASES_PROXY,
+        UsecasesProxyModule.FIND_EVENTS_USECASES_PROXY,
       ],
     };
   }
