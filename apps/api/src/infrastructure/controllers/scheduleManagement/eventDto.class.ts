@@ -18,10 +18,10 @@ export class EventDto {
     @IsUUID('4', { each: true, message: 'teachers doit être un tableau de UUIDs' })
     teachers: UUID[];
 
-    @ApiProperty({ required: false, name: 'groupIds', type: [String], description: 'Group ids, used to schedule courses for groups' })
+    @ApiProperty({ required: false, name: 'groupIds', description: 'GroupId' })
     @IsOptional()
-    @IsUUID('4', { each: true, message: 'groups doit être un tableau de UUIDs' })
-    groups: UUID[];
+    @IsUUID('4', { message: 'groups doit être un UUID' })
+    groupId: UUID;
 
     @ApiProperty({ required: true, name: 'roomId' })
     @IsOptional()

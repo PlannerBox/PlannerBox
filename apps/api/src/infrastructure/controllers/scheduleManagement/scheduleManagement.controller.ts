@@ -1,10 +1,11 @@
 import { Controller, Post, HttpCode, Body, Inject, BadRequestException, NotImplementedException } from "@nestjs/common";
 import { ApiTags, ApiResponse, ApiOperation, ApiBody } from "@nestjs/swagger";
 import { EventDto } from "./eventDto.class";
-import { PlanTrainingUseCase } from "../../../usecases/skill/planTraining.usecase";
+import { PlanTrainingUseCase } from "../../../usecases/event/planTraining.usecase";
 import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
 import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
 import { ScheduleEventDto } from "./scheduleEventDto.class";
+import { PlanCourseUseCase } from "../../../usecases/event/planCourse.usecase";
 
 @Controller('schedule-management')
 @ApiTags('schedule-management')
@@ -16,6 +17,8 @@ export class ScheduleManagementController {
     constructor(
         @Inject(UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY)
         private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>,
+        @Inject(UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY)
+        private readonly planCourseUseCase: UseCaseProxy<PlanCourseUseCase>
     ) {}
 
     @Post('event/create')
@@ -28,7 +31,7 @@ export class ScheduleManagementController {
     async addTrainingSession(@Body() courses: ScheduleEventDto): Promise<any> {
         switch (courses.parent.eventType) {
             case 0:
-                throw new NotImplementedException('Class planning is not implemented yet');
+                return await this.planCourseUseCase.getInstance().planCourse(courses);
             case 1:
             case 2:
                 return await this.planTrainingUseCase.getInstance().planTraining(courses);

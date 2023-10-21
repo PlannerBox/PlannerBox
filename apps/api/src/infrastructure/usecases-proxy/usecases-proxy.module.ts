@@ -44,10 +44,11 @@ import { UpsertSkillUseCase } from '../../usecases/skill/upsertSkill.usecase';
 import { SkillRepository } from '../repositories/skill.repository';
 import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
 import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
-import { PlanTrainingUseCase } from '../../usecases/skill/planTraining.usecase';
+import { PlanTrainingUseCase } from '../../usecases/event/planTraining.usecase';
 import { CourseRepository } from '../repositories/course.repository';
 import { LinkSkillToTeacherUseCase } from '../../usecases/skill/linkSkillToTeacher.usecase';
 import { TeacherSkillsRepository } from '../repositories/teacherSkills.repository';
+import { PlanCourseUseCase } from '../../usecases/event/planCourse.usecase';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ export class UsecasesProxyModule {
 
   // ScheduleManagement
   static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
+  static PLAN_COURSE_USECASES_PROXY = 'PlanCourseUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -365,6 +367,19 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new LinkSkillToTeacherUseCase(teacherRepository, teacherSkillsRepository),
             ),
+        },
+        {
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository],
+          provide: UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            accountRepository: AccountRepository,
+            groupRepository: GroupRepository,
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new PlanCourseUseCase(skillRepository, accountRepository, groupRepository, courseRepository),
+            ),
         }
       ],
       exports: [
@@ -390,6 +405,7 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
         UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
         UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY,
+        UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
       ],
     };
   }

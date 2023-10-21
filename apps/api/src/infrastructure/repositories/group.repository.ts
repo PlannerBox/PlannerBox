@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { Group } from "../entities/Group.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { GroupMembers } from "../entities/GroupMembers.entity";
 import { GroupM } from "../../domain/models/group";
 import { NotFoundException } from "@nestjs/common";
@@ -24,7 +24,7 @@ export class GroupRepository implements IGroupRepository {
         return await this.groupRepository.save(group);
     }
 
-    async findGroup(groupID: string): Promise<any> {
+    async findGroup(groupID: string): Promise<Group> {
         return await this.groupRepository.findOne({ where: { id: groupID }, relations: {groupMembers: { account: true}}, order: { groupMembers: { isOwner: "DESC", account: { firstname: "ASC"}} } });
     }
 
@@ -120,5 +120,11 @@ export class GroupRepository implements IGroupRepository {
 
     async countGroupByType(type: GroupType): Promise<number> {
         return await this.groupRepository.count({ where: { type: type } });
+    }
+
+    async groupExists(groupIds: string[]): Promise<boolean> {
+        const groups = await this.groupRepository.find({ where: { id: In(groupIds) } });
+
+        return groupIds.length == groups.length;
     }
 }

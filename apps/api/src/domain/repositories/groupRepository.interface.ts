@@ -7,7 +7,7 @@ import GroupType from "../models/enums/groupType.enum";
 
 export interface IGroupRepository {
     findAll(): Promise<Group[]>;
-    findGroup(groupID: string): Promise<any>;
+    findGroup(groupID: string): Promise<Group>;
     findGroupBy(id: string, name: string, pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>>;
     findReferee(refereeID: string): Promise<any>;
     createGroup(group: GroupM): Promise<GroupM>;
@@ -16,4 +16,5 @@ export interface IGroupRepository {
     findPaginated(query: PaginateQuery): Promise<Paginated<Group>>;
     findPaginatedManually(pageOptionsDto: PageOptionsDto): Promise<PageDto<Group>>;
     countGroupByType(type: GroupType): Promise<number>;
+    groupExists(groups: string[]): Promise<boolean>;
 }
