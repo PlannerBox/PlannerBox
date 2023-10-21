@@ -9,6 +9,8 @@ import { GroupType } from "../../domain/models/enums/groupType.enum";
 import { ICourseRepository } from "../../domain/repositories/courseRepository.interface";
 import { ScheduleEventDto } from "../../infrastructure/controllers/eventManagement/scheduleEventDto.class";
 import { Course } from "../../infrastructure/entities/Course.entity";
+import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
+import { Room } from "../../infrastructure/entities/Room.entity";
 
 export class PlanTrainingUseCase {
     constructor(
@@ -16,7 +18,7 @@ export class PlanTrainingUseCase {
         private readonly accountRepository: IAccountRepository,
         private readonly groupRepository: IGroupRepository,
         private readonly courseRepository: ICourseRepository,
-        private readonly logger: ILogger
+        private readonly roomRepository: IRoomRepository,
     ) {}
 
     async planTraining(events: ScheduleEventDto): Promise<any> {
@@ -29,6 +31,10 @@ export class PlanTrainingUseCase {
         const accountsExists = await this.accountRepository.accountExists(events.parent.teachers);
         if (!accountsExists) {
             throw new NotFoundException('Liste des enseignants invalide');
+        }
+        const roomExists = await this.roomRepository.getRoom(events.parent.roomId);
+        if (!roomExists) {
+            throw new NotFoundException('Salle inconnue');
         }
 
         // Get group counter to create a new group name
@@ -65,6 +71,7 @@ export class PlanTrainingUseCase {
         course.group = newGroup;
         course.type = events.parent.eventType;
         course.skills = skills;
+        course.room = roomExists as Room;
 
         // Create training session (parent)
         let parent = await this.courseRepository.insertCourse(course);
@@ -85,6 +92,7 @@ export class PlanTrainingUseCase {
             children.group = newGroup;
             children.type = events.parent.eventType;
             children.skills = skills;
+            children.room = roomExists as Room;
             children.parent = parent;
             await this.courseRepository.insertCourse(children);
         });

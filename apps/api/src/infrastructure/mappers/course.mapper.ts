@@ -13,6 +13,7 @@ export class CourseMapper {
             group: course.group,
             skills: course.skills,
             teachers: course.teachers.map(teacher => TeacherMapper.fromEntityToModel(teacher)),
+            room: course.room,
             parent: !course.parent ? null : course.parent,
         };
     }
@@ -27,6 +28,7 @@ export class CourseMapper {
             group: course.group,
             skills: course.skills,
             teachers: course.teachers.map(teacher => TeacherMapper.fromModelToEntity(teacher)),
+            room: course.room,
             parent: !course.parent ? null : course.parent,
             children: null
         };

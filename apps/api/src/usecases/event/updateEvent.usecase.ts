@@ -6,6 +6,8 @@ import { IAccountRepository } from "../../domain/repositories/accountRepository.
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { ITeacherRepository } from "../../domain/repositories/teacherRepository.interface";
 import { TeacherMapper } from "../../infrastructure/mappers/teacher.mapper";
+import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
+import { Room } from "../../infrastructure/entities/Room.entity";
 
 export class UpdateEventUseCase {
     constructor(
@@ -14,6 +16,7 @@ export class UpdateEventUseCase {
         private readonly groupRepository: IGroupRepository,
         private readonly courseRepository: ICourseRepository,
         private readonly teacherRepository: ITeacherRepository,
+        private readonly roomRepository: IRoomRepository
     ) {}
 
     async updateEvent(event: EventDto): Promise<any> {
@@ -33,6 +36,10 @@ export class UpdateEventUseCase {
         if (!groupExists) {
             throw new NotFoundException('Groupe inconnu');
         }
+        const roomExists = await this.roomRepository.getRoom(event.roomId);
+        if (!roomExists) {
+            throw new NotFoundException('Salle inconnue');
+        }
 
         // Get skills corresponding to the formation
         const skills = await this.skillRepository.findSkillsByIds(event.skills);
@@ -47,6 +54,7 @@ export class UpdateEventUseCase {
         course.type = event.eventType;
         course.skills = skills;
         course.teachers = teachers.map(teacher => TeacherMapper.fromEntityToModel(teacher));
+        course.room = roomExists as Room;
 
         // Update training session
         return await this.courseRepository.upsertCourse(course);

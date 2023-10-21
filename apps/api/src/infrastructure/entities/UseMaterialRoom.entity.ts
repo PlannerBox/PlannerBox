@@ -17,11 +17,11 @@ export class UseMaterialRoom {
     @Column('integer')
     number: IntegerType;
 
-    @ManyToOne(() => Room, (room) => room, { cascade: true, eager: true,onDelete: 'CASCADE'  },)
+    @ManyToOne(() => Room, (room) => room, { eager: true },)
     @JoinColumn([{ name: 'roomId', referencedColumnName: 'id' }])
     room: Room;
 
-    @ManyToOne(() => Material, (place) => place, { cascade: true, eager: true, onDelete: 'CASCADE' },)
+    @ManyToOne(() => Material, (place) => place, { eager: true },)
     @JoinColumn([{ name: 'materialId', referencedColumnName: 'id' }])
     material: Material;
 }

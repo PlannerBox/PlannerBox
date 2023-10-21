@@ -20,9 +20,10 @@ export class CourseRepository implements ICourseRepository {
         queryBuilder.leftJoinAndSelect('course.teachers', 'teachers');
         queryBuilder.leftJoinAndSelect('course.skills', 'skills');
         queryBuilder.leftJoinAndSelect('course.group', 'group');
+        queryBuilder.leftJoinAndSelect('course.room', 'room');
 
         return await paginate<Course>(query, queryBuilder, {
-            relations: { teachers : { account : { rolePermissions : true }}, skills: true, group: true },
+            relations: { teachers : { account : { rolePermissions : true }}, skills: true, group: true, room: { useMaterialRoom: { material: true }}},
             sortableColumns: ['name', 'startDate', 'endDate', 'type'],
             defaultSortBy: [['startDate', 'ASC']]
         });

@@ -6,6 +6,8 @@ import { ISkillRepository } from "../../domain/repositories/skillRepository.inte
 import { ScheduleEventDto } from "../../infrastructure/controllers/eventManagement/scheduleEventDto.class";
 import { ITeacherRepository } from "../../domain/repositories/teacherRepository.interface";
 import { Course } from "../../infrastructure/entities/Course.entity";
+import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
+import { Room } from "../../infrastructure/entities/Room.entity";
 
 export class PlanCourseUseCase {
     constructor(
@@ -14,6 +16,7 @@ export class PlanCourseUseCase {
         private readonly groupRepository: IGroupRepository,
         private readonly courseRepository: ICourseRepository,
         private readonly teacherRepository: ITeacherRepository,
+        private readonly roomRepository: IRoomRepository,
     ) {}
 
     async planCourse(events: ScheduleEventDto): Promise<any> {
@@ -31,6 +34,10 @@ export class PlanCourseUseCase {
         if (!groupExists) {
             throw new NotFoundException('Groupe inconnu');
         }
+        const roomExists = await this.roomRepository.getRoom(events.parent.roomId);
+        if (!roomExists) {
+            throw new NotFoundException('Salle inconnue');
+        }
 
         // Get skills corresponding to the formation
         const skills = await this.skillRepository.findSkillsByIds(events.parent.skills);
@@ -46,6 +53,7 @@ export class PlanCourseUseCase {
         course.type = events.parent.eventType;
         course.skills = skills;
         course.teachers = teachers;
+        course.room = roomExists as Room;
 
         // Create training session (parent)
         let parent = await this.courseRepository.insertCourse(course);
@@ -67,6 +75,7 @@ export class PlanCourseUseCase {
             childCourse.type = events.parent.eventType;
             childCourse.skills = skills;
             childCourse.teachers = teachers;
+            childCourse.room = roomExists as Room;
             childCourse.parent = parent;
             await this.courseRepository.insertCourse(childCourse);
         });
