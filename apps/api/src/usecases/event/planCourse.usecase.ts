@@ -1,12 +1,9 @@
 import { HttpStatus, NotFoundException } from "@nestjs/common";
-import { ILogger } from "../../domain/logger/logger.interface";
 import { CourseM } from "../../domain/models/course";
-import GroupType from "../../domain/models/enums/groupType.enum";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { ICourseRepository } from "../../domain/repositories/courseRepository.interface";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { ISkillRepository } from "../../domain/repositories/skillRepository.interface";
-import { NewGroupDto } from "../../infrastructure/controllers/groupManagement/groupDto.class";
 import { ScheduleEventDto } from "../../infrastructure/controllers/scheduleManagement/scheduleEventDto.class";
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 

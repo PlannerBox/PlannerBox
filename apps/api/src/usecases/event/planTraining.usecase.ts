@@ -1,7 +1,6 @@
 import { HttpStatus, NotFoundException } from "@nestjs/common";
 import { ILogger } from "../../domain/logger/logger.interface";
 import { ISkillRepository } from "../../domain/repositories/skillRepository.interface";
-import { EventDto } from "../../infrastructure/controllers/scheduleManagement/eventDto.class";
 import { IGroupRepository } from "../../domain/repositories/groupRepository.interface";
 import { NewGroupDto } from "../../infrastructure/controllers/groupManagement/groupDto.class";
 import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
@@ -78,11 +77,9 @@ export class PlanTrainingUseCase {
         }
 
         // Create training session (children) each child is linked to the parent
-        let childCounter = 0;
         events.children.forEach(async (child) => {
             const children = new CourseM();
-            childCounter++;
-            children.name = 'Formation#' + ((trainingCounter + 1) + childCounter);
+            children.name = 'Formation#' + ((trainingCounter + 1));
             children.startDate = child.startDate;
             children.endDate = child.endDate;
             children.group = newGroup;
