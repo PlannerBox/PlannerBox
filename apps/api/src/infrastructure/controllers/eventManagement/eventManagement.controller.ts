@@ -11,6 +11,7 @@ import { UpdateEventUseCase } from "../../../usecases/event/updateEvent.usecase"
 import { FindEventsUseCase } from "../../../usecases/event/findEvents.usecase";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 import { Course } from "../../entities/Course.entity";
+import { PaginatedEventListDto } from "./paginatedEventListDto.class";
 
 @Controller('event-management')
 @ApiTags('event-management')
@@ -35,7 +36,7 @@ export class EventManagementController {
     @Get('event/list-paginated')
     @HttpCode(200)
     @ApiOperation({ description: 'List all events' })
-    @ApiResponse({ status: 200, description: 'Events successfully listed' })
+    @ApiResponse({ status: 200, description: 'Events successfully listed', type: PaginatedEventListDto })
     @ApiResponse({ status: 204, description: 'No events found' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async listEvents(@Paginate() query: PaginateQuery): Promise<Paginated<Course>> {
