@@ -35,7 +35,7 @@ export class EventManagementController {
 
     @Get('event/list-paginated')
     @HttpCode(200)
-    @ApiOperation({ description: 'List all events' })
+    @ApiOperation({ description: 'List all events (paginated with nestjs-paginate)' })
     @ApiResponse({ status: 200, description: 'Events successfully listed', type: PaginatedEventListDto })
     @ApiResponse({ status: 204, description: 'No events found' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
