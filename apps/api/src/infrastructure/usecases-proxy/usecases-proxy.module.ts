@@ -375,16 +375,17 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository],
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, TeacherRepository],
           provide: UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
           useFactory: (
             skillRepository: SkillRepository,
             accountRepository: AccountRepository,
             groupRepository: GroupRepository,
-            courseRepository: CourseRepository
+            courseRepository: CourseRepository,
+            teacherRepository: TeacherRepository
           ) =>
             new UseCaseProxy(
-              new PlanCourseUseCase(skillRepository, accountRepository, groupRepository, courseRepository),
+              new PlanCourseUseCase(skillRepository, accountRepository, groupRepository, courseRepository, teacherRepository),
             ),
         },
         {
@@ -398,16 +399,17 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository],
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, TeacherRepository],
           provide: UsecasesProxyModule.UPDATE_EVENT_USECASES_PROXY,
           useFactory: (
             skillRepository: SkillRepository,
             accountRepository: AccountRepository,
             groupRepository: GroupRepository,
-            courseRepository: CourseRepository
+            courseRepository: CourseRepository,
+            teacherRepository: TeacherRepository
           ) =>
             new UseCaseProxy(
-              new UpdateEventUseCase(skillRepository, accountRepository, groupRepository, courseRepository),
+              new UpdateEventUseCase(skillRepository, accountRepository, groupRepository, courseRepository, teacherRepository),
             ),
         },
         {

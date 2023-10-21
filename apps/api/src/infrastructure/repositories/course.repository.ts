@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 import EventType from "../../domain/models/enums/eventType.enum";
 import { NotFoundException } from "@nestjs/common";
 import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
+import { CourseMapper } from "../mappers/course.mapper";
 
 export class CourseRepository implements ICourseRepository {
     constructor(
@@ -21,14 +22,18 @@ export class CourseRepository implements ICourseRepository {
         queryBuilder.leftJoinAndSelect('course.group', 'group');
 
         return await paginate<Course>(query, queryBuilder, {
-            relations: ['teachers', 'skills', 'group'],
+            relations: { teachers : { account : { rolePermissions : true }}, skills: true, group: true },
             sortableColumns: ['name', 'startDate', 'endDate', 'type'],
             defaultSortBy: [['startDate', 'ASC']]
         });
     }
 
     async findCourse(id: string): Promise<CourseM> {
-        return await this.courseRepository.findOne({ where: { id: id }});
+        return CourseMapper.fromEntityToModel(await this.courseRepository.findOne({ where: { id: id }}));
+    }
+
+    async insertCourse(course: Course): Promise<any> {
+        return await this.courseRepository.save(course);
     }
 
     async upsertCourse(course: CourseM): Promise<any> {

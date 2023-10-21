@@ -6,6 +6,7 @@ import EventType from "../models/enums/eventType.enum";
 export interface ICourseRepository {
     findEvents(query: PaginateQuery): Promise<Paginated<Course>>;
     findCourse(id: string): Promise<CourseM>;
+    insertCourse(course: Course): Promise<any>;
     upsertCourse(course: CourseM): Promise<any>;
     countCourseByType(type: EventType): Promise<number>;
     deleteCourse(id: string): Promise<any>;

@@ -7,20 +7,18 @@ import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module"
 import { ScheduleEventDto } from "./scheduleEventDto.class";
 import { PlanCourseUseCase } from "../../../usecases/event/planCourse.usecase";
 import { DeleteEventUseCase } from "../../../usecases/event/deleteEvent.usecase";
-import { In } from "typeorm";
 import { UpdateEventUseCase } from "../../../usecases/event/updateEvent.usecase";
 import { FindEventsUseCase } from "../../../usecases/event/findEvents.usecase";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
-import { query } from "express";
 import { Course } from "../../entities/Course.entity";
 
-@Controller('schedule-management')
-@ApiTags('schedule-management')
+@Controller('event-management')
+@ApiTags('event-management')
 @ApiResponse({
     status: 401,
     description: 'No authorization token was found',
 })
-export class ScheduleManagementController {
+export class EventManagementController {
     constructor(
         @Inject(UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY)
         private readonly planTrainingUseCase: UseCaseProxy<PlanTrainingUseCase>,

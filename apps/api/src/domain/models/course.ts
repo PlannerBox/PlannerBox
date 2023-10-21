@@ -1,14 +1,17 @@
+import { Course } from "../../infrastructure/entities/Course.entity";
+import { Group } from "../../infrastructure/entities/Group.entity";
 import { Skill } from "../../infrastructure/entities/Skill.entity";
 import EventType from "./enums/eventType.enum";
-import { GroupM } from "./group";
+import { TeacherM } from "./teacher";
 
 export class CourseM {
     id?: string;
     name: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     type: EventType;
-    group: GroupM;
-    parent?: CourseM;
+    group: Group;
+    parent?: Course;
     skills: Skill[];
+    teachers: TeacherM[];
 }

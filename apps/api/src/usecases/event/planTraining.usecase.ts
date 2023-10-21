@@ -7,8 +7,8 @@ import { GroupMapper } from "../../infrastructure/mappers/group.mapper";
 import { IAccountRepository } from "../../domain/repositories/accountRepository.interface";
 import { GroupType } from "../../domain/models/enums/groupType.enum";
 import { ICourseRepository } from "../../domain/repositories/courseRepository.interface";
-import { CourseM } from "../../domain/models/course";
-import { ScheduleEventDto } from "../../infrastructure/controllers/scheduleManagement/scheduleEventDto.class";
+import { ScheduleEventDto } from "../../infrastructure/controllers/eventManagement/scheduleEventDto.class";
+import { Course } from "../../infrastructure/entities/Course.entity";
 
 export class PlanTrainingUseCase {
     constructor(
@@ -58,7 +58,7 @@ export class PlanTrainingUseCase {
         // Get training counter to create a new training session name
         const trainingCounter = await this.courseRepository.countCourseByType(events.parent.eventType);
 
-        const course = new CourseM();
+        const course = new Course();
         course.name = 'Formation#' + (trainingCounter + 1);
         course.startDate = events.parent.startDate;
         course.endDate = events.parent.endDate;
@@ -67,7 +67,7 @@ export class PlanTrainingUseCase {
         course.skills = skills;
 
         // Create training session (parent)
-        let parent = await this.courseRepository.upsertCourse(course);
+        let parent = await this.courseRepository.insertCourse(course);
 
         if (!events.children || events.children.length === 0) {
             return {
@@ -78,7 +78,7 @@ export class PlanTrainingUseCase {
 
         // Create training session (children) each child is linked to the parent
         events.children.forEach(async (child) => {
-            const children = new CourseM();
+            const children = new Course();
             children.name = 'Formation#' + ((trainingCounter + 1));
             children.startDate = child.startDate;
             children.endDate = child.endDate;
@@ -86,7 +86,7 @@ export class PlanTrainingUseCase {
             children.type = events.parent.eventType;
             children.skills = skills;
             children.parent = parent;
-            await this.courseRepository.upsertCourse(children);
+            await this.courseRepository.insertCourse(children);
         });
 
         return {

@@ -14,10 +14,10 @@ export class Course {
     @Column ('character varying', { name: 'name', nullable: false, length: 100 })
     name: string;
 
-    @Column ('timestamptz', { name: 'startDate', nullable: false, default: () => 'CURRENT_TIMESTAMP' })
+    @Column ('timestamp without time zone', { name: 'startDate', nullable: false, default: () => 'CURRENT_TIMESTAMP' })
     startDate: Date;
 
-    @Column ('timestamptz', { name: 'endDate', nullable: false, default: () => 'CURRENT_TIMESTAMP' })
+    @Column ('timestamp without time zone', { name: 'endDate', nullable: false, default: () => 'CURRENT_TIMESTAMP' })
     endDate: Date;
 
     @Column('enum', { name: 'type', nullable: false, enum: EventType, default: EventType.Class })
