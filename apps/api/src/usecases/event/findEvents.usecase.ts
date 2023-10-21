@@ -10,7 +10,6 @@ export class FindEventsUseCase {
 
     async findEvents(query: PaginateQuery): Promise<Paginated<Course>> {
         let eventList = await this.courseRepository.findEvents(query);
-        console.log(eventList);
         let summaryEvent = [];
         summaryEvent = eventList.data.map(event => {
             return CourseMapper.fromEntityToModel(event);
