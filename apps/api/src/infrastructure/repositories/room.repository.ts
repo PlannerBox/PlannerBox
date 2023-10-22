@@ -22,20 +22,35 @@ export class RoomRepository implements IRoomRepository {
     async getRoom(id: string): Promise<RoomM> {
         return await this.roomRepository.findOneBy({id : id})
     }
-    async getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>> {
-        console.log(query);
-        const queryBuilder = this.roomRepository.createQueryBuilder('room');
-        // queryBuilder.leftJoinAndSelect("room.place", "place");
-        console.log(queryBuilder);
-        return await paginate<Room>(query, queryBuilder, {
-            loadEagerRelations: true,
-            sortableColumns: ['id', 'name'],
-            nullSort: 'last',
-            defaultSortBy: [['name', 'ASC']],
-            searchableColumns: ['id', 'name'],
-            filterableColumns: { id: true ,name: true },
+    // async getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>> {
+    //     console.log(query);
+    //     const queryBuilder = this.roomRepository.createQueryBuilder('room');
+    //     // queryBuilder.leftJoinAndSelect("room.place", "place");
+    //     console.log(queryBuilder);
+    //     return await paginate<Room>(query, queryBuilder, {
+    //         loadEagerRelations: true,
+    //         sortableColumns: ['id', 'name'],
+    //         nullSort: 'last',
+    //         defaultSortBy: [['name', 'ASC']],
+    //         searchableColumns: ['id', 'name'],
+    //         filterableColumns: { id: true ,name: true },
             
+    //     });
+    // }
+    async getAllRoom(query: PaginateQuery): Promise<Paginated<Room>> {
+
+        const queryBuilder = this.roomRepository.createQueryBuilder('room');
+
+ 
+
+        return await paginate<Room>(query, queryBuilder, {
+
+            sortableColumns: ['name'],
+
+            defaultSortBy: [['name', 'ASC']]
+
         });
+
     }
     async updateRoom(room: Room) : Promise<any>{
         return await this.roomRepository.update(room.id, room)

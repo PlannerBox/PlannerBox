@@ -35,6 +35,7 @@ import { RoomUseCase } from '../../../usecases/room/room.usecase';
 import { json } from 'stream/consumers';
 import { JsonResult } from '../../helpers/JsonResult';
 import { PaginateQuery, Paginated } from 'nestjs-paginate';
+import { Room } from '../../entities/Room.entity';
   
   @Controller('room')
   @ApiTags('room')
@@ -119,7 +120,7 @@ import { PaginateQuery, Paginated } from 'nestjs-paginate';
         description: 'No room found',
     })
     @ApiOperation({ description: 'Get rooms' })
-    async getAllPlace(query: PaginateQuery) : Promise<Paginated<RoomM>> {
+    async getAllPlace(query: PaginateQuery) : Promise<Paginated<any>> {
       return await this.roomUseCaseProxy.getInstance().getAllRoom(query);
     }
     @Post('update')

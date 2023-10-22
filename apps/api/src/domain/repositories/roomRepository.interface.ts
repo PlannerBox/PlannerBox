@@ -7,7 +7,7 @@ import { RoomM } from "../models/room";
 export interface IRoomRepository{
     deleteRoom(id: string): Promise<any>;
     getRoom(id: string): Promise<RoomM>;
-    getAllRoom(query: PaginateQuery) : Promise<Paginated<RoomM>>;
+    getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>>;
     updateRoom(room: Room): Promise<any>;
     insertRoom(room: RoomM, place: PlaceM): Promise<any>;
 }
