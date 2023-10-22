@@ -30,7 +30,6 @@ export class RoomUseCase {
         return await this.roomRepository.updateRoom(room);
     }
     async getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>> {
-        console.log(query);
         return await this.roomRepository.getAllRoom(query);
 
     }

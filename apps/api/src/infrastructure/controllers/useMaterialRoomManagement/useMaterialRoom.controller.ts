@@ -17,6 +17,7 @@ import {
     ApiBody,
     ApiExtraModels,
     ApiOperation,
+    ApiQuery,
     ApiResponse,
     ApiTags,
   } from '@nestjs/swagger';
@@ -35,6 +36,7 @@ import { UseMaterialRoomDto } from './useMaterialRoomDto.class';
 import { UseMaterialRoomUseCase } from '../../../usecases/material/useMaterialRoom.usecase';
 import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
 import { JsonResult } from '../../helpers/JsonResult';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
   
   @Controller('useMaterialRoom')
   @ApiTags('useMaterialRoom')
@@ -108,8 +110,11 @@ import { JsonResult } from '../../helpers/JsonResult';
         description: 'No material on room found',
     })
     @ApiOperation({ description: 'Get all material' })
-    async getAllPlace() : Promise<UseMaterialRoomM[]> {
-      return await this.useMaterialRoomUseCaseProxy.getInstance().getAll();
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'the page number to return' }) 
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'the number of items per page' })
+    @ApiQuery({ name: 'filter.name', required: false, type: String, description: 'add a filter (check nestjs paginate doc for more details). You can filter by roomId, materialId,number, room.name, material.name, room.place.city, room.place.street, room.place.streetNumber' })   
+    async getAllPlace(@Paginate() query: PaginateQuery) : Promise<Paginated<any>> {
+      return await this.useMaterialRoomUseCaseProxy.getInstance().getAll(query);
     }
     @Post('update')
     @HasRole(Role.Admin)
