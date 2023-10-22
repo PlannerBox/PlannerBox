@@ -45,7 +45,8 @@ export class RoomUseCase {
         id:roomM.id,
         name: roomM.name,
         place: roomM.place,
-        useMaterialRoom: roomM.useMaterialRoom
+        useMaterialRoom: roomM.useMaterialRoom,
+        courses: roomM.courses
     }
    }
 }

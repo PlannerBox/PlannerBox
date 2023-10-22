@@ -44,10 +44,14 @@ import { UpsertSkillUseCase } from '../../usecases/skill/upsertSkill.usecase';
 import { SkillRepository } from '../repositories/skill.repository';
 import { FindSkillUseCase } from '../../usecases/skill/findSkill.usecase';
 import { DeleteSkillUseCase } from '../../usecases/skill/deleteSkill.usecase';
-import { PlanTrainingUseCase } from '../../usecases/skill/planTraining.usecase';
+import { PlanTrainingUseCase } from '../../usecases/event/planTraining.usecase';
 import { CourseRepository } from '../repositories/course.repository';
 import { LinkSkillToTeacherUseCase } from '../../usecases/skill/linkSkillToTeacher.usecase';
 import { TeacherSkillsRepository } from '../repositories/teacherSkills.repository';
+import { PlanCourseUseCase } from '../../usecases/event/planCourse.usecase';
+import { DeleteEventUseCase } from '../../usecases/event/deleteEvent.usecase';
+import { UpdateEventUseCase } from '../../usecases/event/updateEvent.usecase';
+import { FindEventsUseCase } from '../../usecases/event/findEvents.usecase';
 
 @Module({
   imports: [
@@ -87,8 +91,14 @@ export class UsecasesProxyModule {
   static UPSERT_SKILL_USECASES_PROXY = 'UpsertSkillUseCasesProxy';
   static FIND_SKILL_USECASES_PROXY = 'FindSkillUseCasesProxy';
   static DELETE_SKILL_USECASES_PROXY = 'DeleteSkillUseCasesProxy';
-  static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
   static LINK_SKILL_TO_TEACHER_USECASES_PROXY = 'LinkSkillToTeacherUseCasesProxy';
+
+  // ScheduleManagement
+  static PLAN_TRAINING_USECASES_PROXY = 'PlanTrainingUseCasesProxy';
+  static PLAN_COURSE_USECASES_PROXY = 'PlanCourseUseCasesProxy';
+  static DELETE_EVENT_USECASES_PROXY = 'DeleteEventUseCasesProxy';
+  static UPDATE_EVENT_USECASES_PROXY = 'UpdateEventUseCasesProxy';
+  static FIND_EVENTS_USECASES_PROXY = 'FindEventsUseCasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -340,17 +350,17 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, LoggerService],
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, RoomRepository],
           provide: UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
           useFactory: (
             skillRepository: SkillRepository,
             accountRepository: AccountRepository,
             groupRepository: GroupRepository,
             courseRepository: CourseRepository,
-            logger: LoggerService
+            roomRepository: RoomRepository,
           ) =>
             new UseCaseProxy(
-              new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, courseRepository, logger),
+              new PlanTrainingUseCase(skillRepository, accountRepository, groupRepository, courseRepository, roomRepository),
             ),
         },
         {
@@ -363,7 +373,67 @@ export class UsecasesProxyModule {
             new UseCaseProxy(
               new LinkSkillToTeacherUseCase(teacherRepository, teacherSkillsRepository),
             ),
-        }
+        },
+        {
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, TeacherRepository, RoomRepository],
+          provide: UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            accountRepository: AccountRepository,
+            groupRepository: GroupRepository,
+            courseRepository: CourseRepository,
+            teacherRepository: TeacherRepository,
+            roomRepository: RoomRepository
+          ) =>
+            new UseCaseProxy(
+              new PlanCourseUseCase(skillRepository, accountRepository, groupRepository, courseRepository, teacherRepository, roomRepository),
+            ),
+        },
+        {
+          inject: [CourseRepository],
+          provide: UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY,
+          useFactory: (
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new DeleteEventUseCase(courseRepository),
+            ),
+        },
+        {
+          inject: [SkillRepository, AccountRepository, GroupRepository, CourseRepository, TeacherRepository, RoomRepository],
+          provide: UsecasesProxyModule.UPDATE_EVENT_USECASES_PROXY,
+          useFactory: (
+            skillRepository: SkillRepository,
+            accountRepository: AccountRepository,
+            groupRepository: GroupRepository,
+            courseRepository: CourseRepository,
+            teacherRepository: TeacherRepository,
+            roomRepository: RoomRepository
+          ) =>
+            new UseCaseProxy(
+              new UpdateEventUseCase(skillRepository, accountRepository, groupRepository, courseRepository, teacherRepository, roomRepository),
+            ),
+        },
+        {
+          inject: [CourseRepository],
+          provide: UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY,
+          useFactory: (
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new DeleteEventUseCase(courseRepository),
+            ),
+        },
+        {
+          inject: [CourseRepository],
+          provide: UsecasesProxyModule.FIND_EVENTS_USECASES_PROXY,
+          useFactory: (
+            courseRepository: CourseRepository
+          ) =>
+            new UseCaseProxy(
+              new FindEventsUseCase(courseRepository),
+            ),
+        },
       ],
       exports: [
         UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
@@ -388,6 +458,10 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.DELETE_SKILL_USECASES_PROXY,
         UsecasesProxyModule.PLAN_TRAINING_USECASES_PROXY,
         UsecasesProxyModule.LINK_SKILL_TO_TEACHER_USECASES_PROXY,
+        UsecasesProxyModule.PLAN_COURSE_USECASES_PROXY,
+        UsecasesProxyModule.DELETE_EVENT_USECASES_PROXY,
+        UsecasesProxyModule.UPDATE_EVENT_USECASES_PROXY,
+        UsecasesProxyModule.FIND_EVENTS_USECASES_PROXY,
       ],
     };
   }

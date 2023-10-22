@@ -124,8 +124,8 @@ export class AccountRepository implements IAccountRepository {
   }
 
   async accountExists(ids: string[]): Promise<boolean> {
-    const teachers = await this.accountEntityRepository.find({ where: { id: In(ids) } });
-    return teachers.length === ids.length;
+    const accounts = await this.accountEntityRepository.find({ where: { id: In(ids) } });
+    return accounts.length === ids.length;
 }
 
   async updateLastLogin(username: string): Promise<void> {
@@ -275,10 +275,11 @@ export class AccountRepository implements IAccountRepository {
         return createdStudentAccountEntity.account;
       case Role.ExternTeacher:
       case Role.InternTeacher:
+        const teacher = new Teacher();
+        teacher.account = accountEntity;
+        teacher.intern = account.role === Role.InternTeacher;
         const createdTeacherAccountEntity =
-          await this.teacherEntityRepository.save({
-            account: accountEntity,
-          });
+          await this.teacherEntityRepository.save(teacher);
         return createdTeacherAccountEntity.account;
     }
   }

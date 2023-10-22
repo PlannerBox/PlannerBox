@@ -10,6 +10,7 @@ export class TeacherMapper {
             id: teacherM.teacherId,
             intern: teacherM.intern,
             teacherSkills: teacherM.teacherSkills,
+            courses: teacherM.courses,
             account: AccountMapper.fromModelToEntity(teacherM),
         }
     }
