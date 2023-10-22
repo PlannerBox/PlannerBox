@@ -3,6 +3,7 @@ import { IMaterialRepository } from "../../domain/repositories/materialRepositor
 import { MaterialM } from "../../domain/models/material";
 import { Material } from "../../infrastructure/entities/Material.entity";
 import { MaterialDto } from "../../infrastructure/controllers/MaterialManagement/materialDto.class";
+import { PaginateQuery, Paginated } from "nestjs-paginate";
 
 
 export class MaterialUseCase {
@@ -22,8 +23,8 @@ export class MaterialUseCase {
         return await this.materialRepository.getMaterial(id);
     }
 
-    async getAllMaterial() : Promise<MaterialM[]> {
-        return await this.materialRepository.getAllMaterial();     
+    async getAllMaterial(query: PaginateQuery) : Promise<Paginated<MaterialM>> {
+        return await this.materialRepository.getAllMaterial(query);     
     }
 
     async updateMaterial(materialM:MaterialM) {

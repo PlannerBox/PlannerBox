@@ -63,7 +63,16 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Delete)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'delete' })
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Delete material on room',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'delete material on room' })
     async deleteRoom(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<any>{
       await this.useMaterialRoomUseCaseProxy.getInstance().delete(roomId,materialId);
       return JsonResult.Convert("Material successfully removed on room");
@@ -71,14 +80,34 @@ import { JsonResult } from '../../helpers/JsonResult';
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getOne' })
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Get one material on room',
+        type: UseMaterialRoomDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'Get one material on room' })
     async getPlace(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<UseMaterialRoomM>{
       return await this.useMaterialRoomUseCaseProxy.getInstance().get(roomId,materialId);
     }
     @Get('getAll')
     @HasPermissions(UsersPermissions.ReadAll)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getAll' })
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Get all material',
+        type: UseMaterialRoomDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'Get all material' })
     async getAllPlace() : Promise<UseMaterialRoomM[]> {
       return await this.useMaterialRoomUseCaseProxy.getInstance().getAll();
     }
@@ -86,8 +115,17 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Update material on room',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
     @ApiBody({ type: UseMaterialRoomDto })
-    @ApiOperation({ description: 'update' })
+    @ApiOperation({ description: 'Update material on room' })
     async updatePlace(@Body() useMaterialRoom: UseMaterialRoomM, @Req() request: any) : Promise<any>{
       await this.useMaterialRoomUseCaseProxy.getInstance().update(useMaterialRoom);
       return JsonResult.Convert("Material successfully updated on room");

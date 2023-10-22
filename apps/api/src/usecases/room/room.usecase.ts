@@ -7,6 +7,7 @@ import { Room } from "../../infrastructure/entities/Room.entity";
 import { RoomM } from "../../domain/models/room";
 import { RoomDto } from "../../infrastructure/controllers/roomManagement/roomDto.class";
 import { NotFoundException } from "@nestjs/common";
+import { PaginateQuery, Paginated } from "nestjs-paginate";
 
 
 export class RoomUseCase {
@@ -28,8 +29,9 @@ export class RoomUseCase {
         const room=this.toRoom(roomM);
         return await this.roomRepository.updateRoom(room);
     }
-    async getAllRoom(): Promise<RoomM[]> {
-        return await this.roomRepository.getAllRoom();
+    async  getAllRoom(query: PaginateQuery) : Promise<Paginated<RoomM>> {
+        console.log(query);
+        return await this.roomRepository.getAllRoom(query);
 
     }
     async getRoom(id: string): Promise<RoomM> {

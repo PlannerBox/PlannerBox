@@ -5,6 +5,7 @@ import { Room } from "../entities/Room.entity";
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { RoomM } from "../../domain/models/room";
 import { Place } from "../entities/Place.entity";
+import { PaginateQuery, Paginated, paginate } from "nestjs-paginate";
 
 
 @Injectable()
@@ -21,8 +22,20 @@ export class RoomRepository implements IRoomRepository {
     async getRoom(id: string): Promise<RoomM> {
         return await this.roomRepository.findOneBy({id : id})
     }
-    async getAllRoom(): Promise<RoomM[]> {
-        return await this.roomRepository.find();
+    async getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>> {
+        console.log(query);
+        const queryBuilder = this.roomRepository.createQueryBuilder('room');
+        // queryBuilder.leftJoinAndSelect("room.place", "place");
+        console.log(queryBuilder);
+        return await paginate<Room>(query, queryBuilder, {
+            loadEagerRelations: true,
+            sortableColumns: ['id', 'name'],
+            nullSort: 'last',
+            defaultSortBy: [['name', 'ASC']],
+            searchableColumns: ['id', 'name'],
+            filterableColumns: { id: true ,name: true },
+            
+        });
     }
     async updateRoom(room: Room) : Promise<any>{
         return await this.roomRepository.update(room.id, room)

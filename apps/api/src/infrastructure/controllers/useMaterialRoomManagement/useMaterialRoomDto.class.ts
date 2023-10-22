@@ -5,10 +5,11 @@ import { Material } from "../../entities/Material.entity";
 import { IntegerType } from "typeorm";
 
 export class UseMaterialRoomDto {
-  @ApiProperty({ required: true })
+  @ApiProperty()
   readonly id?: string;
 
-  @IsNotEmpty({ message: 'Name can not be empty' })
+  @IsNotEmpty({ message: 'Number can not be empty' })
+  @ApiProperty({ required: true })
   readonly number: IntegerType;
 
   @ApiProperty({ required: true })
