@@ -1,6 +1,6 @@
-export enum CourseType {
+export enum EventType {
     Class = 0,
     Formation = 1,
     RefresherCourse = 2
 }
-export default CourseType;
+export default EventType;

@@ -13,27 +13,6 @@ export class GetGroupUseCase {
         private readonly logger: ILogger
     ) {}
 
-    // Deprecated please use findPaginateGroupList
-    async findGroupList(): Promise<any> {
-        let groupList = await this.groupRepository.findAll();
-        this.logger.log('GetGroupUseCase', `Found ${groupList.length} groups`);
-        
-        let summaryGroup = [];
-
-        groupList.forEach(group => {
-            summaryGroup.push(GroupMapper.fromModelToSummary(group));
-        });
-
-        return summaryGroup;
-    }
-
-    async findPaginateGroupList(pageOptionsDto: PageOptionsDto): Promise<any> {
-        let groupList = await this.groupRepository.findPaginatedManually(pageOptionsDto);
-        this.logger.log('GetGroupUseCase', `Found ${groupList.meta.itemCount} groups`);
-        
-        return groupList;
-    }
-
     async findGroupDetails(groupId: string): Promise<any> {
         let group = await this.groupRepository.findGroup(groupId);
 

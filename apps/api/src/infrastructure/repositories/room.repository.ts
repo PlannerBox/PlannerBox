@@ -54,6 +54,7 @@ export class RoomRepository implements IRoomRepository {
         name: roomM.name,
         place: roomM.place,
         useMaterialRoom:roomM.useMaterialRoom,
+        courses:roomM.courses
     }
    }
 }

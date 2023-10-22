@@ -12,7 +12,6 @@ export class Material {
     @Column('character varying', { name: 'name', length: 255 })
     name: string;
 
-    @OneToMany(() => UseMaterialRoom, (useMaterialRoom) => useMaterialRoom)
-    @JoinColumn([{ name: 'useMaterialRoomId', referencedColumnName: 'id' }])
+    @OneToMany(() => UseMaterialRoom, (useMaterialRoom) => useMaterialRoom.material, { cascade: true })
     useMaterialRoom: UseMaterialRoom[];
 }

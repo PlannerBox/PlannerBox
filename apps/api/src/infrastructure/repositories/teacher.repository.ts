@@ -1,10 +1,10 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Teacher } from "../entities/Teacher.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { ITeacherRepository } from "../../domain/repositories/teacherRepository.interface";
 import { TeacherM } from "../../domain/models/teacher";
 import { TeacherMapper } from "../mappers/teacher.mapper";
-import { NotFoundError } from "rxjs";
+import { NotFoundError, retry } from "rxjs";
 import { NotFoundException } from "@nestjs/common";
 
 export class TeacherRepository implements ITeacherRepository {
@@ -27,6 +27,10 @@ export class TeacherRepository implements ITeacherRepository {
         return TeacherMapper.fromEntityToModel(teacherEntity);
     }
 
+    async findTeacherByIds(teacherIds: string[]): Promise<Teacher[]> {
+        return await this.teacherRepository.find({ where: { account: { id: In(teacherIds) }}});
+    }
+
     async findTeacherByAccountId(accountId: string): Promise<TeacherM> {
         const teacherEntity: Teacher = await this.teacherRepository.findOne({
             where: {
@@ -43,7 +47,6 @@ export class TeacherRepository implements ITeacherRepository {
 
     async updateTeacher(teacher: TeacherM): Promise<any> {
         const teacherEntity = TeacherMapper.fromModelToEntity(teacher);
-        console.log(teacherEntity);
         await this.teacherRepository.save(teacherEntity);
         return teacher;
     }
