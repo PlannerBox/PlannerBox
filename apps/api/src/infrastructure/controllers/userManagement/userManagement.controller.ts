@@ -35,7 +35,6 @@ import { AccountMapper } from '../../mappers/account.mapper';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
 import { RolesPermissionsDto } from './rolesPermissionsDto.class';
-import { StudentAccountDetailedDto } from './studentAccountDto.class';
 import {
   AccountSummaryDto,
   GenericUserAccountDto,

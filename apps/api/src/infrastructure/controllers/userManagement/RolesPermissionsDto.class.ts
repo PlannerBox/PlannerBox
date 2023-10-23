@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import Role from "../../../domain/models/enums/role.enum";
 import UsersPermissions from "../../../domain/models/enums/usersPermissions.enum";
-import { IsNotEmpty } from "class-validator";
 
 export class RolesPermissionsDto {
     @ApiProperty({ required: false, enum: Role, enumName: 'Role' })
