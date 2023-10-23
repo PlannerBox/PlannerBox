@@ -1,5 +1,5 @@
 import { Metadata, NextPage } from 'next';
-import UsersManagementTabs from './UsersManagementTabs/partials/UsersTab';
+import UsersManagementTabs from './UsersManagementTabs';
 
 export const metadata: Metadata = {
   title: 'PlannerBox - Gestion des utilisateurs',
