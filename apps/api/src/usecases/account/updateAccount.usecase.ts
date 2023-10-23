@@ -52,13 +52,13 @@ export class UpdateAccountUseCase {
             throw new NotFoundException('Account not found');
         }
 
-        student.username = studentM.username;
-        student.firstname = studentM.firstname;
-        student.lastname = studentM.lastname;
-        student.birthDate = studentM.birthDate;
-        student.birthPlace = studentM.birthPlace;
-        student.active = studentM.active;
-        student.formationMode = studentM.formationMode;
+        student.username = studentM.username ?? student.username;
+        student.firstname = studentM.firstname ?? student.firstname;
+        student.lastname = studentM.lastname ?? student.lastname;
+        student.birthDate = studentM.birthDate ?? student.birthDate;
+        student.birthPlace = studentM.birthPlace ?? student.birthPlace;
+        student.active = studentM.active ?? student.active;
+        student.formationMode = studentM.formationMode ?? student.formationMode;
 
         return await this.studentRepository.updateStudent(student);
     }
@@ -91,15 +91,15 @@ export class UpdateAccountUseCase {
             this.logger.error('UpdateAccountUseCases updateAdmin', 'Account not found')
             throw new NotFoundException('Account not found');
         }
-
-        admin.username = adminAccount.username;
-        admin.firstname = adminAccount.firstname;
-        admin.lastname = adminAccount.lastname;
-        admin.birthDate = adminAccount.birthDate;
-        admin.birthPlace = adminAccount.birthPlace;
-        admin.active = adminAccount.active;
-        admin.role = adminAccount.role;
-        admin.rolePermissions = adminAccount.rolePermissions;
+        console.log(adminAccount);
+        admin.username = adminAccount.username ?? admin.username;
+        admin.firstname = adminAccount.firstname ?? admin.firstname;
+        admin.lastname = adminAccount.lastname ?? admin.lastname;
+        admin.birthDate = adminAccount.birthDate ?? admin.birthDate;
+        admin.birthPlace = adminAccount.birthPlace ?? admin.birthPlace;
+        admin.active = adminAccount.active ?? admin.active;
+        admin.role = adminAccount.role ?? admin.role;
+        admin.rolePermissions = adminAccount.rolePermissions ?? admin.rolePermissions;
 
         return await this.accountRepository.updateAccount(admin);
     }

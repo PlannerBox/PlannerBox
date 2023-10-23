@@ -29,6 +29,7 @@ export class AccountMapper {
   }
 
   static fromEntityToModel(account: Account): AccountM {
+
     return {
       id: account.id,
       username: account.username,
