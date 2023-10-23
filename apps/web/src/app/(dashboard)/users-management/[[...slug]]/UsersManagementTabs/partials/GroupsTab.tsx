@@ -517,7 +517,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             <Popover
               placement='leftTop'
               title='Sélectionner le membre'
-              content={addMemberPopoverContent}
+              content={() => addMemberPopoverContent()}
               trigger='click'
             >
               <Button type='primary'>Ajouter un membre</Button>
