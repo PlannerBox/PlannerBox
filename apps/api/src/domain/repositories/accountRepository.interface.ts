@@ -15,5 +15,5 @@ export interface IAccountRepository {
   getAllAccounts(): Promise<AccountWithoutPassword[]>;
   deleteAccount(id: string): Promise<void>;
   findAccount(query: PaginateQuery): Promise<Paginated<Account>>
-  findUserAccountDetails(id: string): Promise<UserAccountDetailsM>;
+  findUserAccountDetails(id: string, username: string): Promise<UserAccountDetailsM>;
 }

@@ -103,9 +103,9 @@ export class AccountManagementUseCases {
   /// <summary>
   ///     Find an account
   /// </summary>
-  async findAccountDetails(accountId: string): Promise<any> {
+  async findAccountDetails(accountId: string, username: string): Promise<any> {
     const userAccountDetails =
-      await this.accountRepository.findUserAccountDetails(accountId);
+      await this.accountRepository.findUserAccountDetails(accountId, username);
     if (!userAccountDetails) {
       this.logger.error(
         'AccountManagementUseCases findAccountDetails',

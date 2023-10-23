@@ -103,7 +103,7 @@ export class UserManagementController {
     return accountList;
   }
 
-  @Get('users/details/:accountId')
+  @Get('users/details')
   @UseGuards(JwtAuthGuard)
   @HttpCode(200)
   @ApiOperation({ description: 'get specific user account details' })
@@ -114,10 +114,13 @@ export class UserManagementController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Account not found' })
-  async getUserDetails(@Param('accountId') accountId: string) {
+  async getUserDetails(@Query('accountId') accountId: string, @Req() request: any) {
+    if (!accountId)
+      return await this.accountManagementUsecaseProxy.getInstance().findAccountDetails(null, request.user.username);
+
     return await this.accountManagementUsecaseProxy
       .getInstance()
-      .findAccountDetails(accountId);
+      .findAccountDetails(accountId, null);
   }
 
   @Get('is-active')

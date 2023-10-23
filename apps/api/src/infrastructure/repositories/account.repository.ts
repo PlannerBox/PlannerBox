@@ -179,15 +179,27 @@ export class AccountRepository implements IAccountRepository {
     });
   }
 
-  async findUserAccountDetails(id: string): Promise<UserAccountDetailsM> {
-    const accountEntity = await this.accountEntityRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        groups: { group: true },
-      },
-    });
+  async findUserAccountDetails(id: string, username: string): Promise<UserAccountDetailsM> {
+    let accountEntity = null;
+    if (id) {
+      accountEntity = await this.accountEntityRepository.findOne({
+        where: {
+          id: id,
+        },
+        relations: {
+          groups: { group: true },
+        },
+      });
+    } else {
+      accountEntity = await this.accountEntityRepository.findOne({
+        where: {
+          username: username,
+        },
+        relations: {
+          groups: { group: true },
+        },
+      });
+    }
 
     if (!accountEntity) {
       return null;
