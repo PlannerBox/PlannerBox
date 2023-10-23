@@ -1,6 +1,7 @@
 'use client';
 
-import { ConfigProvider } from 'antd';
+import Head from 'next/head';
+import Providers from '../utils/providers';
 import './global.scss';
 
 export default function RootLayout({
@@ -10,16 +11,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang='fr'>
+      <Head>
+        <link rel='icon' href='/favicon.ico' sizes='any' />
+      </Head>
       <body>
-        <ConfigProvider
-          theme={{
-            token: {
-              fontSize: 16,
-            },
-          }}
-        >
-          {children}
-        </ConfigProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

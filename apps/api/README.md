@@ -10,7 +10,7 @@ Using [Nest](https://github.com/nestjs/nest) framework with TypeORM
 ## Installation
 
 ```bash
-$ npm i
+$ pnpm i
 ```
 
 ## Running the app
@@ -39,12 +39,28 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## TypeORM
+
+```bash
+# Generate new migration with model changes
+npm run migration:add --name=migrationName
+
+# Run migrations
+npm run migration:run
+
+# Revert the latest migration
+npm run migration:revert
+
+# Create empty migration
+npm run migration:create --name=migrationName
+```
+
 ## More
 
-Swagger available on [http://localhost:3000/swagger](http://localhost:3000/swagger)
+>Swagger available on [http://localhost:3000/swagger](http://localhost:3000/swagger)
 
-Import entities from database with TypeORM model generator
-npx typeorm-model-generator -h localhost -d plannerbox -u postgres -x postgres -e postgres -o .\src\infrastructure\ -s public
+>Import entities from database with TypeORM model generator  
+`npx typeorm-model-generator -h localhost -d plannerbox -u postgres -x postgres -e postgres -o .\src\infrastructure\ -s public`
 
 ## License
 

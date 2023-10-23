@@ -8,13 +8,14 @@
     "dev": "dotenv -- turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "test": "turbo run test"
   },
   "devDependencies": {
     "dotenv-cli": "^7.2.1",
     "eslint-config-custom": "workspace:*",
     "prettier": "^2.8.8",
-    "turbo": "^1.9.3"
+    "turbo": "^1.10.13"
   },
   "engines": {
     "node": ">=14.0.0",
