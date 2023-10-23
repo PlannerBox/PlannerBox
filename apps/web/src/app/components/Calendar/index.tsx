@@ -45,7 +45,7 @@ const Calendar = ({ events }: CalendarProps) => {
     <div>
       <div className={styles.headerToolbar}>
         <div className={styles.headerToolbarActionsGroup}>
-          <Button onClick={handleTodayClick}>Aujourd'hui</Button>
+          <Button onClick={handleTodayClick}>Aujourd&apos;hui</Button>
           <Button onClick={handlePreviousClick}>{'<'}</Button>
           <Button onClick={handleNextClick}>{'>'}</Button>
         </div>

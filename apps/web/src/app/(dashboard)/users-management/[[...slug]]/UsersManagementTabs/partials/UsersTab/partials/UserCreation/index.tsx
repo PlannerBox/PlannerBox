@@ -144,7 +144,7 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
 
   useEffect(() => {
     refetchListGroups();
-  }, [listGroupsOptions]);
+  }, [listGroupsOptions, refetchListGroups]);
 
   return (
     <>

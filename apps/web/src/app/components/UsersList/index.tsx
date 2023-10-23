@@ -16,7 +16,7 @@ export default function UsersList({ users }: UsersListProps) {
       }}
     >
       {users.map((userInformations) => (
-        <UserElement {...userInformations} />
+        <UserElement {...userInformations} key={userInformations.email} />
       ))}
     </div>
   );

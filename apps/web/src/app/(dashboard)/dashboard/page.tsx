@@ -1,6 +1,4 @@
-import { NextPage } from 'next';
-
-const Dashboard: NextPage = async () => {
+const Dashboard = async () => {
   return <div>Dashboard</div>;
 };
 
