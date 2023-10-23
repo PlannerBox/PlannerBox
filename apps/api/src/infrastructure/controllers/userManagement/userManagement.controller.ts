@@ -34,12 +34,12 @@ import { JsonResult } from '../../helpers/JsonResult';
 import { AccountMapper } from '../../mappers/account.mapper';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { RolesPermissionsDto } from './rolesPermissionsDto.class';
 import {
   AccountSummaryDto,
   GenericUserAccountDto,
 } from './userAccountDto.class';
 import { UserAccountDetailsM } from '../../../domain/models/account';
+import { RolesPermissionsDto } from './RolesPermissionsDto.class';
 
 @Controller('user-management')
 @ApiTags('user-management')
