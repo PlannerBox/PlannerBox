@@ -20,12 +20,14 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
+  DeleteUserResponse,
   ListUsersProps,
   ToggleUserStateResponse,
   UserGroupData,
 } from 'api-client';
 import { Role } from 'api-client/enums/Role';
 import { ReactNode, useEffect, useState } from 'react';
+import { useDeleteUser } from '../../../../../../../../hooks/useDeleteUser';
 import { useListUsers } from '../../../../../../../../hooks/useListUsers';
 import { useToggleUserState } from '../../../../../../../../hooks/useToggleUserState';
 import UserCreation from './UserCreation';
@@ -78,9 +80,16 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
       }))
     : [];
 
+  const getUserId = (username: string) => {
+    if (usersList !== undefined) {
+      return usersList.data.find((u) => u.username === username)?.id || '';
+    }
+    return '';
+  };
+
   const { mutate: toggleState } = useToggleUserState({
     onSuccess: handleToggleStateSuccess,
-    onError: handleError,
+    onError: handleToggleStateError,
   });
 
   function handleToggleStateSuccess(data: ToggleUserStateResponse) {
@@ -99,10 +108,39 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
     }
   }
 
-  function handleError() {
+  function handleToggleStateError() {
     openNotification({
       title:
         "Une erreur est survenue lors de la mise à jour de l'état de l'utilisateur !",
+      icon: <CloseCircleOutlined />,
+    });
+  }
+
+  const { mutate: deleteUser } = useDeleteUser({
+    onSuccess: handleDeleteUserSuccess,
+    onError: handleDeleteUserError,
+  });
+
+  function handleDeleteUserSuccess(data: DeleteUserResponse) {
+    if (!!data) {
+      openNotification({
+        title: 'Utilisateur supprimé !',
+        icon: <CheckCircleOutlined />,
+      });
+      queryClient.invalidateQueries({ queryKey: ['listUsers'] });
+    } else {
+      openNotification({
+        title:
+          "Une erreur est survenue lors de la suppression de l'utilisateur !",
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  }
+
+  function handleDeleteUserError() {
+    openNotification({
+      title:
+        "Une erreur est survenue lors de la suppression de l'utilisateur !",
       icon: <CloseCircleOutlined />,
     });
   }
@@ -133,7 +171,11 @@ export default function UsersTab({ step = 'list' }: UsersTabProps) {
       },
       {
         key: '2',
-        label: <a>Supprimer définitivement le compte</a>,
+        label: (
+          <a onClick={() => deleteUser({ id: getUserId(username) })}>
+            Supprimer définitivement le compte
+          </a>
+        ),
       },
     ];
   };
