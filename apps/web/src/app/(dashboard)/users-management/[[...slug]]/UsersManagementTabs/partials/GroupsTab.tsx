@@ -282,7 +282,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
 
   const { Text } = Typography;
 
-  const MemberPopoverContent = () => {
+  const addMemberPopoverContent = () => {
     const [users, setUsers] = useState<UserElementProps[]>([]);
     const fakeUsers: UserElementProps[] = [
       {
@@ -517,7 +517,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             <Popover
               placement='leftTop'
               title='Sélectionner le membre'
-              content={() => MemberPopoverContent()}
+              content={addMemberPopoverContent}
               trigger='click'
             >
               <Button type='primary'>Ajouter un membre</Button>
