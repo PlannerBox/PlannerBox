@@ -9,7 +9,7 @@ type DeleteSkillHookOptions = {
 const useDeleteSkill = ({ onSuccess, onError }: DeleteSkillHookOptions) => {
   return useMutation<DeleteSkillResponse, unknown, string>({
     mutationFn: async (skillId: string) => {
-      return await deleteSkill(skillId);
+      return await deleteSkill({ skillId });
     },
     onSuccess: (data) => {
       if (onSuccess) {

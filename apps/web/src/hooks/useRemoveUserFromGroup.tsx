@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { RemoveUserFromGroupResponse, removeUserFromGroup } from 'api-client';
+import {
+  RemoveUserFromGroupProps,
+  RemoveUserFromGroupResponse,
+  removeUserFromGroup,
+} from 'api-client';
 
 type RemoveUserFromGroupHookOptions = {
   onSuccess?: (data: RemoveUserFromGroupResponse) => void;
@@ -10,9 +14,13 @@ const useRemoveUserFromGroup = ({
   onSuccess,
   onError,
 }: RemoveUserFromGroupHookOptions) => {
-  return useMutation<RemoveUserFromGroupResponse, unknown, void>({
-    mutationFn: async () => {
-      return await removeUserFromGroup();
+  return useMutation<
+    RemoveUserFromGroupResponse,
+    unknown,
+    RemoveUserFromGroupProps
+  >({
+    mutationFn: async (data: RemoveUserFromGroupProps) => {
+      return await removeUserFromGroup(data);
     },
     onSuccess: (data) => {
       if (onSuccess) {

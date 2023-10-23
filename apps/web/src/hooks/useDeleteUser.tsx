@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { DeleteUserResponse, deleteUser } from 'api-client';
+import { DeleteUserProps, DeleteUserResponse, deleteUser } from 'api-client';
 
 type DeleteUserHookOptions = {
   onSuccess?: (data: DeleteUserResponse) => void;
@@ -7,9 +7,9 @@ type DeleteUserHookOptions = {
 };
 
 const useDeleteUser = ({ onSuccess, onError }: DeleteUserHookOptions) => {
-  return useMutation<DeleteUserResponse, unknown, void>({
-    mutationFn: async () => {
-      return await deleteUser();
+  return useMutation<DeleteUserResponse, unknown, DeleteUserProps>({
+    mutationFn: async (data: DeleteUserProps) => {
+      return await deleteUser(data);
     },
     onSuccess: (data) => {
       if (onSuccess) {

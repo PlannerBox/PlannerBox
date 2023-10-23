@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { listRolePermissions } from 'api-client';
+import { ListRolePermissionsProps, listRolePermissions } from 'api-client';
 import { useCookies } from 'react-cookie';
 
-const useListRolePermissions = () => {
+const useListRolePermissions = (props: ListRolePermissionsProps) => {
   const [cookies] = useCookies(['session']);
   console.log('useListRolePermissions');
   return useQuery({
     queryKey: ['listRolePermissions'],
-    queryFn: () => listRolePermissions(cookies['session']),
+    queryFn: () => listRolePermissions(props, cookies['session']),
   });
 };
 

@@ -5,7 +5,7 @@ type FilterType = {
   name?: string;
 };
 
-export type GetListRoomsProps = {
+export type ListRoomsProps = {
   filter?: FilterType;
   limit?: number;
   page?: number;
@@ -55,7 +55,7 @@ export type GetListRoomsResponse = {
 };
 
 const listRooms = async (
-  props: GetListRoomsProps,
+  props: ListRoomsProps,
   session: string
 ): Promise<GetListRoomsResponse> => {
   let url = `${process.env.NEXT_PUBLIC_API_URL}/api/room/getfilter`;

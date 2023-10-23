@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { ListSkillsProps, getListSkills } from 'api-client';
+import { GetListSkillsProps, getListSkills } from 'api-client';
 import { useCookies } from 'react-cookie';
 
-const useListSkills = (props: ListSkillsProps) => {
+const useListSkills = (props: GetListSkillsProps) => {
   const [cookies] = useCookies(['session']);
   console.log('useListSkills');
   return useQuery({
