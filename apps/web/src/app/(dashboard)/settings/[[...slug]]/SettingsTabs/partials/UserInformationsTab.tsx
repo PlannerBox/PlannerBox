@@ -3,14 +3,10 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Form, Input, notification } from 'antd';
-import {
-  ListUsersProps,
-  UpdateUserProps,
-  UpdateUserResponse,
-} from 'api-client';
-import { ReactNode, useState } from 'react';
-import { useListUsers } from '../../../../../../hooks/useListUsers';
+import { UpdateUserProps, UpdateUserResponse } from 'api-client';
+import { ReactNode, useEffect } from 'react';
 import { useUpdateUser } from '../../../../../../hooks/useUpdateUser';
+import { useUserDetails } from '../../../../../../hooks/useUserDetails';
 
 const layout = {
   labelCol: { span: 8 },
@@ -43,13 +39,9 @@ export default function UserInformationsTab() {
     });
   };
 
-  const [listUsersOptions, setListUsersOptions] = useState<ListUsersProps>({
-    filter: undefined,
-    limit: 9,
-    page: 1,
-  });
-
-  const { data: userInformations } = useListUsers(listUsersOptions);
+  const { data: userDetails, isLoading: isUserDetailsLoading } = useUserDetails(
+    {}
+  );
 
   const { mutate: updateUser } = useUpdateUser({
     onSuccess: handleUpdateUserSuccess,
@@ -62,7 +54,7 @@ export default function UserInformationsTab() {
         title: 'Informations personnelles mises à jour !',
         icon: <CheckCircleOutlined />,
       });
-      queryClient.invalidateQueries({ queryKey: ['listUsers'] });
+      queryClient.invalidateQueries({ queryKey: ['userDetails'] });
     } else {
       openNotification({
         title:
@@ -82,13 +74,23 @@ export default function UserInformationsTab() {
 
   const onFinish = (values: UpdateUserProps) => {
     updateUser({
-      id: userInformations!.data[0].id,
+      id: userDetails!.id,
       username: values.username,
       firstname: values.firstname,
       lastname: values.lastname,
     });
-    console.log(values);
   };
+
+  useEffect(() => {
+    console.log({ userDetails });
+    if (userDetails !== undefined) {
+      form.setFieldsValue({
+        lastname: userDetails.lastname,
+        firstname: userDetails.firstname,
+        username: userDetails.username,
+      });
+    }
+  }, [userDetails]);
 
   return (
     <Form
@@ -101,17 +103,17 @@ export default function UserInformationsTab() {
       wrapperCol={{ style: { width: '100%' } }}
     >
       <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
-        <Input defaultValue='Alberto' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item name='firstname' label='Prénom' rules={[{ required: true }]}>
-        <Input defaultValue='Roberto' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item
         name='username'
         label='Adresse mail'
         rules={[{ required: true, type: 'email' }]}
       >
-        <Input defaultValue='roberto.alberto@gmail.com' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item
         style={{
@@ -123,7 +125,7 @@ export default function UserInformationsTab() {
           style: { margin: 'auto', marginTop: 'var(--spacing-24)' },
         }}
       >
-        <Button type='primary' htmlType='submit'>
+        <Button type='primary' htmlType='submit' loading={isUserDetailsLoading}>
           Enregistrer les modifications
         </Button>
       </Form.Item>
