@@ -5,6 +5,7 @@ import { UseMaterialRoom } from "../../infrastructure/entities/UseMaterialRoom.e
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { IMaterialRepository } from "../../domain/repositories/materialRepository.interface";
 import { NotFoundException } from "@nestjs/common";
+import { PaginateQuery, Paginated } from "nestjs-paginate";
 
 
 export class UseMaterialRoomUseCase {
@@ -34,8 +35,8 @@ export class UseMaterialRoomUseCase {
         return await this.materialRoomRepository.get(roomId, materialId);
     }
 
-    async getAll() : Promise<UseMaterialRoomM[]> {
-        return await this.materialRoomRepository.getAll();     
+    async getAll(query: PaginateQuery) : Promise<Paginated<UseMaterialRoom>> {
+        return await this.materialRoomRepository.getAll(query);     
     }
 
     async update(useMaterialRoomM:UseMaterialRoomM): Promise<any> {

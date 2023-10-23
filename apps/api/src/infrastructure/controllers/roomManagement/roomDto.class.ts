@@ -4,10 +4,11 @@ import { Place } from "../../entities/Place.entity";
 import { UseMaterialRoom } from "../../entities/UseMaterialRoom.entity";
 
 export class RoomDto {
-  @ApiProperty({ required: true })
+  @ApiProperty()
   readonly id?: string;
 
   @IsNotEmpty({ message: 'Name can not be empty' })
+  @ApiProperty({ required: true })
   @IsString()
   readonly name: string;
 

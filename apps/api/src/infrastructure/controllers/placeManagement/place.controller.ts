@@ -53,8 +53,17 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Add)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @HttpCode(201)
+    @ApiResponse({
+        status: 201,
+        description: 'Place successfully added',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No place found',
+    })
     @ApiBody({ type: PlaceDto })
-    @ApiOperation({ description: 'insert' })
+    @ApiOperation({ description: 'Insert place' })
     async insertPlace(@Body() place: PlaceDto, @Req() request: any) {
         await this.placeUseCaseProxy.getInstance().insertPlace(place);
         return JsonResult.Convert("Place successfully added");
@@ -64,7 +73,16 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Delete)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'delete' })
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Place successfully deleted',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No place found',
+    })
+    @ApiOperation({ description: 'Delete place' })
     async deletePlace(@Query('id') id: string) {
       await this.placeUseCaseProxy.getInstance().deletePlace(id);
       return JsonResult.Convert("Place successfully removed");
@@ -72,14 +90,34 @@ import { JsonResult } from '../../helpers/JsonResult';
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getOne' })
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Details of one place',
+        type: PlaceDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No place found',
+    })
+    @ApiOperation({ description: 'Get One place' })
     async getPlace(@Query('id') id: string) : Promise<PlaceM>{
       return await this.placeUseCaseProxy.getInstance().getPlace(id);
     }
     @Get('getAll')
     @HasPermissions(UsersPermissions.ReadAll)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getAll' })
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Details of places',
+        type: PlaceDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No place found',
+    })
+    @ApiOperation({ description: 'Get places' })
     async getAllPlace() : Promise<PlaceM[]> {
       return await this.placeUseCaseProxy.getInstance().getAllPlace();
     }
@@ -88,7 +126,16 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasPermissions(UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @ApiBody({ type: PlaceDto })
-    @ApiOperation({ description: 'update' })
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Update place',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No place found',
+    })
+    @ApiOperation({ description: 'update place' })
     async updatePlace(@Body() place: PlaceM, @Req() request: any) {
       await this.placeUseCaseProxy.getInstance().updatePlace(place);
       return JsonResult.Convert("Place successfully updated");

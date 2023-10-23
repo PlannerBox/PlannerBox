@@ -17,6 +17,7 @@ import {
     ApiBody,
     ApiExtraModels,
     ApiOperation,
+    ApiQuery,
     ApiResponse,
     ApiTags,
   } from '@nestjs/swagger';
@@ -35,6 +36,7 @@ import { UseMaterialRoomDto } from './useMaterialRoomDto.class';
 import { UseMaterialRoomUseCase } from '../../../usecases/material/useMaterialRoom.usecase';
 import { UseMaterialRoomM } from '../../../domain/models/useMaterialRoom';
 import { JsonResult } from '../../helpers/JsonResult';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
   
   @Controller('useMaterialRoom')
   @ApiTags('useMaterialRoom')
@@ -63,7 +65,16 @@ import { JsonResult } from '../../helpers/JsonResult';
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Delete)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'delete' })
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Delete material on room',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'delete material on room' })
     async deleteRoom(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<any>{
       await this.useMaterialRoomUseCaseProxy.getInstance().delete(roomId,materialId);
       return JsonResult.Convert("Material successfully removed on room");
@@ -71,23 +82,55 @@ import { JsonResult } from '../../helpers/JsonResult';
     @Get('getOne')
     @HasPermissions(UsersPermissions.Read)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getOne' })
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Get one material on room',
+        type: UseMaterialRoomDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'Get one material on room' })
     async getPlace(@Query('roomId') roomId: string, @Query('materialId') materialId: string) : Promise<UseMaterialRoomM>{
       return await this.useMaterialRoomUseCaseProxy.getInstance().get(roomId,materialId);
     }
     @Get('getAll')
     @HasPermissions(UsersPermissions.ReadAll)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @ApiOperation({ description: 'getAll' })
-    async getAllPlace() : Promise<UseMaterialRoomM[]> {
-      return await this.useMaterialRoomUseCaseProxy.getInstance().getAll();
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Get all material',
+        type: UseMaterialRoomDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
+    @ApiOperation({ description: 'Get all material' })
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'the page number to return' }) 
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'the number of items per page' })
+    @ApiQuery({ name: 'filter.name', required: false, type: String, description: 'add a filter (check nestjs paginate doc for more details). You can filter by roomId, materialId,number, room.name, material.name, room.place.city, room.place.street, room.place.streetNumber' })   
+    async getAllPlace(@Paginate() query: PaginateQuery) : Promise<Paginated<any>> {
+      return await this.useMaterialRoomUseCaseProxy.getInstance().getAll(query);
     }
     @Post('update')
     @HasRole(Role.Admin)
     @HasPermissions(UsersPermissions.Update)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @HttpCode(204)
+    @ApiResponse({
+        status: 204,
+        description: 'Update material on room',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No material on room found',
+    })
     @ApiBody({ type: UseMaterialRoomDto })
-    @ApiOperation({ description: 'update' })
+    @ApiOperation({ description: 'Update material on room' })
     async updatePlace(@Body() useMaterialRoom: UseMaterialRoomM, @Req() request: any) : Promise<any>{
       await this.useMaterialRoomUseCaseProxy.getInstance().update(useMaterialRoom);
       return JsonResult.Convert("Material successfully updated on room");

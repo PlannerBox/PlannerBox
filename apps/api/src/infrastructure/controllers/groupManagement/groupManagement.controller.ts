@@ -82,6 +82,22 @@ export class GroupManagementController {
         return GroupMapper.fromModelToDetailDto(group);
     }
 
+    @Get('group/details')
+    @HttpCode(200)
+    @ApiResponse({
+        status: 200,
+        description: 'Returns details of a specific group',
+        type: GroupDetailDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'No group found',
+    })
+    @ApiOperation({ description: 'Returns details of a specific group' })
+    async getPaginatedGroupDetailsByAccount(@Paginate() query: PaginateQuery): Promise<any> {
+        return await this.getGroupUsecasesProxy.getInstance().findGroupPaginatedList(query);
+    }
+
     @Get('user/summary')
     @UseGuards(JwtAuthGuard)
     @HttpCode(200)
