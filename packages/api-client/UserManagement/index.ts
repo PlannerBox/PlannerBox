@@ -5,3 +5,4 @@ export * from './listRolePermissions';
 export * from './listUsers';
 export * from './updateRolePermissions';
 export * from './updateUser';
+export * from './toggleUserState';
