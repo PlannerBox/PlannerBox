@@ -1,26 +1,96 @@
 'use client';
 
-import { Button, Form, Input } from 'antd';
-import { DefaultOptionType } from 'antd/es/select';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button, Form, Input, notification } from 'antd';
+import { UpdateUserProps, UpdateUserResponse } from 'api-client';
+import { ReactNode, useEffect } from 'react';
+import { useUpdateUser } from '../../../../../../hooks/useUpdateUser';
+import { useUserDetails } from '../../../../../../hooks/useUserDetails';
 
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
 
-const filterGroups = (inputValue: string, path: DefaultOptionType[]) =>
-  path.some(
-    (option) =>
-      (option.label as string).toLowerCase().indexOf(inputValue.toLowerCase()) >
-      -1
-  );
+type OpenNotificationProps = {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+};
 
 export default function UserInformationsTab() {
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {
-    console.log(values);
+  const [notificationApi, notificationContextHolder] =
+    notification.useNotification();
+
+  const openNotification = ({
+    title,
+    description,
+    icon,
+  }: OpenNotificationProps) => {
+    notificationApi.open({
+      message: title,
+      description: description,
+      icon: icon,
+      placement: 'top',
+    });
   };
+
+  const { data: userDetails, isLoading: isUserDetailsLoading } = useUserDetails(
+    {}
+  );
+
+  const { mutate: updateUser } = useUpdateUser({
+    onSuccess: handleUpdateUserSuccess,
+    onError: handleUpdateUserStateError,
+  });
+
+  function handleUpdateUserSuccess(data: UpdateUserResponse) {
+    if (!!data) {
+      openNotification({
+        title: 'Informations personnelles mises à jour !',
+        icon: <CheckCircleOutlined />,
+      });
+      queryClient.invalidateQueries({ queryKey: ['userDetails'] });
+    } else {
+      openNotification({
+        title:
+          'Une erreur est survenue lors de la mise à jour des informations personnelles !',
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  }
+
+  function handleUpdateUserStateError() {
+    openNotification({
+      title:
+        'Une erreur est survenue lors de la mise à jour des informations personnelles !',
+      icon: <CloseCircleOutlined />,
+    });
+  }
+
+  const onFinish = (values: UpdateUserProps) => {
+    updateUser({
+      id: userDetails!.id,
+      username: values.username,
+      firstname: values.firstname,
+      lastname: values.lastname,
+    });
+  };
+
+  useEffect(() => {
+    console.log({ userDetails });
+    if (userDetails !== undefined) {
+      form.setFieldsValue({
+        lastname: userDetails.lastname,
+        firstname: userDetails.firstname,
+        username: userDetails.username,
+      });
+    }
+  }, [userDetails]);
 
   return (
     <Form
@@ -33,17 +103,17 @@ export default function UserInformationsTab() {
       wrapperCol={{ style: { width: '100%' } }}
     >
       <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
-        <Input defaultValue='Alberto' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item name='firstname' label='Prénom' rules={[{ required: true }]}>
-        <Input defaultValue='Roberto' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item
-        name='mail'
+        name='username'
         label='Adresse mail'
         rules={[{ required: true, type: 'email' }]}
       >
-        <Input defaultValue='roberto.alberto@gmail.com' />
+        <Input disabled={isUserDetailsLoading} />
       </Form.Item>
       <Form.Item
         style={{
@@ -55,7 +125,7 @@ export default function UserInformationsTab() {
           style: { margin: 'auto', marginTop: 'var(--spacing-24)' },
         }}
       >
-        <Button type='primary' htmlType='submit'>
+        <Button type='primary' htmlType='submit' loading={isUserDetailsLoading}>
           Enregistrer les modifications
         </Button>
       </Form.Item>
