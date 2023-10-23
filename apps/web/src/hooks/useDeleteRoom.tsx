@@ -9,7 +9,9 @@ type DeleteRoomHookOptions = {
 const useDeleteRoom = ({ onSuccess, onError }: DeleteRoomHookOptions) => {
   return useMutation<DeleteRoomResponse, unknown, string>({
     mutationFn: async (placeId: string) => {
-      return await deleteRoom(placeId);
+      return await deleteRoom({
+        id: placeId,
+      });
     },
     onSuccess: (data) => {
       if (onSuccess) {
