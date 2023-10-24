@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { UpdateUserProps, UpdateUserResponse, updateUser } from 'api-client';
+import { useCookies } from 'react-cookie';
 
 type UpdateUserHookOptions = {
   onSuccess?: (data: UpdateUserResponse) => void;
@@ -7,9 +8,10 @@ type UpdateUserHookOptions = {
 };
 
 const useUpdateUser = ({ onSuccess, onError }: UpdateUserHookOptions) => {
+  const [cookies] = useCookies(['session']);
   return useMutation<UpdateUserResponse, unknown, UpdateUserProps>({
-    mutationFn: async (data: UpdateUserProps) => {
-      return await updateUser(data);
+    mutationFn: async (data: Omit<UpdateUserProps, 'session'>) => {
+      return await updateUser({ ...data, session: cookies['session'] });
     },
     onSuccess: (data) => {
       if (onSuccess) {
