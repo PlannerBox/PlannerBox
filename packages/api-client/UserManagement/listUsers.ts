@@ -74,7 +74,7 @@ const listUsers = async (
       `$eq:${props.filter.role}`
     );
   }
-  
+  console.log('COOKIE DE CES MORTS', `session=${session}; SameSite=None; Secure;`);
   return await apiCall(url, {
     method: 'GET',
     headers: new Headers({
