@@ -7,6 +7,7 @@ import { removeAfterSemicolon } from '../../helpers/removeAfterSemicolon';
 import { LoggerService } from '../../logger/logger.service';
 import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
+import { log } from 'console';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,6 +19,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
+          log('JwtStrategy', 'Request', request);
+          log('JwtStrategy', 'jwtFromRequest', request.cookies);
           if (request && request.cookies)
             return removeAfterSemicolon(request.cookies.session || '');
           return null;
