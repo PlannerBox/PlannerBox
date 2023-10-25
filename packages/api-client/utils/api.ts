@@ -9,6 +9,7 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
   const options: RequestInit = {
     headers: new Headers({
       'Content-Type': 'application/json',
+      credentials: 'include',
       ...init?.headers,
     }),
     ...init,
@@ -17,7 +18,6 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
   return fetch(input, options).then(async (res) => {
     if (res.ok) {
       const result = await res.json();
-      console.log('apiCall', 'result', result);
       return result;
     }
 
