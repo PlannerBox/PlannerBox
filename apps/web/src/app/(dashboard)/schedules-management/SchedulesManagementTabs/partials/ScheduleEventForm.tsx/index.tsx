@@ -40,6 +40,7 @@ interface ScheduleEventFormProps {
 type TimeRangeType = {
   $H: string;
   $m: string;
+  $d: string;
 };
 
 type ScheduleEventFormData = {
@@ -137,13 +138,18 @@ const ScheduleEventForm = ({
   const onFinish = (values: ScheduleEventFormData) => {
     // Schedule event
     console.log({ values });
+    let startTime = new Date(values.timeRange[0].$d);
+    let endTime = new Date(values.timeRange[1].$d);
+
     let startDate = new Date(values.dateRange[0].toString());
-    startDate.setHours(parseInt(values.timeRange[0].$H));
-    startDate.setMinutes(parseInt(values.timeRange[0].$m));
+    startDate.setHours(startTime.getHours());
+    startDate.setMinutes(startTime.getMinutes());
+    startDate.setSeconds(0);
 
     let endDate = new Date(values.dateRange[0].toString());
-    startDate.setHours(parseInt(values.timeRange[1].$H));
-    startDate.setMinutes(parseInt(values.timeRange[1].$m));
+    endDate.setHours(endTime.getHours());
+    endDate.setMinutes(endTime.getMinutes());
+    endDate.setSeconds(0);
 
     const selectedSkill = skills?.data.find((s) => s.id === values.skill);
 
@@ -153,8 +159,8 @@ const ScheduleEventForm = ({
         teachers: [...values.teachers],
         groupId: initialGroup?.id || '',
         roomId: values.room,
-        startDate: startDate.toLocaleDateString(),
-        endDate: endDate.toLocaleDateString(),
+        startDate: startDate.toLocaleString(),
+        endDate: endDate.toLocaleString(),
         name: selectedSkill?.name || '',
         eventType: EventType.Class,
       },
@@ -184,7 +190,7 @@ const ScheduleEventForm = ({
         form={form}
         name='schedule-event-form'
         onFinish={onFinish}
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: '80vw' }}
       >
         <Form.Item
           name='skill'
@@ -248,7 +254,7 @@ const ScheduleEventForm = ({
           initialValue={initialGroup?.id}
           className={styles.formItem}
         >
-          <TeamOutlined size={16} color={initialGroup?.color} />{' '}
+          <TeamOutlined size={16} style={{ color: initialGroup?.color }} />{' '}
           {initialGroup?.name}
         </Form.Item>
 
