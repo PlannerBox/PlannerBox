@@ -324,14 +324,14 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
 
   const [openForm, setOpenForm] = useState(false);
   const [dimensions, setDimensions] = useState({
-    width: window?.innerWidth || 0,
-    height: window?.innerHeight || 0,
+    width: !!window ? window.innerWidth : 0,
+    height: !!window ? window.innerHeight : 0,
   });
 
   const handleResize = () => {
     setDimensions({
-      width: window?.innerWidth,
-      height: window?.innerHeight,
+      width: !!window ? window.innerWidth : 0,
+      height: !!window ? window.innerHeight : 0,
     });
   };
 
