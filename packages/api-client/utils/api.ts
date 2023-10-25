@@ -16,7 +16,9 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
 
   return fetch(input, options).then(async (res) => {
     if (res.ok) {
-      return await res.json();
+      const result = await res.json();
+      console.log('apiCall', 'result', result);
+      return result;
     }
 
     throw new Error(`${res.status} ${res.statusText}`);
