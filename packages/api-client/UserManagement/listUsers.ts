@@ -80,7 +80,6 @@ const listUsers = async (
     headers: new Headers({
       Cookie: `session=${session}`,
     }),
-    credentials: 'include',
     redirect: 'follow',
   });
 };
