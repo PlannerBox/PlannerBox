@@ -18,7 +18,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          return removeAfterSemicolon(request?.cookies?.session || '');
+          if (request && request.cookies)
+            return removeAfterSemicolon(request.cookies.session);
+          return null;
         },
       ]),
       secretOrKey: process.env.JWT_SECRET,
