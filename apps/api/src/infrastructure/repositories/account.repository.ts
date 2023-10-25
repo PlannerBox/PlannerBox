@@ -119,7 +119,6 @@ export class AccountRepository implements IAccountRepository {
     if (!accountEntity) {
       return null;
     }
-
     return AccountMapper.fromEntityToModel(accountEntity);
   }
 

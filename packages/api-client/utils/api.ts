@@ -8,7 +8,7 @@ export type SendRequestProps = {
 const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
   const options: RequestInit = {
     headers: new Headers({
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
       ...init?.headers,
     }),
     ...init,

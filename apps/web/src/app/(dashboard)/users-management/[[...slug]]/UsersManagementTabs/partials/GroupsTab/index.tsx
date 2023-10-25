@@ -1,15 +1,12 @@
 'use client';
 
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import {
   Button,
-  Cascader,
   Form,
   Input,
   Popover,
   Select,
   Space,
-  Switch,
   Table,
   Tag,
   Typography,
@@ -17,12 +14,13 @@ import {
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
-import UsersList from '../../../../../components/UsersList';
-import { UserElementProps } from '../../../../../components/UsersList/partials/UserElement';
+import { useCallback, useEffect, useState } from 'react';
+import UsersList from '../../../../../../components/UsersList';
+import { UserElementProps } from '../../../../../../components/UsersList/partials/UserElement';
+import GroupCreation from './GroupCreation';
 
 type UsersTabProps = {
-  step?: 'list' | 'create' | 'manage';
+  step?: 'list' | 'manage' | 'create';
 };
 
 interface GroupDataType {
@@ -141,66 +139,42 @@ const fakeGroupMembers: Omit<MembersDataType, 'key'>[] = [
     lastname: 'Roberto',
     firstname: 'Alberto',
     mail: 'alberto@gmail.com',
-    responsible: false,
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    responsible: false,
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
     responsible: true,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Johnny',
+    lastname: 'Sino',
+    mail: 'johnny@sino.com',
     responsible: false,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Porel',
+    lastname: 'Rtus',
+    mail: 'robert@albert.com',
     responsible: false,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Franscesca',
+    lastname: 'Gragjda',
+    mail: 'franscesca@gragjda.com',
     responsible: false,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Poiro',
+    lastname: 'Trotro',
+    mail: 'trotro@poiro.com',
     responsible: false,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Ariette',
+    lastname: 'Salvette',
+    mail: 'ariette@salvette.com',
     responsible: false,
   },
   {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    responsible: false,
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
-    responsible: false,
-  },
-  {
-    lastname: 'Roberto',
-    firstname: 'Alberto',
-    mail: 'alberto@gmail.com',
+    firstname: 'Paul',
+    lastname: 'Krush',
+    mail: 'paul@krush.com',
     responsible: false,
   },
 ];
@@ -282,7 +256,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
 
   const { Text } = Typography;
 
-  const addMemberPopoverContent = () => {
+  const MemberPopoverContent = () => {
     const [users, setUsers] = useState<UserElementProps[]>([]);
     const fakeUsers: UserElementProps[] = [
       {
@@ -291,74 +265,39 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
         email: 'robert@albert.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
+        firstname: 'Francis',
+        lastname: 'Tortel',
         email: 'robert@albert.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
+        firstname: 'Johnny',
+        lastname: 'Sino',
+        email: 'johnny@sino.com',
+      },
+      {
+        firstname: 'Porel',
+        lastname: 'Rtus',
         email: 'robert@albert.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
+        firstname: 'Franscesca',
+        lastname: 'Gragjda',
+        email: 'franscesca@gragjda.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
+        firstname: 'Poiro',
+        lastname: 'Trotro',
+        email: 'trotro@poiro.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
+        firstname: 'Ariette',
+        lastname: 'Salvette',
+        email: 'ariette@salvette.com',
       },
       {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
+        firstname: 'Paul',
+        lastname: 'Krush',
+        email: 'paul@krush.com',
       },
     ];
 
@@ -383,6 +322,31 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
     );
   };
 
+  const [openForm, setOpenForm] = useState(false);
+  const [dimensions, setDimensions] = useState({
+    width: !!window ? window.innerWidth : 0,
+    height: !!window ? window.innerHeight : 0,
+  });
+
+  const handleResize = () => {
+    setDimensions({
+      width: !!window ? window.innerWidth : 0,
+      height: !!window ? window.innerHeight : 0,
+    });
+  };
+
+  const closeForm = () => {
+    setOpenForm(false);
+  };
+
+  const handleOpenFormChange = (newOpen: boolean) => {
+    setOpenForm(newOpen);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize, false);
+  }, []);
+
   return (
     <div>
       {step === 'list' && (
@@ -395,9 +359,16 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
               margin: 'var(--spacing-16) var(--spacing-8)',
             }}
           >
-            <Button type='primary' onClick={() => shallowRedirect('create')}>
-              Créer un groupe
-            </Button>
+            <Popover
+              placement={dimensions.width >= 650 ? 'leftTop' : 'bottomRight'}
+              title='Créer un groupe'
+              content={<GroupCreation closePopover={() => closeForm()} />}
+              trigger='click'
+              open={openForm}
+              onOpenChange={handleOpenFormChange}
+            >
+              <Button type='primary'>Créer un groupe</Button>
+            </Popover>
           </div>
           <Table
             columns={groupColumns}
@@ -405,102 +376,6 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             scroll={{ x: 150 }}
           />
         </>
-      )}
-      {step === 'create' && (
-        <Form
-          {...layout}
-          form={form}
-          name='control-hooks'
-          onFinish={onFinish}
-          style={{ maxWidth: '100%' }}
-          labelCol={{ style: { width: 200 } }}
-          wrapperCol={{ style: { width: '100%' } }}
-        >
-          <Form.Item name='type' label='Type' rules={[{ required: true }]}>
-            <Select placeholder='Sélectionner une option' allowClear>
-              <Option value='student'>Apprenant</Option>
-              <Option value='internal_teacher'>Formateur interne</Option>
-              <Option value='external_teacher'>Formateur externe</Option>
-              <Option value='admin'>Administrateur</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name='firstname'
-            label='Prénom'
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name='mail'
-            label='Adresse mail'
-            rules={[{ required: true, type: 'email' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name='organisational_way'
-            label="Méthode d'organisation"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder='Sélectionner une option' allowClear>
-              <Option value='standard'>Présentiel</Option>
-              <Option value='full_remote'>Distanciel</Option>
-              <Option value='partial_remote'>
-                Mixte présentiel/distanciel
-              </Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name='groups'
-            label='Groupe(s)'
-            rules={[{ required: false }]}
-          >
-            <Cascader
-              options={fakeGroupOptions}
-              placeholder='Sélectionner un ou plusieurs groupes'
-              showSearch={{ filter: filterGroups }}
-              onSearch={(value) => console.log(value)}
-              maxTagCount='responsive'
-              multiple
-            />
-          </Form.Item>
-          <Form.Item
-            name='switch'
-            label='État'
-            valuePropName='checked'
-            help={
-              'Un compte activé permet à l’utilisateur de se connecter, tandis qu’un compte désactivé bloque sa connexion.'
-            }
-            rules={[{ required: true }]}
-          >
-            <Switch defaultChecked />
-          </Form.Item>
-          <Form.Item
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-            }}
-            wrapperCol={{
-              style: { margin: 'auto', marginTop: 'var(--spacing-24)' },
-            }}
-          >
-            <Button
-              type='ghost'
-              onClick={() => shallowRedirect('/users')}
-              style={{ marginRight: 'var(--spacing-24)' }}
-            >
-              <ArrowLeftOutlined /> Retour
-            </Button>
-            <Button type='primary' htmlType='submit'>
-              Créer l&apos;utilisateur
-            </Button>
-          </Form.Item>
-        </Form>
       )}
       {step === 'manage' && (
         <>
@@ -517,7 +392,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             <Popover
               placement='leftTop'
               title='Sélectionner le membre'
-              content={addMemberPopoverContent}
+              content={MemberPopoverContent}
               trigger='click'
             >
               <Button type='primary'>Ajouter un membre</Button>

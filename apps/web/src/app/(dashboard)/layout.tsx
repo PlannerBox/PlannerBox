@@ -2,6 +2,8 @@
 
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Layout, Tooltip, theme } from 'antd';
+import { useRouter } from 'next/navigation';
+import { useLogout } from '../../hooks/useLogout';
 import Logo from '../components/Logo';
 import SideMenu from '../components/SideMenu';
 import styles from './styles.module.scss';
@@ -16,6 +18,16 @@ export default function DashboardLayout({
   const {
     token: { colorBgContainer, colorBgLayout },
   } = theme.useToken();
+
+  const router = useRouter();
+
+  const handleLogoutSuccess = () => {
+    router.push('/sign-in');
+  };
+
+  const { mutate: logout, isLoading: isLogoutLoading } = useLogout({
+    onSuccess: handleLogoutSuccess,
+  });
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -52,11 +64,15 @@ export default function DashboardLayout({
             gap: 'var(--spacing-4)',
           }}
         >
-          <Button type='default' href='/sign-out'>
+          <Button
+            type='default'
+            onClick={() => logout({})}
+            loading={isLogoutLoading}
+          >
             Se déconnecter
           </Button>
           <Tooltip placement='bottom' title='Paramètres'>
-            <Button type='ghost' href='/settings'>
+            <Button type='ghost' href='/settings/user-informations'>
               <SettingOutlined />
             </Button>
           </Tooltip>

@@ -8,6 +8,7 @@ export type UpdateUserProps = {
   username: string;
   firstname: string;
   lastname: string;
+  session: string;
 };
 
 export type UpdateUserResponse = {
@@ -28,13 +29,22 @@ export type UpdateUserResponse = {
 
 const updateUser = async ({
   id,
-  ...userData
+  username,
+  firstname,
+  lastname,
+  session,
 }: UpdateUserProps): Promise<UpdateUserResponse> => {
   return await apiCall(
     `${process.env.NEXT_PUBLIC_API_URL}/api/user-management/update`,
     {
       method: 'POST',
-      body: JSON.stringify({ id, ...userData }),
+      body: JSON.stringify({ id, username, firstname, lastname }),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        Cookie: `session=${session}`,
+      }),
+      credentials: 'include',
+      redirect: 'follow',
     }
   );
 };
