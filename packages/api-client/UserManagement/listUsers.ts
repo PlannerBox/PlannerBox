@@ -79,7 +79,9 @@ const listUsers = async (
     method: 'GET',
     headers: new Headers({
       Cookie: `session=${session} SameSite=None; Secure;`,
-    })
+    }),
+    credentials: 'include',
+    redirect: 'follow',
   });
 };
 
