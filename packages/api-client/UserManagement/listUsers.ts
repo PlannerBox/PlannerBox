@@ -78,9 +78,8 @@ const listUsers = async (
   return await apiCall(url, {
     method: 'GET',
     headers: new Headers({
-      Cookie: `session=${session}`,
-    }),
-    redirect: 'follow',
+      Cookie: `session=${session}; HttpOnly; Path=/; Max-Age=${process.env.JWT_EXPIRATION_TIME}`,
+    })
   });
 };
 
