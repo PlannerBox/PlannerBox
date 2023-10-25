@@ -40,6 +40,7 @@ const updateUser = async ({
       method: 'POST',
       body: JSON.stringify({ id, username, firstname, lastname }),
       headers: new Headers({
+        'Content-Type': 'application/json',
         Cookie: `session=${session}`,
       }),
       credentials: 'include',

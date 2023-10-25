@@ -9,7 +9,11 @@ type UpdateUserHookOptions = {
 
 const useUpdateUser = ({ onSuccess, onError }: UpdateUserHookOptions) => {
   const [cookies] = useCookies(['session']);
-  return useMutation<UpdateUserResponse, unknown, UpdateUserProps>({
+  return useMutation<
+    UpdateUserResponse,
+    unknown,
+    Omit<UpdateUserProps, 'session'>
+  >({
     mutationFn: async (data: Omit<UpdateUserProps, 'session'>) => {
       return await updateUser({ ...data, session: cookies['session'] });
     },

@@ -72,7 +72,7 @@ export default function DashboardLayout({
             Se déconnecter
           </Button>
           <Tooltip placement='bottom' title='Paramètres'>
-            <Button type='ghost' href='/settings'>
+            <Button type='ghost' href='/settings/user-informations'>
               <SettingOutlined />
             </Button>
           </Tooltip>

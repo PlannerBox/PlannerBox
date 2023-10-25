@@ -72,7 +72,7 @@ export default function UserInformationsTab() {
     });
   }
 
-  const onFinish = (values: UpdateUserProps) => {
+  const onFinish = (values: Omit<UpdateUserProps, 'session'>) => {
     updateUser({
       id: userDetails!.id,
       username: values.username,
@@ -93,42 +93,49 @@ export default function UserInformationsTab() {
   }, [userDetails]);
 
   return (
-    <Form
-      {...layout}
-      form={form}
-      name='control-hooks'
-      onFinish={onFinish}
-      style={{ maxWidth: '100%' }}
-      labelCol={{ style: { width: 200 } }}
-      wrapperCol={{ style: { width: '100%' } }}
-    >
-      <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
-        <Input disabled={isUserDetailsLoading} />
-      </Form.Item>
-      <Form.Item name='firstname' label='Prénom' rules={[{ required: true }]}>
-        <Input disabled={isUserDetailsLoading} />
-      </Form.Item>
-      <Form.Item
-        name='username'
-        label='Adresse mail'
-        rules={[{ required: true, type: 'email' }]}
+    <>
+      {notificationContextHolder}
+      <Form
+        {...layout}
+        form={form}
+        name='control-hooks'
+        onFinish={onFinish}
+        style={{ maxWidth: '100%' }}
+        labelCol={{ style: { width: 200 } }}
+        wrapperCol={{ style: { width: '100%' } }}
       >
-        <Input disabled={isUserDetailsLoading} />
-      </Form.Item>
-      <Form.Item
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
-        }}
-        wrapperCol={{
-          style: { margin: 'auto', marginTop: 'var(--spacing-24)' },
-        }}
-      >
-        <Button type='primary' htmlType='submit' loading={isUserDetailsLoading}>
-          Enregistrer les modifications
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item name='lastname' label='Nom' rules={[{ required: true }]}>
+          <Input disabled={isUserDetailsLoading} />
+        </Form.Item>
+        <Form.Item name='firstname' label='Prénom' rules={[{ required: true }]}>
+          <Input disabled={isUserDetailsLoading} />
+        </Form.Item>
+        <Form.Item
+          name='username'
+          label='Adresse mail'
+          rules={[{ required: true, type: 'email' }]}
+        >
+          <Input disabled={isUserDetailsLoading} />
+        </Form.Item>
+        <Form.Item
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}
+          wrapperCol={{
+            style: { margin: 'auto', marginTop: 'var(--spacing-24)' },
+          }}
+        >
+          <Button
+            type='primary'
+            htmlType='submit'
+            loading={isUserDetailsLoading}
+          >
+            Enregistrer les modifications
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
