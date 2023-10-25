@@ -35,6 +35,8 @@ async function bootstrap() {
   // CORS Policy
   app.enableCors({
     origin: process.env.WEBSITE_URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
     credentials: true,
   });
 
