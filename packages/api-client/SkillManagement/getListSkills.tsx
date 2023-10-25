@@ -12,9 +12,9 @@ export type GetListSkillsProps = {
 
 export type ListSkillsData = {
   id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
+  name: string;
+  externTeachersNumber: number;
+  internTeachersNumber: number;
 };
 
 type MetaData = {

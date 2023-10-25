@@ -2,7 +2,8 @@ import { Role } from '../enums/Role';
 import { addQueryParams, apiCall } from '../utils/api';
 
 type FilterType = {
-  role: Role;
+  role?: Role;
+  roles?: Role[];
 };
 
 export type ListUsersProps = {
@@ -72,6 +73,14 @@ const listUsers = async (
       url,
       'filter.rolePermissions.role',
       `$eq:${props.filter.role}`
+    );
+  }
+
+  if (props.filter?.roles) {
+    url = addQueryParams(
+      url,
+      'filter.rolePermissions.role',
+      `$in:${props.filter.roles.join(',')}`
     );
   }
 

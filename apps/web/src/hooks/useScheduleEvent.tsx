@@ -15,6 +15,7 @@ const useScheduleEvent = ({ onSuccess, onError }: ScheduleEventHookOptions) => {
   const [cookies] = useCookies(['session']);
   return useMutation<ScheduleEventResponse, unknown, ScheduleEventProps>({
     mutationFn: async (data: ScheduleEventProps) => {
+      console.log({ data });
       return await scheduleEvent(data, cookies['session']);
     },
     onSuccess: (data) => {
