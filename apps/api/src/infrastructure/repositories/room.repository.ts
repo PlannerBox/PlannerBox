@@ -25,17 +25,18 @@ export class RoomRepository implements IRoomRepository {
     async getAllRoom(query: PaginateQuery) : Promise<Paginated<Room>> {
         const queryBuilder = this.roomRepository.createQueryBuilder('room');
         queryBuilder.leftJoinAndSelect("room.place", "place");
+        queryBuilder.leftJoinAndSelect("room.courses", "courses");
        
         return await paginate<Room>(query, queryBuilder, {
             loadEagerRelations: true,
-            sortableColumns: ['id', 'name', 'place.city','place.street', 'place.streetNumber'],
+            sortableColumns: ['id', 'name', 'place.city','place.street', 'place.streetNumber', 'courses.startDate', 'courses.endDate'],
             nullSort: 'last',
             defaultSortBy: [['name', 'ASC']],
-            searchableColumns: ['id', 'name','place.city','place.street', 'place.streetNumber'],
+            searchableColumns: ['id', 'name','place.city','place.street', 'place.streetNumber', 'courses.startDate', 'courses.endDate'],
             filterableColumns: { id: true ,name: true,'place.city': [FilterOperator.EQ, FilterOperator.ILIKE],
             'place.street': [FilterOperator.EQ, FilterOperator.ILIKE],
-            'place.streetNumber': [FilterOperator.EQ, FilterOperator.ILIKE]},
-            relations:['place']
+            'place.streetNumber': [FilterOperator.EQ, FilterOperator.ILIKE], 'courses.startDate': [FilterOperator.EQ, FilterOperator.ILIKE, FilterOperator.BTW], 'courses.endDate': [FilterOperator.EQ, FilterOperator.ILIKE, FilterOperator.BTW]},
+            relations:['place', 'courses']
         });
     }
  
