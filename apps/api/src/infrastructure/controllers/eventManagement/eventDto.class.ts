@@ -42,5 +42,10 @@ export class EventDto {
 
     @ApiProperty({ required: true, name: 'eventType' })
     eventType: EventType;
+
+    @ApiProperty({ required: false, name: 'materials', type: [String], description: 'Materials' })
+    @IsOptional()
+    @IsUUID('4', { each: true, message: 'material ids doit être un tableau de UUIDs' })
+    materials: UUID[];
 }
 

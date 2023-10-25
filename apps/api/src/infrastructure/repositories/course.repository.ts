@@ -30,7 +30,7 @@ export class CourseRepository implements ICourseRepository {
     }
 
     async findCourse(id: string): Promise<CourseM> {
-        return CourseMapper.fromEntityToModel(await this.courseRepository.findOne({ where: { id: id }}));
+        return CourseMapper.fromEntityToModel(await this.courseRepository.findOne({ where: { id: id }, relations:  { teachers : { account : { rolePermissions : true }}, skills: true, group: true, room: { useMaterialRoom: { material: true }}, materials: true}}));
     }
 
     async insertCourse(course: Course): Promise<any> {

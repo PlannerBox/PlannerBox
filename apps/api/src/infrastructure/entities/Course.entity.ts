@@ -4,6 +4,7 @@ import { Skill } from "./Skill.entity";
 import EventType from "../../domain/models/enums/eventType.enum";
 import { Teacher } from "./Teacher.entity";
 import { Room } from "./Room.entity";
+import { Material } from "./Material.entity";
 
 @Index('Course_pkey', ['id'], { unique: true })
 @Tree('adjacency-list')
@@ -38,11 +39,15 @@ export class Course {
     @JoinColumn([{ name: 'roomId', referencedColumnName: 'id' }])
     room: Room;
 
-    @ManyToMany(() => Teacher, (teacher) => teacher.courses, { onDelete: 'CASCADE' })
+    @ManyToMany(() => Teacher, (teacher) => teacher.courses, { cascade: true })
     @JoinTable({ name: 'CourseTeachers' })
     teachers: Teacher[];
 
-    @ManyToMany(() => Skill, (skill) => skill.courses, { eager: true })
+    @ManyToMany(() => Skill, (skill) => skill.courses, { cascade: true })
     @JoinTable({ name: 'CourseSkills' })
     skills: Skill[];
+
+    @ManyToMany(() => Material, (material) => material.courses, {cascade: true})
+    @JoinTable({ name: 'CourseMaterials' })
+    materials: Material[];
 }

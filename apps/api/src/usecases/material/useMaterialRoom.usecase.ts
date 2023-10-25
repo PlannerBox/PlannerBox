@@ -46,8 +46,8 @@ export class UseMaterialRoomUseCase {
 
     toUseMaterialRoomM(useMaterialRoomM : UseMaterialRoomM) : UseMaterialRoom{
     return{
-        roomId: useMaterialRoomM.material.id,
-        materialId: useMaterialRoomM.room.id,
+        roomId: useMaterialRoomM.room.id,
+        materialId: useMaterialRoomM.material.id,
         number: useMaterialRoomM.number,
         room: useMaterialRoomM.room,
         material: useMaterialRoomM.material,
