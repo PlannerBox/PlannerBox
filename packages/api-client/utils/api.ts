@@ -9,7 +9,6 @@ const apiCall = (input: RequestInfo | URL, init?: RequestInit) => {
   const options: RequestInit = {
     headers: new Headers({
       'Content-Type': 'application/json',
-      credentials: 'include',
       ...init?.headers,
     }),
     ...init,
