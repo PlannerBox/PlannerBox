@@ -20,7 +20,7 @@ import { UserElementProps } from '../../../../../../components/UsersList/partial
 import GroupCreation from './GroupCreation';
 
 type UsersTabProps = {
-  step?: 'list' | 'manage';
+  step?: 'list' | 'manage' | 'create';
 };
 
 interface GroupDataType {
@@ -256,7 +256,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
 
   const { Text } = Typography;
 
-  const addMemberPopoverContent = () => {
+  const MemberPopoverContent = () => {
     const [users, setUsers] = useState<UserElementProps[]>([]);
     const fakeUsers: UserElementProps[] = [
       {
@@ -392,7 +392,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             <Popover
               placement='leftTop'
               title='Sélectionner le membre'
-              content={addMemberPopoverContent}
+              content={MemberPopoverContent}
               trigger='click'
             >
               <Button type='primary'>Ajouter un membre</Button>
