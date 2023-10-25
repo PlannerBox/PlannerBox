@@ -74,7 +74,7 @@ const listUsers = async (
       `$eq:${props.filter.role}`
     );
   }
-
+  console.log('cookie', `session=${session}`)
   return await apiCall(url, {
     method: 'GET',
     headers: new Headers({
