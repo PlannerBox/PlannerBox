@@ -35,6 +35,7 @@ const scheduleEvent = async (
       method: 'POST',
       body: JSON.stringify(requestData),
       headers: new Headers({
+        'Content-Type': 'application/json',
         Cookie: `session=${session}`,
       }),
       credentials: 'include',

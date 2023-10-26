@@ -4,6 +4,7 @@ import {
   CloseCircleOutlined,
   FundProjectionScreenOutlined,
   IdcardOutlined,
+  ProfileOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -17,7 +18,13 @@ import {
   TimePicker,
   notification,
 } from 'antd';
-import { EventType, GroupData, Role, ScheduleEventResponse } from 'api-client';
+import {
+  EventType,
+  GroupData,
+  Role,
+  ScheduleEventResponse,
+  formatDateToISO8601,
+} from 'api-client';
 import { ReactNode, useEffect } from 'react';
 import { useListRooms } from '../../../../../../hooks/useListRooms';
 import { useListSkills } from '../../../../../../hooks/useListSkills';
@@ -108,14 +115,15 @@ const ScheduleEventForm = ({
   function handleSuccess(data: ScheduleEventResponse) {
     if (!!data) {
       openNotification({
-        title: 'Utilisateur créé avec succès !',
+        title: 'Événement planifié avec succès !',
         icon: <CheckCircleOutlined />,
       });
       form.resetFields();
       queryClient.invalidateQueries({ queryKey: ['listEvents'] });
     } else {
       openNotification({
-        title: "Une erreur est survenue lors de la création de l'utilisateur !",
+        title:
+          "Une erreur est survenue lors de la planification de l'événement !",
         icon: <CloseCircleOutlined />,
       });
     }
@@ -141,17 +149,52 @@ const ScheduleEventForm = ({
     let startTime = new Date(values.timeRange[0].$d);
     let endTime = new Date(values.timeRange[1].$d);
 
-    let startDate = new Date(values.dateRange[0].toString());
+    let from = new Date(values.dateRange[0]);
+    let to = new Date(values.dateRange[1]);
+
+    let startDate = new Date(values.dateRange[0]);
     startDate.setHours(startTime.getHours());
     startDate.setMinutes(startTime.getMinutes());
     startDate.setSeconds(0);
 
-    let endDate = new Date(values.dateRange[0].toString());
+    let endDate = new Date(values.dateRange[1]);
     endDate.setHours(endTime.getHours());
     endDate.setMinutes(endTime.getMinutes());
     endDate.setSeconds(0);
 
     const selectedSkill = skills?.data.find((s) => s.id === values.skill);
+
+    const generateChildren = (
+      from: Date,
+      to: Date,
+      startTime: Date,
+      endTime: Date
+    ) => {
+      const children = [];
+
+      // Créez une copie de la date `from` pour la boucle
+      const currentDate = new Date(from);
+
+      while (currentDate <= to) {
+        // Créez une copie de la date courante en utilisant les heures et minutes de `startTime`
+        const startDate = new Date(currentDate);
+        startDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+
+        // Créez une copie de la date courante en utilisant les heures et minutes de `endTime`
+        const endDate = new Date(currentDate);
+        endDate.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
+
+        children.push({
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        });
+
+        // Avancez d'un jour
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      return children;
+    };
 
     scheduleEvent({
       parent: {
@@ -159,12 +202,12 @@ const ScheduleEventForm = ({
         teachers: [...values.teachers],
         groupId: initialGroup?.id || '',
         roomId: values.room,
-        startDate: startDate.toLocaleString(),
-        endDate: endDate.toLocaleString(),
+        startDate: formatDateToISO8601(startDate),
+        endDate: formatDateToISO8601(endDate),
         name: selectedSkill?.name || '',
         eventType: EventType.Class,
       },
-      children: [],
+      children: generateChildren(from, to, startTime, endTime),
     });
   };
 
@@ -191,6 +234,8 @@ const ScheduleEventForm = ({
         name='schedule-event-form'
         onFinish={onFinish}
         style={{ maxWidth: '80vw' }}
+        labelCol={{ style: { width: 200 } }}
+        wrapperCol={{ style: { width: '100%' } }}
       >
         <Form.Item
           name='skill'
@@ -198,7 +243,7 @@ const ScheduleEventForm = ({
           className={styles.formItem}
         >
           <Select
-            placeholder='Select a skill'
+            placeholder='Sélectionner la compétence enseignée'
             loading={isSkillsLoading}
             style={fullWidth}
             onChange={(newValue) =>
@@ -266,7 +311,7 @@ const ScheduleEventForm = ({
           <IdcardOutlined size={16} />
           <Select
             mode='multiple'
-            placeholder='Select teachers'
+            placeholder='Sélectionner le(s) formateur(s)'
             loading={isTeachersLoading}
             style={fullWidth}
             onChange={(newValue) =>
@@ -284,13 +329,30 @@ const ScheduleEventForm = ({
         </Form.Item>
 
         <Form.Item
+          name='material'
+          rules={[{ required: true }]}
+          className={styles.formItem}
+        >
+          <ProfileOutlined size={16} />
+          <Checkbox.Group
+            options={availableMaterial}
+            style={fullWidth}
+            onChange={(newValue) =>
+              form.setFieldsValue({
+                material: newValue,
+              })
+            }
+          />
+        </Form.Item>
+
+        <Form.Item
           name='room'
           rules={[{ required: true }]}
           className={styles.formItem}
         >
           <FundProjectionScreenOutlined size={16} />
           <Select
-            placeholder='Select a room'
+            placeholder='Sélectionner une salle'
             loading={isRoomsLoading}
             style={fullWidth}
             onChange={(newValue) =>
@@ -305,23 +367,6 @@ const ScheduleEventForm = ({
               </Option>
             ))}
           </Select>
-        </Form.Item>
-
-        <Form.Item
-          name='material'
-          rules={[{ required: true }]}
-          className={styles.formItem}
-        >
-          <FundProjectionScreenOutlined size={16} />
-          <Checkbox.Group
-            options={availableMaterial}
-            style={fullWidth}
-            onChange={(newValue) =>
-              form.setFieldsValue({
-                material: newValue,
-              })
-            }
-          />
         </Form.Item>
       </Form>
     </>
