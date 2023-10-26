@@ -29,10 +29,12 @@ import { Course } from '../entities/Course.entity';
 import { CourseRepository } from './course.repository';
 import { TeacherSkills } from '../entities/TeacherSkills.entity';
 import { TeacherSkillsRepository } from './teacherSkills.repository';
+import { CourseTeacher } from '../entities/CourseTeacher.entity';
+import { CourseTeachersRepository } from './courseTeachers.repository';
 
 @Module({
-  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course, TeacherSkills])],
-  providers: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository],
-  exports: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository],
+  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course, TeacherSkills, CourseTeacher])],
+  providers: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository, CourseTeachersRepository],
+  exports: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository, CourseTeachersRepository],
 })
 export class RepositoriesModule {}

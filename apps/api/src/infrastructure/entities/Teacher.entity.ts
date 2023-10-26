@@ -25,9 +25,9 @@ export class Teacher {
   @JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
   account: Account;
 
-  @OneToMany(() => TeacherSkills, teacherSkills => teacherSkills.teacher)
+  @OneToMany(() => TeacherSkills, teacherSkills => teacherSkills.teacher, { cascade: true })
   teacherSkills: TeacherSkills[];
 
-  @ManyToMany(() => Course, course => course.skills)
+  @ManyToMany(() => Course, course => course.teachers, { cascade: true })
   courses: Course[];
 }

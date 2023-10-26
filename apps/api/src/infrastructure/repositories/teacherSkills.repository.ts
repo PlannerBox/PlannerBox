@@ -13,4 +13,16 @@ export class TeacherSkillsRepository implements ITeacherSkillsRepository {
         await this.teacherSkillsRepository.delete({ teacherId: teacherSkills[0].teacherId });
         return await this.teacherSkillsRepository.save(teacherSkills);
     }
+
+    async deleteTeacherSkills(teacherId?: string, skillId?: string): Promise<any> {
+        console.log(teacherId, skillId);
+        if (teacherId) {
+            await this.teacherSkillsRepository.delete({ teacherId: teacherId });
+        }
+        if (skillId) {
+            await this.teacherSkillsRepository.delete({ skillId: skillId });
+        }
+
+        return;
+    }
 }

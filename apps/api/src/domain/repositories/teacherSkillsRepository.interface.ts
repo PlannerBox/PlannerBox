@@ -2,4 +2,5 @@ import { TeacherSkills } from "../../infrastructure/entities/TeacherSkills.entit
 
 export interface ITeacherSkillsRepository {
     saveTeacherSkills(teacherSkills: TeacherSkills[]): Promise<TeacherSkills[]>;
+    deleteTeacherSkills(teacherId?: string, skillId?: string): Promise<any>;
 }

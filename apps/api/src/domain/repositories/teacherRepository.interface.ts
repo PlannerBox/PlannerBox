@@ -6,4 +6,5 @@ export interface ITeacherRepository {
     findTeacherByIds(teacherIds: string[]): Promise<Teacher[]>;
     findTeacherByAccountId(accountId: string): Promise<TeacherM>;
     updateTeacher(teacher: TeacherM): Promise<TeacherM>;
+    deleteTeacher(accountId: string): Promise<any>;
 }
