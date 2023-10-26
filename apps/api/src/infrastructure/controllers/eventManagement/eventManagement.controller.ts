@@ -12,6 +12,7 @@ import { FindEventsUseCase } from "../../../usecases/event/findEvents.usecase";
 import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
 import { Course } from "../../entities/Course.entity";
 import { PaginatedEventListDto } from "./paginatedEventListDto.class";
+import { RoomEventFilterDto } from "./roomEventFilterDto.class";
 
 @Controller('event-management')
 @ApiTags('event-management')
@@ -41,6 +42,17 @@ export class EventManagementController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async listEvents(@Paginate() query: PaginateQuery): Promise<Paginated<Course>> {
         return await this.findEventsUseCase.getInstance().findEvents(query);
+    }
+
+    @Post('event/avalaible-rooms')
+    @HttpCode(200)
+    @ApiOperation({ description: 'List all rooms available for a course' })
+    @ApiResponse({ status: 200, description: 'Rooms successfully listed', type: [Course] })
+    @ApiResponse({ status: 204, description: 'No rooms found' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBody({ type: RoomEventFilterDto })
+    async listAvalaibleRooms(@Body() roomEventFilterDto: RoomEventFilterDto): Promise<any> {
+        return await this.findEventsUseCase.getInstance().findAvailableRooms(roomEventFilterDto);
     }
 
     @Post('event/create')
