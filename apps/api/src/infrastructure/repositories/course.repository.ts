@@ -14,8 +14,9 @@ export class CourseRepository implements ICourseRepository {
     private readonly courseRepository: Repository<Course>,
   ) {}
 
-  async findEvents(query: PaginateQuery): Promise<Paginated<Course>> {
-    const queryBuilder = this.courseRepository.createQueryBuilder('course');
+    async findCourse(id: string): Promise<CourseM> {
+        return CourseMapper.fromEntityToModel(await this.courseRepository.findOne({ where: { id: id }, relations:  { teachers : { account : { rolePermissions : true }}, skills: true, group: true, room: { useMaterialRoom: { material: true }}, materials: true}}));
+    }
 
     queryBuilder.leftJoinAndSelect('course.teachers', 'teachers');
     queryBuilder.leftJoinAndSelect('course.skills', 'skills');

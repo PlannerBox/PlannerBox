@@ -11,6 +11,7 @@ import { ScheduleEventDto } from "../../infrastructure/controllers/eventManageme
 import { Course } from "../../infrastructure/entities/Course.entity";
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { Room } from "../../infrastructure/entities/Room.entity";
+import { IMaterialRepository } from "../../domain/repositories/materialRepository.interface";
 
 export class PlanTrainingUseCase {
     constructor(
@@ -19,6 +20,7 @@ export class PlanTrainingUseCase {
         private readonly groupRepository: IGroupRepository,
         private readonly courseRepository: ICourseRepository,
         private readonly roomRepository: IRoomRepository,
+        private readonly materialRepository: IMaterialRepository
     ) {}
 
     async planTraining(events: ScheduleEventDto): Promise<any> {
@@ -61,6 +63,9 @@ export class PlanTrainingUseCase {
         // Get skills corresponding to the formation
         const skills = await this.skillRepository.findSkillsByIds(events.parent.skills);
 
+        // Get materials corresponding to the event
+        const materials = await this.materialRepository.findMaterialByIds(events.parent.materials);
+
         // Get training counter to create a new training session name
         const trainingCounter = await this.courseRepository.countCourseByType(events.parent.eventType);
 
@@ -72,6 +77,7 @@ export class PlanTrainingUseCase {
         course.type = events.parent.eventType;
         course.skills = skills;
         course.room = roomExists as Room;
+        course.materials = materials;
 
         // Create training session (parent)
         let parent = await this.courseRepository.insertCourse(course);
@@ -94,6 +100,7 @@ export class PlanTrainingUseCase {
             children.skills = skills;
             children.room = roomExists as Room;
             children.parent = parent;
+            children.materials = materials;
             await this.courseRepository.insertCourse(children);
         });
 

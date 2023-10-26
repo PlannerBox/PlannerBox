@@ -8,6 +8,7 @@ import { ITeacherRepository } from "../../domain/repositories/teacherRepository.
 import { TeacherMapper } from "../../infrastructure/mappers/teacher.mapper";
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { Room } from "../../infrastructure/entities/Room.entity";
+import { IMaterialRepository } from "../../domain/repositories/materialRepository.interface";
 
 export class UpdateEventUseCase {
     constructor(
@@ -16,7 +17,8 @@ export class UpdateEventUseCase {
         private readonly groupRepository: IGroupRepository,
         private readonly courseRepository: ICourseRepository,
         private readonly teacherRepository: ITeacherRepository,
-        private readonly roomRepository: IRoomRepository
+        private readonly roomRepository: IRoomRepository,
+        private readonly materialRepository: IMaterialRepository
     ) {}
 
     async updateEvent(event: EventDto): Promise<any> {
@@ -47,6 +49,9 @@ export class UpdateEventUseCase {
         // Get teachers
         const teachers = await this.teacherRepository.findTeacherByIds(event.teachers);
 
+        // Get Materials
+        const materials = await this.materialRepository.findMaterialByIds(event.materials);
+
         course.name = event.name;
         course.startDate = event.startDate.toLocaleString();
         course.endDate = event.endDate.toLocaleString();
@@ -55,6 +60,7 @@ export class UpdateEventUseCase {
         course.skills = skills;
         course.teachers = teachers.map(teacher => TeacherMapper.fromEntityToModel(teacher));
         course.room = roomExists as Room;
+        course.materials = materials;
 
         // Update training session
         return await this.courseRepository.upsertCourse(course);

@@ -15,6 +15,7 @@ export class CourseMapper {
             teachers: course.teachers.map(teacher => TeacherMapper.fromEntityToModel(teacher)),
             room: course.room,
             parent: !course.parent ? null : course.parent,
+            materials: course.materials
         };
     }
 
@@ -30,7 +31,8 @@ export class CourseMapper {
             teachers: course.teachers.map(teacher => TeacherMapper.fromModelToEntity(teacher)),
             room: course.room,
             parent: !course.parent ? null : course.parent,
-            children: null
+            children: null,
+            materials: course.materials
         };
     }
 }

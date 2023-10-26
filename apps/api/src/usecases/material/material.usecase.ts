@@ -37,6 +37,7 @@ export class MaterialUseCase {
         id:materialM.id,
         name: materialM.name,
         useMaterialRoom: materialM.useMaterialRoom,
+        courses: materialM.courses
     }
    }
 }

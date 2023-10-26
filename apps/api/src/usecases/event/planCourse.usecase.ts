@@ -8,6 +8,7 @@ import { ITeacherRepository } from "../../domain/repositories/teacherRepository.
 import { Course } from "../../infrastructure/entities/Course.entity";
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { Room } from "../../infrastructure/entities/Room.entity";
+import { IMaterialRepository } from "../../domain/repositories/materialRepository.interface";
 
 export class PlanCourseUseCase {
     constructor(
@@ -17,6 +18,7 @@ export class PlanCourseUseCase {
         private readonly courseRepository: ICourseRepository,
         private readonly teacherRepository: ITeacherRepository,
         private readonly roomRepository: IRoomRepository,
+        private readonly materialRepository: IMaterialRepository
     ) {}
 
     async planCourse(events: ScheduleEventDto): Promise<any> {
@@ -45,6 +47,9 @@ export class PlanCourseUseCase {
         // Get teachers
         const teachers = await this.teacherRepository.findTeacherByIds(events.parent.teachers);
 
+        // Get materials
+        const materials = await this.materialRepository.findMaterialByIds(events.parent.materials);
+
         const course = new Course();
         course.name = events.parent.name;
         course.startDate = events.parent.startDate;
@@ -54,7 +59,7 @@ export class PlanCourseUseCase {
         course.skills = skills;
         course.teachers = teachers;
         course.room = roomExists as Room;
-
+        course.materials = materials
         // Create training session (parent)
         let parent = await this.courseRepository.insertCourse(course);
 
@@ -77,6 +82,7 @@ export class PlanCourseUseCase {
             childCourse.teachers = teachers;
             childCourse.room = roomExists as Room;
             childCourse.parent = parent;
+            childCourse.materials = materials;
             await this.courseRepository.insertCourse(childCourse);
         });
 

@@ -1,6 +1,6 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Place } from "./Place.entity";
+import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UseMaterialRoom } from "./UseMaterialRoom.entity";
+import { Course } from "./Course.entity";
 
 
 @Index('Material_pkey', ['id'], { unique: true })
@@ -14,4 +14,7 @@ export class Material {
 
     @OneToMany(() => UseMaterialRoom, (useMaterialRoom) => useMaterialRoom.material, { cascade: true })
     useMaterialRoom: UseMaterialRoom[];
+
+    @ManyToMany(() => Course, (course) => course.materials)
+    courses: Course[];
 }

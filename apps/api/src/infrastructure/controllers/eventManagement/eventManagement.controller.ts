@@ -1,27 +1,18 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Inject,
-  Param,
-  Post,
-} from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
-import { DeleteEventUseCase } from '../../../usecases/event/deleteEvent.usecase';
-import { FindEventsUseCase } from '../../../usecases/event/findEvents.usecase';
-import { PlanCourseUseCase } from '../../../usecases/event/planCourse.usecase';
-import { PlanTrainingUseCase } from '../../../usecases/event/planTraining.usecase';
-import { UpdateEventUseCase } from '../../../usecases/event/updateEvent.usecase';
-import { Course } from '../../entities/Course.entity';
-import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
-import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { EventDto } from './eventDto.class';
-import { PaginatedEventListDto } from './paginatedEventListDto.class';
-import { ScheduleEventDto } from './scheduleEventDto.class';
+import { Controller, Post, HttpCode, Body, Inject, BadRequestException, NotImplementedException, Delete, Param, Get } from "@nestjs/common";
+import { ApiTags, ApiResponse, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { EventDto } from "./eventDto.class";
+import { PlanTrainingUseCase } from "../../../usecases/event/planTraining.usecase";
+import { UseCaseProxy } from "../../usecases-proxy/usecases-proxy";
+import { UsecasesProxyModule } from "../../usecases-proxy/usecases-proxy.module";
+import { ScheduleEventDto } from "./scheduleEventDto.class";
+import { PlanCourseUseCase } from "../../../usecases/event/planCourse.usecase";
+import { DeleteEventUseCase } from "../../../usecases/event/deleteEvent.usecase";
+import { UpdateEventUseCase } from "../../../usecases/event/updateEvent.usecase";
+import { FindEventsUseCase } from "../../../usecases/event/findEvents.usecase";
+import { Paginate, PaginateQuery, Paginated } from "nestjs-paginate";
+import { Course } from "../../entities/Course.entity";
+import { PaginatedEventListDto } from "./paginatedEventListDto.class";
+import { RoomEventFilterDto } from "./roomEventFilterDto.class";
 
 @Controller('event-management')
 @ApiTags('event-management')
@@ -61,25 +52,34 @@ export class EventManagementController {
     return await this.findEventsUseCase.getInstance().findEvents(query);
   }
 
-  @Post('event/create')
-  @HttpCode(200)
-  @ApiOperation({ description: 'Create a new course' })
-  @ApiResponse({ status: 200, description: 'Course successfully planned' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
-  @ApiBody({ type: ScheduleEventDto })
-  async scheduleEvent(@Body() courses: ScheduleEventDto): Promise<any> {
-    console.log({ courses });
-    switch (courses.parent.eventType) {
-      case 0:
-        return await this.planCourseUseCase.getInstance().planCourse(courses);
-      case 1:
-      case 2:
-        return await this.planTrainingUseCase
-          .getInstance()
-          .planTraining(courses);
-      default:
-        throw new BadRequestException('courseType must be 0, 1 or 2');
+    @Post('event/avalaible-rooms')
+    @HttpCode(200)
+    @ApiOperation({ description: 'List all rooms available for a course' })
+    @ApiResponse({ status: 200, description: 'Rooms successfully listed', type: [Course] })
+    @ApiResponse({ status: 204, description: 'No rooms found' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBody({ type: RoomEventFilterDto })
+    async listAvalaibleRooms(@Body() roomEventFilterDto: RoomEventFilterDto): Promise<any> {
+        return await this.findEventsUseCase.getInstance().findAvailableRooms(roomEventFilterDto);
+    }
+
+    @Post('event/create')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Create a new course' })
+    @ApiResponse({ status: 200, description: 'Course successfully planned' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse({ status: 404, description: 'Skill or teacher not found' })
+    @ApiBody({ type: ScheduleEventDto })
+    async scheduleEvent(@Body() courses: ScheduleEventDto): Promise<any> {
+        switch (courses.parent.eventType) {
+            case 0:
+                return await this.planCourseUseCase.getInstance().planCourse(courses);
+            case 1:
+            case 2:
+                return await this.planTrainingUseCase.getInstance().planTraining(courses);
+            default:
+                throw new BadRequestException('courseType must be 0, 1 or 2');
+        }
     }
   }
 

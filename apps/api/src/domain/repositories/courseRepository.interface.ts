@@ -2,6 +2,8 @@ import { PaginateQuery, Paginated } from "nestjs-paginate";
 import { Course } from "../../infrastructure/entities/Course.entity";
 import { CourseM } from "../models/course";
 import EventType from "../models/enums/eventType.enum";
+import { RoomEventFilterDto } from "../../infrastructure/controllers/eventManagement/roomEventFilterDto.class";
+import { Room } from "../../infrastructure/entities/Room.entity";
 
 export interface ICourseRepository {
     findEvents(query: PaginateQuery): Promise<Paginated<Course>>;
