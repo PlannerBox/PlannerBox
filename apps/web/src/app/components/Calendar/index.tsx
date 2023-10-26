@@ -4,13 +4,19 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import { Badge, Button, Radio, RadioChangeEvent } from 'antd';
-import { EventType } from 'api-client';
+import { EventType, ListScheduledEventsData } from 'api-client';
 import { useEffect, useRef, useState } from 'react';
 import Event from './partials/Event';
 import styles from './styles.module.scss';
 
 export type CalendarProps = {
   events?: EventSourceInput;
+};
+
+export type EventsWithDetailsType = EventContentArg & {
+  event: {
+    extendedProps: ListScheduledEventsData;
+  };
 };
 
 export type CalendarViewMode = 'dayGridDay' | 'dayGridWeek' | 'dayGridMonth';
@@ -38,7 +44,7 @@ const Calendar = ({ events }: CalendarProps) => {
     console.log({ events });
   }, [events]);
 
-  const renderEventContent = (eventInfo: EventContentArg) => (
+  const renderEventContent = (eventInfo: EventsWithDetailsType) => (
     <Event eventInfo={eventInfo} viewMode={viewMode} />
   );
 
@@ -91,8 +97,12 @@ const Calendar = ({ events }: CalendarProps) => {
         selectable={true}
       />
       <div className={styles.caption}>
-        <Badge color='pink' text='Remises à niveau' />
-        <Badge color='cyan' text='Formations' />
+        <Badge color={getEventColor(EventType.Class)} text='Cours' />
+        <Badge
+          color={getEventColor(EventType.RefresherCourse)}
+          text='Remises à niveau'
+        />
+        <Badge color={getEventColor(EventType.Formation)} text='Formations' />
       </div>
     </div>
   );

@@ -1,11 +1,14 @@
+import { GroupData } from '../GroupManagement';
+import { UserDetailsData } from '../UserManagement';
 import { EventType } from '../enums/EventType';
 import { apiCall } from '../utils/api';
+import { ListRoomsData } from './listRooms';
 
 export type ScheduledEventType = {
   skills: string[];
-  teachers: string[];
-  groupId: string;
-  roomId: string;
+  teachers: UserDetailsData[];
+  group: GroupData;
+  room: ListRoomsData;
   startDate: string;
   endDate: string;
   name: string;

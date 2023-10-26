@@ -23,26 +23,6 @@ interface Group {
 }
 
 export default function SchedulesManagementTabs({}) {
-  // Fake Data
-  const dateA = new Date();
-
-  const dateB = new Date();
-  dateB.setDate(dateB.getDate() + 7);
-
-  const dateC = new Date();
-  dateC.setDate(dateC.getDate() + 9);
-
-  const trainings = [
-    { title: 'Anthony FOUBRO', date: dateA, backgroundColor: 'pink' },
-    { title: 'Norbert DUPUIT', date: dateA, backgroundColor: 'cyan' },
-    { title: 'Yasmine AREZA', date: dateB, backgroundColor: 'cyan' },
-    { title: 'Malcolm NOLASTNAME', date: dateB, backgroundColor: 'cyan' },
-    { title: 'Francis NOLASTNAME', date: dateB, backgroundColor: 'cyan' },
-    { title: 'Dewey NOLASTNAME', date: dateC, backgroundColor: 'pink' },
-    { title: 'Jesse PINKMAN', date: dateC, backgroundColor: 'pink' },
-  ];
-  // End of Fake Data
-
   const [listEventsOptions, setListEventsOptions] =
     useState<ListScheduledEventsProps>({
       filter: undefined,
@@ -96,8 +76,10 @@ export default function SchedulesManagementTabs({}) {
   );
 
   const onGroupChange = (value: (string | number)[]) => {
-    let group = groupsList?.data.find((g) => g.id === value[0]) || undefined;
-    setSelectedGroup(!!value ? group : undefined);
+    let group = !!value
+      ? groupsList?.data.find((g) => g.id === value[0]) || undefined
+      : undefined;
+    setSelectedGroup(group);
 
     setListEventsOptions((old) => ({
       filter: {
@@ -154,14 +136,21 @@ export default function SchedulesManagementTabs({}) {
         </Popover>
       </div>
       <Calendar
-        events={events?.data.map((e) => ({
-          title: e.name,
-          start: formatDateToISO8601(new Date(e.startDate)),
-          end: formatDateToISO8601(new Date(e.endDate)),
-          startTime: formatDateToISO8601(new Date(e.startDate)),
-          endTime: formatDateToISO8601(new Date(e.endDate)),
-          backgroundColor: getEventColor(e.eventType),
-        }))}
+        events={
+          !!selectedGroup
+            ? events?.data.map((e) => ({
+                title: e.name,
+                start: formatDateToISO8601(new Date(e.startDate)),
+                end: formatDateToISO8601(new Date(e.endDate)),
+                startTime: formatDateToISO8601(new Date(e.startDate)),
+                endTime: formatDateToISO8601(new Date(e.endDate)),
+                backgroundColor: getEventColor(e.eventType),
+                extendedProps: {
+                  ...e,
+                },
+              }))
+            : []
+        }
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { addQueryParams, apiCall } from '../utils/api';
 import { Room } from './listRooms';
 
 type FilterType = {
+  id?: string;
   group?: {
     id: string;
   };
@@ -54,6 +55,10 @@ const listScheduledEvents = async (
 
   if (props.page !== undefined) {
     url = addQueryParams(url, 'page', props.page.toString());
+  }
+
+  if (props.filter?.id && props.filter.id !== '') {
+    url = addQueryParams(url, 'filter.id', `$eq:${props.filter.id}`);
   }
 
   if (props.filter?.group?.id && props.filter.group.id !== '') {

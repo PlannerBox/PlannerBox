@@ -1,21 +1,23 @@
-import { EventContentArg } from '@fullcalendar/core';
-import { Badge, Tooltip } from 'antd';
-import { CalendarViewMode } from '..';
+import { Badge, Popover } from 'antd';
+import { CalendarViewMode, EventsWithDetailsType } from '..';
+import ScheduledEventDetails from '../../../(dashboard)/schedules-management/SchedulesManagementTabs/partials/ScheduledEventDetails.tsx';
 
 export type EventProps = {
-  eventInfo: EventContentArg;
+  eventInfo: EventsWithDetailsType;
   viewMode: CalendarViewMode;
 };
 
 const Event = ({ eventInfo, viewMode }: EventProps) => {
   const e = eventInfo.event;
   const startTime = e.start
-    ? `${e.start?.getHours()}:${
+    ? `${e.start?.getHours()}h${
         e.start.getMinutes() < 10 ? '0' : ''
       }${e.start?.getMinutes()}`
     : undefined;
   const endTime = e.end
-    ? `${e.end?.getHours()}:${e.end?.getMinutes()}`
+    ? `${e.end?.getHours()}h${
+        e.end.getMinutes() < 10 ? '0' : ''
+      }${e.end?.getMinutes()}`
     : undefined;
 
   let displayedText;
@@ -33,18 +35,23 @@ const Event = ({ eventInfo, viewMode }: EventProps) => {
       displayedText = `${startTime ? startTime + ' ' : ''}${e.title}`;
       break;
     case 'dayGridMonth':
+    default:
       displayedText = e.title;
       break;
   }
 
   return (
-    <Tooltip title={displayedText} trigger='hover'>
+    <Popover
+      placement='leftTop'
+      content={<ScheduledEventDetails event={eventInfo} />}
+      trigger='click'
+    >
       <Badge
         color={eventInfo.backgroundColor}
         text={displayedText}
         style={{ padding: '0 8px', overflow: 'hidden' }}
       />
-    </Tooltip>
+    </Popover>
   );
 };
 

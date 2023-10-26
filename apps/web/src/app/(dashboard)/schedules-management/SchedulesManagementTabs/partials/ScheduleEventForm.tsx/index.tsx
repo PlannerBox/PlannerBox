@@ -21,8 +21,10 @@ import {
 import {
   EventType,
   GroupData,
+  ListRoomsData,
   Role,
   ScheduleEventResponse,
+  UserDetailsData,
   formatDateToISO8601,
 } from 'api-client';
 import { ReactNode, useEffect } from 'react';
@@ -55,9 +57,9 @@ type ScheduleEventFormData = {
   dateRange: string[];
   timeRange: TimeRangeType[];
   groupId: string;
-  teachers: string[];
+  teachers: UserDetailsData[];
   material: string[];
-  room: string;
+  room: ListRoomsData;
 };
 
 type OpenNotificationProps = {
@@ -119,7 +121,7 @@ const ScheduleEventForm = ({
         icon: <CheckCircleOutlined />,
       });
       form.resetFields();
-      queryClient.invalidateQueries({ queryKey: ['listScheduledEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['listEvents'] });
     } else {
       openNotification({
         title:
@@ -200,8 +202,8 @@ const ScheduleEventForm = ({
       parent: {
         skills: [selectedSkill?.id || ''],
         teachers: [...values.teachers],
-        groupId: initialGroup?.id || '',
-        roomId: values.room,
+        group: initialGroup!,
+        room: values.room,
         startDate: formatDateToISO8601(startDate),
         endDate: formatDateToISO8601(endDate),
         name: selectedSkill?.name || '',
