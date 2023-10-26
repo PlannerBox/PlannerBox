@@ -2,10 +2,17 @@
 
 import { Button, Cascader, Popover } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
-import { EventType, GroupData, ListGroupsProps } from 'api-client';
+import {
+  EventType,
+  GroupData,
+  ListGroupsProps,
+  ListScheduledEventsProps,
+  formatDateToISO8601,
+} from 'api-client';
 import { useEffect, useState } from 'react';
 import { useListGroups } from '../../../../hooks/useListGroups';
-import Calendar from '../../../components/Calendar';
+import { useListScheduledEvents } from '../../../../hooks/useListScheduledEvents';
+import Calendar, { getEventColor } from '../../../components/Calendar';
 import ScheduleEventForm from './partials/ScheduleEventForm.tsx';
 import styles from './styles.module.scss';
 
@@ -35,6 +42,15 @@ export default function SchedulesManagementTabs({}) {
     { title: 'Jesse PINKMAN', date: dateC, backgroundColor: 'pink' },
   ];
   // End of Fake Data
+
+  const [listEventsOptions, setListEventsOptions] =
+    useState<ListScheduledEventsProps>({
+      filter: undefined,
+      limit: 1000,
+    });
+
+  const { data: events, isLoading: isEventsListLoading } =
+    useListScheduledEvents(listEventsOptions);
 
   const [listGroupsOptions, setListGroupsOptions] = useState<ListGroupsProps>({
     filter: undefined,
@@ -79,12 +95,21 @@ export default function SchedulesManagementTabs({}) {
     undefined
   );
 
-  const onGroupChange = (value: (string | number)[]) =>
-    setSelectedGroup(
-      !!value
-        ? groupsList?.data.find((g) => g.id === value[0]) || undefined
-        : undefined
-    );
+  const onGroupChange = (value: (string | number)[]) => {
+    let group = groupsList?.data.find((g) => g.id === value[0]) || undefined;
+    setSelectedGroup(!!value ? group : undefined);
+
+    setListEventsOptions((old) => ({
+      filter: {
+        group: !!group
+          ? {
+              id: group?.id,
+            }
+          : undefined,
+      },
+      limit: old.limit,
+    }));
+  };
 
   useEffect(() => {
     console.log({ selectedGroup });
@@ -128,7 +153,16 @@ export default function SchedulesManagementTabs({}) {
           </Button>
         </Popover>
       </div>
-      <Calendar events={trainings} />
+      <Calendar
+        events={events?.data.map((e) => ({
+          title: e.name,
+          start: formatDateToISO8601(new Date(e.startDate)),
+          end: formatDateToISO8601(new Date(e.endDate)),
+          startTime: formatDateToISO8601(new Date(e.startDate)),
+          endTime: formatDateToISO8601(new Date(e.endDate)),
+          backgroundColor: getEventColor(e.eventType),
+        }))}
+      />
     </div>
   );
 }

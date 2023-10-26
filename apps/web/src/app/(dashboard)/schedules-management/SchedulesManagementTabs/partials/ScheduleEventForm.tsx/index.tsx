@@ -119,7 +119,7 @@ const ScheduleEventForm = ({
         icon: <CheckCircleOutlined />,
       });
       form.resetFields();
-      queryClient.invalidateQueries({ queryKey: ['listEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['listScheduledEvents'] });
     } else {
       openNotification({
         title:
