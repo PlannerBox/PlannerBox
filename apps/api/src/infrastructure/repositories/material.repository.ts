@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Room } from "../entities/Room.entity";
 import { IRoomRepository } from "../../domain/repositories/roomRepository.interface";
 import { RoomM } from "../../domain/models/room";
@@ -47,11 +47,16 @@ export class MaterialRepository implements IMaterialRepository {
     
    }
 
+    async findMaterialByIds(materialIds: string[]): Promise<Material[]> {
+        return await this.materialRepository.find({ where: { id: In(materialIds) }});
+    }
+
    toMaterialEntity(materialM:MaterialM) : Material {
     return{
         id: materialM.id,
         name: materialM.name,
         useMaterialRoom:materialM.useMaterialRoom,
+        courses: materialM.courses
     }
    }
 }

@@ -10,4 +10,5 @@ export interface IUseMaterialRoomRepository{
     getAll(query: PaginateQuery) : Promise<Paginated<UseMaterialRoom>>;
     update(useMaterialRoomM: UseMaterialRoom): Promise<any>;
     insert(useMaterialRoom: UseMaterialRoomM, room: RoomM, material: MaterialM): Promise<any>;
+    deleteByIdRoom(roomId: string);
 }

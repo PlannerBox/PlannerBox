@@ -60,6 +60,9 @@ export class UseMaterialRoomRepository implements IUseMaterialRoomRepository {
         return await this.useMaterialRoomRepository.save(useMaterialRoom);
     
    }
+   async deleteByIdRoom(roomId: string): Promise<any>{
+    return await this.useMaterialRoomRepository.delete({roomId : roomId})
+   }
 
    toUseMaterialRoomEntity(useMaterialRoomM:UseMaterialRoomM) : UseMaterialRoom {
     return{

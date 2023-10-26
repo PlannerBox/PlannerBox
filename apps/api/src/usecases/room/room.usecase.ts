@@ -5,25 +5,61 @@ import { IRoomRepository } from "../../domain/repositories/roomRepository.interf
 import { IPlaceRepository } from "../../domain/repositories/placeRepository.interface";
 import { Room } from "../../infrastructure/entities/Room.entity";
 import { RoomM } from "../../domain/models/room";
-import { RoomDto } from "../../infrastructure/controllers/roomManagement/roomDto.class";
+import { InsertRoomDTO, RoomDto } from "../../infrastructure/controllers/roomManagement/roomDto.class";
 import { NotFoundException } from "@nestjs/common";
 import { PaginateQuery, Paginated } from "nestjs-paginate";
+import { UUID } from "crypto";
+import { IUseMaterialRoomRepository } from "../../domain/repositories/useMaterialRoomRepository.interface";
+import { IMaterialRepository } from "../../domain/repositories/materialRepository.interface";
+import { UseMaterialRoom } from "../../infrastructure/entities/UseMaterialRoom.entity";
+import { Material } from "../../infrastructure/entities/Material.entity";
 
 
 export class RoomUseCase {
     constructor(
         private readonly placeRepository: IPlaceRepository,
         private readonly roomRepository: IRoomRepository,
+        private readonly useMaterialRoomRepository: IUseMaterialRoomRepository,
+        private readonly materialRepository: IMaterialRepository,
         ) { }
         
-    async insertRoom(roomM: RoomM, idPlace: string): Promise<any>{
+    async insertRoom(roomM: RoomDto): Promise<any>{
+    
+        const useMaterialRooms = roomM.useMaterialRoom;
+        const idPlace=roomM.place.id;
         let place = await this.placeRepository.getPlace(idPlace);
         if (!place) {
             throw new NotFoundException('No place found');
         }
-       
+        
+        if (roomM.id) {
+            const newRoom =this.toRoom(roomM);
+            console.log("if");
+            this.useMaterialRoomRepository.deleteByIdRoom(newRoom.id);
+            this.roomRepository.insertRoom(newRoom);
+            useMaterialRooms.forEach(async materialRoom => {
+                const material= await this.materialRepository.getMaterial(materialRoom.materialId);
+                if (material) {
+                    await this.useMaterialRoomRepository.insert(materialRoom, newRoom, material);
+                }
+               });
 
-       return await this.roomRepository.insertRoom(roomM, place);
+        }
+        else{
+            console.log("else");
+
+            const roomAfterInsert= await this.roomRepository.insertRoom(roomM);
+            console.log(roomAfterInsert);
+            const room = await this.roomRepository.getRoom(roomAfterInsert.id);
+            useMaterialRooms.forEach(async materialRoom => {
+             const material= await this.materialRepository.getMaterial(materialRoom.materialId);
+             if (material) {
+                 await this.useMaterialRoomRepository.insert(materialRoom, room, material);
+             }
+            });
+        }
+       
+       return "Room successfully added";
     }
     async updateRoom(roomM: RoomM) : Promise<any>{
         const room=this.toRoom(roomM);
