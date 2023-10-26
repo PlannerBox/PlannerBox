@@ -31,7 +31,7 @@ export class CourseRepository implements ICourseRepository {
       },
       sortableColumns: ['name', 'startDate', 'endDate', 'type'],
       defaultSortBy: [['startDate', 'ASC']],
-      filterableColumns: { 'group.id': true, id: true },
+      filterableColumns: { 'group.id': true, id: true, type: true },
     });
   }
 

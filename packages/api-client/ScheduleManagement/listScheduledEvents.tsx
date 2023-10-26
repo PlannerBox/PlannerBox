@@ -7,6 +7,7 @@ import { Room } from './listRooms';
 
 type FilterType = {
   id?: string;
+  types?: number[];
   group?: {
     id: string;
   };
@@ -79,6 +80,14 @@ const listScheduledEvents = async (
 
   if (props.filter?.endDate && props.filter.endDate !== '') {
     url = addQueryParams(url, 'filter.endDate', `$lt:${props.filter.endDate}`);
+  }
+
+  if (props.filter?.types) {
+    url = addQueryParams(
+      url,
+      'filter.types',
+      `$in:${props.filter.types.join(',')}`
+    );
   }
 
   return await apiCall(url, {
