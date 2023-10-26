@@ -6,6 +6,7 @@ import { IRoomRepository } from "../../domain/repositories/roomRepository.interf
 import { RoomM } from "../../domain/models/room";
 import { Place } from "../entities/Place.entity";
 import { FilterOperator, PaginateQuery, Paginated, paginate } from "nestjs-paginate";
+import { RoomEventFilterDto } from "../controllers/eventManagement/roomEventFilterDto.class";
 
 
 @Injectable()
@@ -49,6 +50,43 @@ export class RoomRepository implements IRoomRepository {
         room.place=place;
         return await this.roomRepository.save(room);
     
+   }
+   
+   async findAvailableRooms(queryFilter: RoomEventFilterDto): Promise<Room[]> {
+        const timeConflictqb = this.roomRepository.createQueryBuilder('r1');
+        timeConflictqb.leftJoinAndSelect("r1.courses", "c1");
+
+        timeConflictqb.select("r1.id");
+        
+        timeConflictqb.where("c1.startDate <= :startDate AND c1.endDate > :startDate", { startDate: queryFilter.startDate });
+        timeConflictqb.orWhere("c1.startDate < :endDate AND c1.endDate >= :endDate", { endDate: queryFilter.endDate });
+        timeConflictqb.orWhere("c1.startDate >= :startDate AND c1.startDate < :endDate", { startDate: queryFilter.startDate, endDate: queryFilter.endDate });
+        timeConflictqb.orWhere("c1.endDate > :startDate AND c1.endDate <= :endDate", { startDate: queryFilter.startDate, endDate: queryFilter.endDate });
+        
+        const rooms = await timeConflictqb.getMany();
+
+        const queryBuilder = this.roomRepository.createQueryBuilder('r');
+        queryBuilder.leftJoinAndSelect("r.useMaterialRoom", "umr");        
+        queryBuilder.select("r.id as roomId, array_agg(umr.materialId)");
+
+        if (rooms.length > 0)
+            queryBuilder.where("r.id NOT IN (:...rooms)", { rooms: rooms.map(r => r.id) });
+        else
+            queryBuilder.where("1 = 1");
+
+        queryBuilder.andWhere("umr.materialId IN (:...materials)", { materials: queryFilter.materials });
+        queryBuilder.groupBy("r.id");
+        queryBuilder.having("count(DISTINCT umr.materialId) = :materialCount", { materialCount: queryFilter.materials.length });
+
+        const result = await queryBuilder.getRawMany();
+
+        let roomsResult = [];
+        for (const row of result) {
+            const room = await this.roomRepository.findOne({ where: { id: row.roomId }, relations: ['useMaterialRoom', 'useMaterialRoom.material'] });
+            roomsResult.push(room);
+        }
+
+        return roomsResult;
    }
 
    toRoomEntity(roomM:RoomM) : Room {

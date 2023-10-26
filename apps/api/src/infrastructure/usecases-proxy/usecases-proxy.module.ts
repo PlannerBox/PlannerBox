@@ -428,13 +428,14 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [CourseRepository],
+          inject: [CourseRepository, RoomRepository],
           provide: UsecasesProxyModule.FIND_EVENTS_USECASES_PROXY,
           useFactory: (
-            courseRepository: CourseRepository
+            courseRepository: CourseRepository,
+            roomRepository: RoomRepository
           ) =>
             new UseCaseProxy(
-              new FindEventsUseCase(courseRepository),
+              new FindEventsUseCase(courseRepository, roomRepository),
             ),
         },
       ],
