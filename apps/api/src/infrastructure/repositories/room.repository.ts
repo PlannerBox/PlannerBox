@@ -43,9 +43,9 @@ export class RoomRepository implements IRoomRepository {
         return await this.roomRepository.update(room.id, room)
     }
    
-   async insertRoom(room:Room, place: Place) : Promise<any> {
- 
-        room.place=place;
+   async insertRoom(room:Room) : Promise<any> {
+    console.log(room);
+    
         return await this.roomRepository.save(room);
     
    }

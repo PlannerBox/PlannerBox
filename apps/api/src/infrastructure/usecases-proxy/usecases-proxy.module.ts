@@ -228,14 +228,18 @@ export class UsecasesProxyModule {
             ),
         },
         {
-          inject: [PlaceRepository, RoomRepository],
+          inject: [PlaceRepository, RoomRepository, UseMaterialRoomRepository, MaterialRepository],
           provide: UsecasesProxyModule.ROOM_MANAGEMENT_PROXY,
           useFactory: (
             placeRepository: PlaceRepository,
-            roomRepository: RoomRepository
+            roomRepository: RoomRepository,
+            useMaterialRoomRepository: UseMaterialRoomRepository,
+            materialRepository: MaterialRepository,
+
+            
           ) =>
             new UseCaseProxy(
-              new RoomUseCase(placeRepository, roomRepository),
+              new RoomUseCase(placeRepository, roomRepository, useMaterialRoomRepository, materialRepository),
             ),
         },
         {

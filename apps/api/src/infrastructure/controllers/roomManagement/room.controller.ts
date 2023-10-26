@@ -25,7 +25,7 @@ import { JwtAuthGuard } from '../../common/guards/jwtAuth.guard';
 import { HasPermissions } from '../../decorators/has-permissions.decorator';
 import UsersPermissions from '../../../domain/models/enums/usersPermissions.enum';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { RoomDto } from './roomDto.class';
+import { InsertRoomDTO, RoomDto } from './roomDto.class';
 import { HasRole } from '../../decorators/has-role.decorator';
 import Role from '../../../domain/models/enums/role.enum';
 import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
@@ -37,6 +37,8 @@ import { json } from 'stream/consumers';
 import { JsonResult } from '../../helpers/JsonResult';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 import { Room } from '../../entities/Room.entity';
+import { UUID } from 'crypto';
+import { UseMaterialRoom } from '../../entities/UseMaterialRoom.entity';
   
   @Controller('room')
   @ApiTags('room')
@@ -53,7 +55,7 @@ import { Room } from '../../entities/Room.entity';
       private readonly roomUseCaseProxy: UseCaseProxy<RoomUseCase>,
     ) {}
   
-    @Post('insert/:idPlace')
+    @Post('insert')
     @HasPermissions(UsersPermissions.Add)
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @HttpCode(201)
@@ -67,8 +69,10 @@ import { Room } from '../../entities/Room.entity';
     })
     @ApiBody({ type: RoomDto })
     @ApiOperation({ description: 'insert' })
-    async insertRoom(@Body() room: RoomM, @Param('idPlace') idPlace: string) { 
-      await this.roomUseCaseProxy.getInstance().insertRoom(room, idPlace); 
+    async insertRoom(@Body() insertRoom: RoomDto) { 
+      
+      console.log(insertRoom); 
+      await this.roomUseCaseProxy.getInstance().insertRoom(insertRoom);
       return JsonResult.Convert("Room successfully added"); 
     }
 

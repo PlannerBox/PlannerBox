@@ -3,6 +3,8 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 import { Room } from "../../entities/Room.entity";
 import { Material } from "../../entities/Material.entity";
 import { IntegerType } from "typeorm";
+import { RoomDto } from "../roomManagement/roomDto.class";
+import { MaterialDto } from "../MaterialManagement/materialDto.class";
 
 export class UseMaterialRoomDto {
   @ApiProperty()
@@ -13,9 +15,9 @@ export class UseMaterialRoomDto {
   readonly number: IntegerType;
 
   @ApiProperty({ required: true })
-  readonly room: Room;
+  readonly room: RoomDto;
 
   @ApiProperty({ required: true })
-  readonly material: Material;
+  readonly material: MaterialDto;
 
 }

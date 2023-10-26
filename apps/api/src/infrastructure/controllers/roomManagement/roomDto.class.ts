@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 import { Place } from "../../entities/Place.entity";
 import { UseMaterialRoom } from "../../entities/UseMaterialRoom.entity";
+import { Room } from "../../entities/Room.entity";
 
 export class RoomDto {
   @ApiProperty()
@@ -17,5 +18,12 @@ export class RoomDto {
 
   @ApiProperty({ required: true })
   readonly useMaterialRoom?: UseMaterialRoom[];
+
+}
+export class InsertRoomDTO{
+  @ApiProperty()
+  readonly room: Room;
+  @ApiProperty()
+  readonly useMaterialRooms: UseMaterialRoom[];
 
 }
