@@ -273,6 +273,7 @@ const ScheduleEventForm = ({
                 dateRange: newValue,
               })
             }
+            format='DD/MM/YYYY'
           />
         </Form.Item>
 
