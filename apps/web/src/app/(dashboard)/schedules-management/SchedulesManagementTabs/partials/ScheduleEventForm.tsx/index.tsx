@@ -177,7 +177,7 @@ const ScheduleEventForm = ({
       // Créez une copie de la date `from` pour la boucle
       const currentDate = new Date(from);
 
-      while (currentDate <= to) {
+      while (currentDate < to) {
         // Créez une copie de la date courante en utilisant les heures et minutes de `startTime`
         const startDate = new Date(currentDate);
         startDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
