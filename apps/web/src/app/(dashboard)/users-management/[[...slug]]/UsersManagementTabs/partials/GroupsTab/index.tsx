@@ -1,8 +1,9 @@
 'use client';
 
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
-  Form,
   Input,
   Popover,
   Select,
@@ -10,16 +11,18 @@ import {
   Table,
   Tag,
   Typography,
+  notification,
 } from 'antd';
-import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
 import {
+  AddGroupMemberResponse,
   GetUserDetailsProps,
   ListGroupsProps,
   ListUsersProps,
+  UserData,
 } from 'api-client';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { useAddGroupMember } from '../../../../../../../hooks/useAddGroupMember';
 import { useListGroups } from '../../../../../../../hooks/useListGroups';
 import { useListUsers } from '../../../../../../../hooks/useListUsers';
 import UsersList from '../../../../../../components/UsersList';
@@ -166,9 +169,29 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
+type OpenNotificationProps = {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+};
+
 export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
-  const [form] = Form.useForm();
-  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [notificationApi, notificationContextHolder] =
+    notification.useNotification();
+
+  const openNotification = ({
+    title,
+    description,
+    icon,
+  }: OpenNotificationProps) => {
+    notificationApi.open({
+      message: title,
+      description: description,
+      icon: icon,
+      placement: 'top',
+    });
+  };
 
   const defaultListGroupsOptions = {
     filter: undefined,
@@ -222,9 +245,6 @@ export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
     useState<ListUsersProps>(defaultUsersOptions);
 
   const { data: users, isLoading: usersLoading } = useListUsers(usersOptions);
-  useEffect(() => {
-    console.log('users test:', { users });
-  }, [users]);
 
   const onUsersSearch = (value: string) => {
     if (value.length > 0) {
@@ -238,26 +258,56 @@ export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
     }
   };
 
-  const onReset = () => {
-    form.resetFields();
-  };
-
-  const filterGroups = (inputValue: string, path: DefaultOptionType[]) =>
-    path.some(
-      (option) =>
-        (option.label as string)
-          .toLowerCase()
-          .indexOf(inputValue.toLowerCase()) > -1
-    );
-
-  const shallowRedirect = useCallback(
-    (key: string) => {
-      router.push(`/users-management/groups/${key}`, { shallow: true });
-    },
-    [router]
-  );
-
   const { Text } = Typography;
+
+  const { mutate: fetchAddMember } = useAddGroupMember({
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
+
+  function handleSuccess(data: AddGroupMemberResponse) {
+    if (!!data) {
+      openNotification({
+        title: 'Nouveau membre ajouté avec succès !',
+        icon: <CheckCircleOutlined />,
+      });
+      queryClient.invalidateQueries({ queryKey: ['listGroups'] });
+    } else {
+      openNotification({
+        title: "Une erreur est survenue lors de l'ajout du membre !",
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  }
+
+  function handleError() {
+    openNotification({
+      title: "Une erreur est survenue lors de l'ajout du membre !",
+      icon: <CloseCircleOutlined />,
+    });
+  }
+
+  const addMember = (accountId: string) =>
+    fetchAddMember({
+      accountId: accountId,
+      isOwner: false,
+      groupId: idManaged!,
+    });
+
+  const [usersWithoutMembers, setUsersWithoutMembers] = useState<UserData[]>(
+    []
+  );
+  useEffect(() => {
+    if (step === 'manage' && !!membersData && !!users) {
+      setUsersWithoutMembers(
+        users.data.filter(
+          (user) => !membersData.some((member) => member.mail === user.username)
+        )
+      );
+    } else {
+      setUsersWithoutMembers([]);
+    }
+  }, [step, membersData, users, idManaged]);
 
   const MemberPopoverContent = () => (
     <div
@@ -271,7 +321,11 @@ export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
         placeholder='Rechercher un utilisateur'
         onChange={(input) => onUsersSearch(input.currentTarget.value)}
       />
-      <UsersList users={users?.data} isLoading={usersLoading} />
+      <UsersList
+        users={usersWithoutMembers}
+        isLoading={usersLoading}
+        addMember={addMember}
+      />
     </div>
   );
 
@@ -313,12 +367,9 @@ export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
     }
   }, [step]);
 
-  useEffect(() => {
-    console.log({ membersData });
-  }, [membersData]);
-
   return (
     <div>
+      {notificationContextHolder}
       {step === 'list' && (
         <>
           <div

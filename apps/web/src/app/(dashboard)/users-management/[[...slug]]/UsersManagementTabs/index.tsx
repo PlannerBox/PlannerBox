@@ -14,6 +14,7 @@ export default function UsersManagementTabs() {
   const validTabs = ['users', 'groups', 'permissions'];
   const currentTabSplittedPathname = pathname.split('/');
   const currentTabPathname = currentTabSplittedPathname[2] ?? '';
+  console.log(currentTabSplittedPathname[3]);
 
   const shallowRedirect = useCallback(
     (key: string) => {

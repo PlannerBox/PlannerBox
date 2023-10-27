@@ -4,6 +4,7 @@ import {
   AddGroupMemberResponse,
   addGroupMember,
 } from 'api-client';
+import { useCookies } from 'react-cookie';
 
 type AddGroupMemberHookOptions = {
   onSuccess?: (data: AddGroupMemberResponse) => void;
@@ -14,9 +15,10 @@ const useAddGroupMember = ({
   onSuccess,
   onError,
 }: AddGroupMemberHookOptions) => {
+  const [cookies] = useCookies(['session']);
   return useMutation<AddGroupMemberResponse, unknown, AddGroupMemberProps>({
     mutationFn: async (data: AddGroupMemberProps) => {
-      return await addGroupMember(data);
+      return await addGroupMember(data, cookies['session']);
     },
     onSuccess: (data) => {
       if (onSuccess) {

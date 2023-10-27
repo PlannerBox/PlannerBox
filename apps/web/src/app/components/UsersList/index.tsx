@@ -5,11 +5,13 @@ import UserElement from './partials/UserElement';
 export type UsersListProps = {
   users?: UserData[];
   isLoading?: boolean;
+  addMember: (accountId: string) => void;
 };
 
 export default function UsersList({
   users,
   isLoading = false,
+  addMember,
 }: UsersListProps) {
   return (
     <div
@@ -22,7 +24,11 @@ export default function UsersList({
       }}
     >
       {users?.map((userInformations) => (
-        <UserElement {...userInformations} key={userInformations.username} />
+        <UserElement
+          {...userInformations}
+          key={userInformations.username}
+          onClick={() => addMember(userInformations.id)}
+        />
       ))}
       {isLoading && <Spin />}
     </div>
