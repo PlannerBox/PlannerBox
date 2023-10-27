@@ -11,9 +11,10 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Divider, Form, notification } from 'antd';
 import { DeleteEventResponse } from 'api-client';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useDeleteEvent } from '../../../../../../hooks/useDeleteEvent';
 import { EventsWithDetailsType } from '../../../../../components/Calendar';
+import ScheduledEventEdit from '../ScheduledEventEdit.tsx';
 import styles from './styles.module.scss';
 
 const layout = {
@@ -87,6 +88,17 @@ const ScheduledEventDetails = ({ event }: ScheduledEventDetailsProps) => {
     onError: handleError,
   });
 
+  const [display, setDisplay] = useState<'details' | 'edit'>('details');
+
+  if (display === 'edit') {
+    return (
+      <ScheduledEventEdit
+        event={event.event.extendedProps}
+        eventId={event.event.extendedProps.id}
+      />
+    );
+  }
+
   return (
     <Form
       {...layout}
@@ -98,7 +110,11 @@ const ScheduledEventDetails = ({ event }: ScheduledEventDetailsProps) => {
       {notificationContextHolder}
       <Form.Item name='skill' className={styles.formItem}>
         {event.event.title}
-        <Button type='text' icon={<EditOutlined />} />
+        <Button
+          type='text'
+          icon={<EditOutlined />}
+          onClick={() => setDisplay('edit')}
+        />
         <Button
           type='text'
           icon={
