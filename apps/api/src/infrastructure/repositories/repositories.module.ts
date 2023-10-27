@@ -33,7 +33,7 @@ import { CourseTeacher } from '../entities/CourseTeacher.entity';
 import { CourseTeachersRepository } from './courseTeachers.repository';
 
 @Module({
-  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course, TeacherSkills, CourseTeacher])],
+  imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Account, Admin,  Student, Teacher, Group, GroupMembers, RolePermissions, Place, Material, Room, UseMaterialRoom, Skill, Course, TeacherSkills, CourseTeacher, CourseRepository])],
   providers: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository, CourseTeachersRepository],
   exports: [AccountRepository, AdminRepository, StudentRepository, TeacherRepository, GroupRepository, GroupMemberRepository, RolePermissionsRepository, PlaceRepository, RoomRepository, MaterialRepository, UseMaterialRoomRepository, SkillRepository, CourseRepository, TeacherSkillsRepository, CourseTeachersRepository],
 })

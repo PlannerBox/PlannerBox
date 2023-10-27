@@ -9,6 +9,7 @@ import { UseMaterialRoomController } from './useMaterialRoomManagement/useMateri
 import { GroupManagementController } from './groupManagement/groupManagement.controller';
 import { SkillManagementController } from './skillManagement/skillManagement.controller';
 import { EventManagementController } from './eventManagement/eventManagement.controller';
+import { CourseRepository } from '../repositories/course.repository';
 @Module({
   imports: [UsecasesProxyModule.register()],
   controllers: [AuthController, UserManagementController, PlaceController, RoomController, MaterialController, UseMaterialRoomController,GroupManagementController, SkillManagementController, EventManagementController],
