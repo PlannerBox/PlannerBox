@@ -1,16 +1,13 @@
 import { Button, Typography } from 'antd';
+import { UserData } from 'api-client';
 import styles from './styles.module.scss';
 
-export type UserElementProps = {
-  firstname: string;
-  lastname: string;
-  email: string;
-};
+export type UserElementProps = UserData;
 
 export default function UserElement({
   firstname,
   lastname,
-  email,
+  username,
 }: UserElementProps) {
   const { Text } = Typography;
 
@@ -19,7 +16,7 @@ export default function UserElement({
       <Text>
         {firstname} {lastname}
       </Text>
-      <Text type='secondary'>{email}</Text>
+      <Text type='secondary'>{username}</Text>
     </Button>
   );
 }

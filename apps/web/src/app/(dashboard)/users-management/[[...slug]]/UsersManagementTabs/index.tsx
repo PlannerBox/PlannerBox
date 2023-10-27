@@ -35,7 +35,6 @@ export default function UsersManagementTabs() {
 
   const groupStep = useCallback(() => {
     if (currentTabSplittedPathname[4] === 'manage') {
-      // TODO: Check for ID validity
       return 'manage';
     }
 
@@ -55,7 +54,12 @@ export default function UsersManagementTabs() {
     {
       key: 'groups',
       label: `Groupes`,
-      children: <GroupsTab step={groupStep()} />,
+      children: (
+        <GroupsTab
+          step={groupStep()}
+          idManaged={currentTabSplittedPathname[3]}
+        />
+      ),
     },
     {
       key: 'permissions',

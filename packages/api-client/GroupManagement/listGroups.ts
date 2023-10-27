@@ -2,7 +2,8 @@ import { AccountType } from '../UserManagement';
 import { addQueryParams, apiCall } from '../utils/api';
 
 type FilterType = {
-  name: string;
+  name?: string;
+  id?: string;
 };
 
 export type ListGroupsProps = {
@@ -45,6 +46,9 @@ const listGroups = async (
   let url = `${process.env.NEXT_PUBLIC_API_URL}/api/group-management/group/list-paginated`;
   if (props.filter?.name) {
     url = addQueryParams(url, 'filter.name', `$ilike:${props.filter.name}`);
+  }
+  if (props.filter?.id) {
+    url = addQueryParams(url, 'filter.uuid', `$ilike:${props.filter.id}`);
   }
 
   if (props.limit !== undefined) {

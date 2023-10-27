@@ -8,6 +8,7 @@ type FilterType = {
 };
 
 export type GetUserSummaryProps = {
+  search?: string;
   filter?: FilterType;
   limit?: number;
   page?: number;

@@ -16,7 +16,6 @@ import { Student } from '../entities/Student.entity';
 import { Teacher } from '../entities/Teacher.entity';
 import { AccountMapper } from '../mappers/account.mapper';
 
-
 @Injectable()
 export class AccountRepository implements IAccountRepository {
   constructor(
@@ -55,15 +54,7 @@ export class AccountRepository implements IAccountRepository {
       ],
       nullSort: 'last',
       defaultSortBy: [['username', 'ASC']],
-      searchableColumns: [
-        'id',
-        'username',
-        'firstname',
-        'lastname',
-        'rolePermissions',
-        'active',
-        'groups',
-      ],
+      searchableColumns: ['username', 'firstname', 'lastname'],
       filterableColumns: {
         id: true,
         username: true,
@@ -123,9 +114,11 @@ export class AccountRepository implements IAccountRepository {
   }
 
   async accountExists(ids: string[]): Promise<boolean> {
-    const accounts = await this.accountEntityRepository.find({ where: { id: In(ids) } });
+    const accounts = await this.accountEntityRepository.find({
+      where: { id: In(ids) },
+    });
     return accounts.length === ids.length;
-}
+  }
 
   async updateLastLogin(username: string): Promise<void> {
     await this.accountEntityRepository.update(
@@ -163,11 +156,9 @@ export class AccountRepository implements IAccountRepository {
     );
   }
 
-
   async deleteAccount(id: string): Promise<void> {
     await this.accountEntityRepository.delete({ id: id });
   }
-
 
   async getAllAccounts(): Promise<AccountWithoutPassword[]> {
     const accountEntities = await this.accountEntityRepository.find();
@@ -178,7 +169,10 @@ export class AccountRepository implements IAccountRepository {
     });
   }
 
-  async findUserAccountDetails(id: string, username: string): Promise<UserAccountDetailsM> {
+  async findUserAccountDetails(
+    id: string,
+    username: string,
+  ): Promise<UserAccountDetailsM> {
     let accountEntity = null;
     if (id) {
       accountEntity = await this.accountEntityRepository.findOne({
@@ -249,7 +243,7 @@ export class AccountRepository implements IAccountRepository {
               id: account.id,
             },
           },
-          relations: { teacherSkills: { skill: true }}
+          relations: { teacherSkills: { skill: true } },
         });
         userAccountDetails.teacherId = teacherEntity.id;
         userAccountDetails.intern = teacherEntity.intern;

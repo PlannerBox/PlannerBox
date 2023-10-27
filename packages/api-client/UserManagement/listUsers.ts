@@ -7,6 +7,7 @@ type FilterType = {
 };
 
 export type ListUsersProps = {
+  search?: string;
   filter?: FilterType;
   limit?: number;
   page?: number;
@@ -82,6 +83,10 @@ const listUsers = async (
       'filter.rolePermissions.role',
       `$in:${props.filter.roles.join(',')}`
     );
+  }
+
+  if (props.search && props.search !== '') {
+    url = addQueryParams(url, 'search', props.search);
   }
 
   return await apiCall(url, {

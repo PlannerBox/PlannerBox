@@ -1,10 +1,16 @@
-import UserElement, { UserElementProps } from './partials/UserElement';
+import { Spin } from 'antd';
+import { UserData } from 'api-client';
+import UserElement from './partials/UserElement';
 
 export type UsersListProps = {
-  users: UserElementProps[];
+  users?: UserData[];
+  isLoading?: boolean;
 };
 
-export default function UsersList({ users }: UsersListProps) {
+export default function UsersList({
+  users,
+  isLoading = false,
+}: UsersListProps) {
   return (
     <div
       style={{
@@ -15,9 +21,10 @@ export default function UsersList({ users }: UsersListProps) {
         maxHeight: '50vh',
       }}
     >
-      {users.map((userInformations) => (
-        <UserElement {...userInformations} key={userInformations.email} />
+      {users?.map((userInformations) => (
+        <UserElement {...userInformations} key={userInformations.username} />
       ))}
+      {isLoading && <Spin />}
     </div>
   );
 }

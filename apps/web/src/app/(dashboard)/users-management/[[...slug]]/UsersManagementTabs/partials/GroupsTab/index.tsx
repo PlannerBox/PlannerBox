@@ -13,56 +13,30 @@ import {
 } from 'antd';
 import type { DefaultOptionType } from 'antd/es/cascader';
 import { ColumnsType } from 'antd/es/table';
+import {
+  GetUserDetailsProps,
+  ListGroupsProps,
+  ListUsersProps,
+} from 'api-client';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useListGroups } from '../../../../../../../hooks/useListGroups';
+import { useListUsers } from '../../../../../../../hooks/useListUsers';
 import UsersList from '../../../../../../components/UsersList';
-import { UserElementProps } from '../../../../../../components/UsersList/partials/UserElement';
 import GroupCreation from './GroupCreation';
 
 type UsersTabProps = {
   step?: 'list' | 'manage' | 'create';
+  idManaged?: string;
 };
 
 interface GroupDataType {
   key: string;
-  uuid: string;
+  id: string;
   name: string;
-  responsible: string;
+  responsible?: GetUserDetailsProps;
   members_count: number;
 }
-
-const fakeGroups = [
-  {
-    uuid: 'dkdkd-dkddkd-jsdjqdsbn',
-    name: 'MS2D-AL',
-    responsible: 'Roberto Alberto',
-    members_count: 43,
-  },
-  {
-    uuid: 'dkdkd-dkddkd-jsdjqdsjq',
-    name: 'MS2D-JQ',
-    responsible: 'Roberto Alberto',
-    members_count: 12,
-  },
-  {
-    uuid: 'dkdkd-dkddkd-jsdjqdsjp',
-    name: 'Bac+5',
-    responsible: 'Roberto Alberto',
-    members_count: 83,
-  },
-  {
-    uuid: 'dkdkd-dkddkd-jsdjqdsjr',
-    name: '2023',
-    responsible: 'Roberto Alberto',
-    members_count: 50,
-  },
-  {
-    uuid: 'dkdkd-dkddkd-jsdjqdsja',
-    name: '2022',
-    responsible: 'Roberto Alberto',
-    members_count: 22,
-  },
-];
 
 const groupColumns: ColumnsType<GroupDataType> = [
   {
@@ -96,35 +70,11 @@ const groupColumns: ColumnsType<GroupDataType> = [
   },
 ];
 
-const groupData: GroupDataType[] = fakeGroups.map((group) => ({
-  key: group.uuid,
-  ...group,
-}));
-
 interface Group {
   value: string;
   label: string;
   disabled?: boolean;
 }
-
-const fakeGroupOptions: Group[] = [
-  {
-    value: 'MS2D-AL',
-    label: 'MS2D-AL',
-  },
-  {
-    value: 'Bac+5',
-    label: 'Bac+5',
-  },
-  {
-    value: '2023',
-    label: '2023',
-  },
-  {
-    value: 'BGs',
-    label: 'BGs',
-  },
-];
 
 interface MembersDataType {
   key: string;
@@ -209,13 +159,6 @@ const membersColumns: ColumnsType<MembersDataType> = [
   },
 ];
 
-const membersData: MembersDataType[] = fakeGroupMembers
-  .sort((value) => (value.responsible ? -1 : 1))
-  .map((member, index) => ({
-    key: index.toString(),
-    ...member,
-  }));
-
 const { Option } = Select;
 
 const layout = {
@@ -223,20 +166,80 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-export default function GroupsTab({ step = 'list' }: UsersTabProps) {
+export default function GroupsTab({ step = 'list', idManaged }: UsersTabProps) {
   const [form] = Form.useForm();
   const router = useRouter();
+
+  const defaultListGroupsOptions = {
+    filter: undefined,
+    limit: 1000,
+  };
+
+  const [listGroupsOptions, setListGroupsOptions] = useState<ListGroupsProps>(
+    defaultListGroupsOptions
+  );
+
+  const { data: groupsList, isLoading: isGroupsListLoading } =
+    useListGroups(listGroupsOptions);
+
+  const groupData: GroupDataType[] = groupsList
+    ? groupsList.data.map((group) => ({
+        key: group.id,
+        id: group.id,
+        name: group.name,
+        responsible: group.groupMembers.find((g) => g.isOwner),
+        members_count: group.groupMembers.length,
+      }))
+    : [];
+
+  const [membersData, setMembersData] = useState<MembersDataType[]>([]);
+
+  useEffect(() => {
+    if (step === 'manage' && !!groupsList) {
+      setMembersData(
+        groupsList.data[0].groupMembers
+          .sort((value) => (value.isOwner ? -1 : 1))
+          .map((member, index) => ({
+            key: index.toString(),
+            lastname: member.account.lastname,
+            firstname: member.account.firstname,
+            mail: member.account.username,
+            responsible: member.isOwner,
+          }))
+      );
+    }
+  }, [groupsList, step]);
 
   const onFinish = (values: any) => {
     console.log(values);
   };
 
-  const onReset = () => {
-    form.resetFields();
+  const defaultUsersOptions = {
+    filter: undefined,
+    limit: 1000,
+  };
+  const [usersOptions, setUsersOptions] =
+    useState<ListUsersProps>(defaultUsersOptions);
+
+  const { data: users, isLoading: usersLoading } = useListUsers(usersOptions);
+  useEffect(() => {
+    console.log('users test:', { users });
+  }, [users]);
+
+  const onUsersSearch = (value: string) => {
+    if (value.length > 0) {
+      setUsersOptions({
+        search: value,
+        filter: undefined,
+        limit: 1000,
+      });
+    } else {
+      setUsersOptions(defaultUsersOptions);
+    }
   };
 
-  const onFill = () => {
-    form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
+  const onReset = () => {
+    form.resetFields();
   };
 
   const filterGroups = (inputValue: string, path: DefaultOptionType[]) =>
@@ -256,71 +259,21 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
 
   const { Text } = Typography;
 
-  const MemberPopoverContent = () => {
-    const [users, setUsers] = useState<UserElementProps[]>([]);
-    const fakeUsers: UserElementProps[] = [
-      {
-        firstname: 'Roberto',
-        lastname: 'Alberto',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Francis',
-        lastname: 'Tortel',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Johnny',
-        lastname: 'Sino',
-        email: 'johnny@sino.com',
-      },
-      {
-        firstname: 'Porel',
-        lastname: 'Rtus',
-        email: 'robert@albert.com',
-      },
-      {
-        firstname: 'Franscesca',
-        lastname: 'Gragjda',
-        email: 'franscesca@gragjda.com',
-      },
-      {
-        firstname: 'Poiro',
-        lastname: 'Trotro',
-        email: 'trotro@poiro.com',
-      },
-      {
-        firstname: 'Ariette',
-        lastname: 'Salvette',
-        email: 'ariette@salvette.com',
-      },
-      {
-        firstname: 'Paul',
-        lastname: 'Krush',
-        email: 'paul@krush.com',
-      },
-    ];
-
-    return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spacing-12)',
-        }}
-      >
-        <Input
-          placeholder='Rechercher un utilisateur'
-          onChange={(input) =>
-            input.currentTarget.value.length > 0
-              ? setUsers(fakeUsers)
-              : setUsers([])
-          }
-        />
-        <UsersList users={users} />
-      </div>
-    );
-  };
+  const MemberPopoverContent = () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--spacing-12)',
+      }}
+    >
+      <Input
+        placeholder='Rechercher un utilisateur'
+        onChange={(input) => onUsersSearch(input.currentTarget.value)}
+      />
+      <UsersList users={users?.data} isLoading={usersLoading} />
+    </div>
+  );
 
   const [openForm, setOpenForm] = useState(false);
   const [dimensions, setDimensions] = useState({
@@ -346,6 +299,23 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
   useEffect(() => {
     window.addEventListener('resize', handleResize, false);
   }, []);
+
+  useEffect(() => {
+    if (step === 'manage') {
+      setListGroupsOptions({
+        filter: {
+          id: idManaged,
+        },
+        limit: 1,
+      });
+    } else {
+      setListGroupsOptions(defaultListGroupsOptions);
+    }
+  }, [step]);
+
+  useEffect(() => {
+    console.log({ membersData });
+  }, [membersData]);
 
   return (
     <div>
@@ -374,6 +344,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             columns={groupColumns}
             dataSource={groupData}
             scroll={{ x: 150 }}
+            loading={isGroupsListLoading}
           />
         </>
       )}
@@ -402,6 +373,7 @@ export default function GroupsTab({ step = 'list' }: UsersTabProps) {
             columns={membersColumns}
             dataSource={membersData}
             scroll={{ x: 150 }}
+            loading={isGroupsListLoading}
           />
         </>
       )}
