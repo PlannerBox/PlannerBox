@@ -1,16 +1,38 @@
 'use client';
 
-import { EditOutlined, MoreOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Popover, Space, Table } from 'antd';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  EditOutlined,
+  MoreOutlined,
+} from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button, Form, Input, Popover, Space, Table, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import {
+  CreateSkillProps,
+  CreateSkillResponse,
+  UpdateSkillProps,
+} from 'api-client';
+import { ReactNode } from 'react';
+import { useCreateSkill } from '../../../../../hooks/useCreateSkill';
+import { useListSkills } from '../../../../../hooks/useListSkills';
+import { useUpdateSkill } from '../../../../../hooks/useUpdateSkill';
 
 type SkillsTabProps = {
   step?: 'list';
 };
 
+type OpenNotificationProps = {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+};
+
 export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
   interface SkillsDataType {
     key: string;
+    id: string;
     name: string;
     internal_teachers: number;
     external_teachers: number;
@@ -20,19 +42,73 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
     name?: string;
   };
 
-  const [creationForm] = Form.useForm<SkillFieldType>();
-  const skillNameCreationValue = Form.useWatch('name', creationForm);
+  const queryClient = useQueryClient();
+  const [notificationApi, notificationContextHolder] =
+    notification.useNotification();
 
-  const onSkillCreationFinish = (values: any) => {
-    console.log('Success:', values);
+  const openNotification = ({
+    title,
+    description,
+    icon,
+  }: OpenNotificationProps) => {
+    notificationApi.open({
+      message: title,
+      description: description,
+      icon: icon,
+      placement: 'top',
+    });
   };
 
-  const onSkillCreationFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+  const { data: skills, isLoading: skillsLoading } = useListSkills({});
+  const data = skills
+    ? skills.data.map((s) => ({
+        key: s.id,
+        name: s.name,
+        internal_teachers: s.internTeachersNumber,
+        external_teachers: s.externTeachersNumber,
+      }))
+    : [];
+
+  const [creationForm] = Form.useForm<CreateSkillProps>();
+  const skillNameCreationValue = Form.useWatch('name', creationForm);
+
+  const onSkillCreationSuccess = (data: CreateSkillResponse) => {
+    console.log('Success:', data);
+    if (!!data) {
+      openNotification({
+        title: 'Compétence créée avec succès !',
+        icon: <CheckCircleOutlined />,
+      });
+      creationForm.resetFields();
+      queryClient.invalidateQueries({ queryKey: ['useListSkills'] });
+    } else {
+      openNotification({
+        title: 'Une erreur est survenue lors de la création de la compétence !',
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  };
+
+  const onSkillCreationFailed = () => {
+    console.log('Failed');
+    openNotification({
+      title: 'Une erreur est survenue lors de la création de la compétence !',
+      icon: <CloseCircleOutlined />,
+    });
   };
 
   const onSkillCreationReset = () => {
     creationForm.resetFields();
+  };
+
+  const { mutate: fetchSkillCreation, isLoading: skillCreationLoading } =
+    useCreateSkill({
+      onSuccess: onSkillCreationSuccess,
+      onError: onSkillCreationFailed,
+    });
+
+  const onSkillCreationFinish = (values: CreateSkillProps) => {
+    fetchSkillCreation(values);
   };
 
   const addSkillPopoverContent = () => (
@@ -40,7 +116,6 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
       name='basic'
       initialValues={{}}
       onFinish={onSkillCreationFinish}
-      onFinishFailed={onSkillCreationFinishFailed}
       autoComplete='off'
       form={creationForm}
       style={{
@@ -58,6 +133,7 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
           type='primary'
           htmlType='submit'
           disabled={(skillNameCreationValue?.length || 0) <= 0}
+          loading={skillCreationLoading}
         >
           Créer
         </Button>
@@ -65,27 +141,54 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
     </Form>
   );
 
-  const [editForm] = Form.useForm<SkillFieldType>();
+  const [editForm] = Form.useForm<UpdateSkillProps>();
   const skillNameEditValue = Form.useWatch('name', editForm);
 
-  const onSkillEditFinish = (values: any) => {
-    console.log('Success:', values);
+  const onSkillUpdateSuccess = (data: CreateSkillResponse) => {
+    console.log('Success:', data);
+    if (!!data) {
+      openNotification({
+        title: 'Compétence modifiée avec succès !',
+        icon: <CheckCircleOutlined />,
+      });
+      editForm.resetFields();
+      queryClient.invalidateQueries({ queryKey: ['useListSkills'] });
+    } else {
+      openNotification({
+        title:
+          'Une erreur est survenue lors de la modification de la compétence !',
+        icon: <CloseCircleOutlined />,
+      });
+    }
   };
 
-  const onSkillEditFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+  const onSkillUpdateFailed = () => {
+    console.log('Failed');
+    openNotification({
+      title:
+        'Une erreur est survenue lors de la modification de la compétence !',
+      icon: <CloseCircleOutlined />,
+    });
+  };
+
+  const { mutate: fetchEditSkill } = useUpdateSkill({
+    onSuccess: onSkillUpdateSuccess,
+    onError: onSkillUpdateFailed,
+  });
+
+  const onSkillEditFinish = (values: UpdateSkillProps) => {
+    fetchEditSkill(values);
   };
 
   const onSkillEditReset = () => {
     editForm.resetFields();
   };
 
-  const editSkillPopoverContent = (defaultValue: string) => (
+  const editSkillPopoverContent = (id: string, defaultValue: string) => (
     <Form
       name='basic'
       initialValues={{}}
       onFinish={onSkillEditFinish}
-      onFinishFailed={onSkillEditFinishFailed}
       autoComplete='off'
       form={editForm}
       style={{
@@ -96,6 +199,10 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
     >
       <Form.Item<SkillFieldType> name='name' style={{ margin: 0 }}>
         <Input defaultValue={defaultValue} />
+      </Form.Item>
+
+      <Form.Item name='id' noStyle>
+        <Input value={id} type='hidden' />
       </Form.Item>
 
       <Form.Item style={{ margin: 0 }}>
@@ -134,7 +241,7 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
           <Popover
             placement='leftTop'
             title='Nom de la compétence'
-            content={() => editSkillPopoverContent(record.name)}
+            content={() => editSkillPopoverContent(record.id, record.name)}
             trigger='click'
             onOpenChange={onSkillEditReset}
           >
@@ -146,29 +253,9 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
     },
   ];
 
-  const skillsData: SkillsDataType[] = [
-    {
-      key: '1',
-      name: 'Big Data',
-      internal_teachers: 0,
-      external_teachers: 3,
-    },
-    {
-      key: '2',
-      name: 'Big Data',
-      internal_teachers: 42,
-      external_teachers: 12,
-    },
-    {
-      key: '3',
-      name: 'Big Data',
-      internal_teachers: 32,
-      external_teachers: 99,
-    },
-  ];
-
   return (
     <div>
+      {notificationContextHolder}
       {step === 'list' && (
         <>
           <div
@@ -191,8 +278,9 @@ export default function SkillsTab({ step = 'list' }: SkillsTabProps) {
           </div>
           <Table
             columns={skillsColumns}
-            dataSource={skillsData}
+            dataSource={data}
             scroll={{ x: 150 }}
+            loading={skillsLoading}
           />
         </>
       )}
