@@ -11,11 +11,17 @@ import {
   notification,
 } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
-import { ListGroupsProps, SignUpProps, SignUpResponse } from 'api-client';
+import {
+  GetListSkillsProps,
+  ListGroupsProps,
+  SignUpProps,
+  SignUpResponse,
+} from 'api-client';
 import { Role } from 'api-client/enums/Role';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormationMode } from '../../../../../../../../../enums/FormationMode';
 import { useListGroups } from '../../../../../../../../../hooks/useListGroups';
+import { useListSkills } from '../../../../../../../../../hooks/useListSkills';
 import { useSignUp } from '../../../../../../../../../hooks/useSignUp';
 import styles from './styles.module.scss';
 
@@ -26,7 +32,7 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-interface Group {
+interface CascaderOption {
   value: string;
   label: string;
   disabled?: boolean;
@@ -80,10 +86,29 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
     data: groupsList,
     isLoading: isGroupsListLoading,
     refetch: refetchListGroups,
-  } = useListGroups({});
+  } = useListGroups(listGroupsOptions);
 
-  const groupOptions: Group[] | undefined = groupsList
+  const groupOptions: CascaderOption[] | undefined = groupsList
     ? groupsList.data.map((group) => ({
+        value: group.id,
+        label: group.name,
+      }))
+    : [];
+
+  const [listSkillsOptions, setListSkillsOptions] =
+    useState<GetListSkillsProps>({
+      filter: undefined,
+      limit: 1000,
+    });
+
+  const {
+    data: skills,
+    isLoading: isSkillsLoading,
+    refetch: refetchSkills,
+  } = useListSkills(listSkillsOptions);
+
+  const skillOptions: CascaderOption[] | undefined = skills
+    ? skills.data.map((group) => ({
         value: group.id,
         label: group.name,
       }))
@@ -122,6 +147,8 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
       form.setFieldsValue({ formationMode: undefined, groups: undefined });
     } else if (value === Role.InternTeacher || value === Role.ExternTeacher) {
       form.setFieldsValue({ formationMode: undefined });
+    } else if (value === Role.Student) {
+      form.setFieldValue({ skills: undefined });
     }
   };
 
@@ -142,9 +169,30 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
     }));
   };
 
+  const filterSkills = (inputValue: string, path: DefaultOptionType[]) =>
+    path.some(
+      (option) =>
+        (option.label as string)
+          .toLowerCase()
+          .indexOf(inputValue.toLowerCase()) > -1
+    );
+
+  const handleSkillSearch = (value: string) => {
+    setListSkillsOptions((old) => ({
+      filter: {
+        name: value,
+      },
+      limit: old.limit,
+    }));
+  };
+
   useEffect(() => {
     refetchListGroups();
   }, [listGroupsOptions]);
+
+  useEffect(() => {
+    refetchSkills();
+  }, [listSkillsOptions]);
 
   return (
     <>
@@ -253,6 +301,24 @@ const UserCreation = ({ closePopover }: UserCreationProps) => {
                     placeholder='Sélectionner un ou plusieurs groupes'
                     showSearch={{ filter: filterGroups }}
                     onSearch={handleGroupSearch}
+                    maxTagCount='responsive'
+                    multiple
+                  />
+                </Form.Item>
+              )}
+              {(getFieldValue('role') === Role.InternTeacher ||
+                getFieldValue('role') === Role.ExternTeacher) && (
+                <Form.Item
+                  name='skills'
+                  label='Compétence(s)'
+                  rules={[{ required: false }]}
+                >
+                  <Cascader
+                    loading={isSkillsLoading}
+                    options={skillOptions}
+                    placeholder='Sélectionner une ou plusieurs compétences'
+                    showSearch={{ filter: filterSkills }}
+                    onSearch={handleSkillSearch}
                     maxTagCount='responsive'
                     multiple
                   />

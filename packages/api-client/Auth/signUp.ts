@@ -9,6 +9,8 @@ export type SignUpProps = {
   birthPlace: string;
   role: Role;
   formationMode: string;
+  groups: string[];
+  skills: string[];
 };
 
 export type SignUpResponse = {};
