@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { GroupMembersM } from '../../domain/models/groupMembers';
 import { GroupMemberSummary } from '../controllers/groupManagement/groupDto.class';
 import { GroupMembersDto } from '../controllers/groupManagement/groupMembersDto.class';

@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { Group } from "../../infrastructure/entities/Group.entity";
 import { GroupMembers } from "../../infrastructure/entities/GroupMembers.entity";
 import { RolePermissions } from "../../infrastructure/entities/RolePermissions.entity";
@@ -24,6 +25,7 @@ export class AccountWithoutPassword {
 export class AccountM extends AccountWithoutPassword {
   password?: string;
   formationMode?: FormationMode;
+  skills?: UUID[];
 }
 
 export class NestedAccountM {

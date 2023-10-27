@@ -289,6 +289,11 @@ export class AccountRepository implements IAccountRepository {
         const teacher = new Teacher();
         teacher.account = accountEntity;
         teacher.intern = account.role === Role.InternTeacher;
+        const teacherSkills = [];
+        account.skills.forEach((skill) => {
+          teacherSkills.push({ skill: { id: skill } });
+        });
+        teacher.teacherSkills = teacherSkills;
         const createdTeacherAccountEntity =
           await this.teacherEntityRepository.save(teacher);
         return createdTeacherAccountEntity.account;

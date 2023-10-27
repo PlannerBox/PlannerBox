@@ -86,6 +86,7 @@ export class AccountMapper {
       active: true,
       role: newAccountDto.role,
       formationMode: newAccountDto.formationMode,
+      skills: newAccountDto.skills,
     };
   }
 

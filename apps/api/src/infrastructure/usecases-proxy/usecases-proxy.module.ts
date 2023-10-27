@@ -146,14 +146,16 @@ export class UsecasesProxyModule {
           useFactory: () => new UseCaseProxy(new LogoutUseCases()),
         },
         {
-          inject: [AccountRepository, BcryptService],
+          inject: [AccountRepository, BcryptService, GroupMemberRepository, SkillRepository],
           provide: UsecasesProxyModule.SIGNUP_USECASES_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
             bcryptService: BcryptService,
+            groupMemberRepository: GroupMemberRepository,
+            skillRepository: SkillRepository
           ) =>
             new UseCaseProxy(
-              new SignUpUseCases(accountRepository, bcryptService),
+              new SignUpUseCases(accountRepository, bcryptService, groupMemberRepository, skillRepository),
             ),
         },
         {

@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { FormationMode } from '../../../domain/models/enums/formationMode.enum';
 import Role from '../../../domain/models/enums/role.enum';
+import { UUID } from 'crypto';
 
 export class AuthPasswordDto {
   @ApiProperty({ required: true, minLength: 10 })
@@ -58,6 +59,11 @@ export class AuthSignUpDto extends AuthPasswordDto {
   @ApiProperty({ required: false, enum: FormationMode, enumName: 'FormationMode' })
   readonly formationMode?: FormationMode;
 
+  @ApiProperty({ required: false, format: 'liste des ids de groupes' })
+  readonly groups?: UUID[];
+
+  @ApiProperty({ required: false, format: 'liste des ids de compétences' })
+  readonly skills?: UUID[];
   // Ajouter la liste des groupes (ids) dans lequel ajouter le nouveau compte (key: groups)
   // - si formateur interne/externe, mettre isOwner à true
   // - si admin ignorer
