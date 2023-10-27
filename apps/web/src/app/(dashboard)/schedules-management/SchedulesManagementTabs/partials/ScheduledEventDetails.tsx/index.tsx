@@ -1,10 +1,18 @@
 import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
   FundProjectionScreenOutlined,
   IdcardOutlined,
   ProfileOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import { Divider, Form } from 'antd';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button, Divider, Form, notification } from 'antd';
+import { DeleteEventResponse } from 'api-client';
+import { ReactNode } from 'react';
+import { useDeleteEvent } from '../../../../../../hooks/useDeleteEvent';
 import { EventsWithDetailsType } from '../../../../../components/Calendar';
 import styles from './styles.module.scss';
 
@@ -17,6 +25,12 @@ interface ScheduledEventDetailsProps {
   event: EventsWithDetailsType;
 }
 
+type OpenNotificationProps = {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+};
+
 const ScheduledEventDetails = ({ event }: ScheduledEventDetailsProps) => {
   const availableMaterial = [
     { label: 'Postes informatiques', value: 'computers' },
@@ -26,6 +40,53 @@ const ScheduledEventDetails = ({ event }: ScheduledEventDetailsProps) => {
     { label: 'Microphone', value: 'microphone' },
   ];
 
+  const queryClient = useQueryClient();
+  const [notificationApi, notificationContextHolder] =
+    notification.useNotification();
+
+  const openNotification = ({
+    title,
+    description,
+    icon,
+  }: OpenNotificationProps) => {
+    notificationApi.open({
+      message: title,
+      description: description,
+      icon: icon,
+      placement: 'top',
+    });
+  };
+
+  const handleSuccess = (data: DeleteEventResponse) => {
+    console.log('Success:', data);
+    if (!!data) {
+      openNotification({
+        title: 'Evenement supprimé avec succès !',
+        icon: <CheckCircleOutlined />,
+      });
+      queryClient.invalidateQueries({ queryKey: ['listEvents'] });
+    } else {
+      openNotification({
+        title:
+          "Une erreur est survenue lors de la suppression de l'événement !",
+        icon: <CloseCircleOutlined />,
+      });
+    }
+  };
+
+  const handleError = () => {
+    console.log('Failed');
+    openNotification({
+      title: "Une erreur est survenue lors de la suppression de l'événement !",
+      icon: <CloseCircleOutlined />,
+    });
+  };
+
+  const { mutate: deleteEvent } = useDeleteEvent({
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
+
   return (
     <Form
       {...layout}
@@ -34,8 +95,18 @@ const ScheduledEventDetails = ({ event }: ScheduledEventDetailsProps) => {
       labelCol={{ style: { width: 200 } }}
       wrapperCol={{ style: { width: '100%' } }}
     >
+      {notificationContextHolder}
       <Form.Item name='skill' className={styles.formItem}>
         {event.event.title}
+        <Button type='text' icon={<EditOutlined />} />
+        <Button
+          type='text'
+          icon={
+            <DeleteOutlined
+              onClick={() => deleteEvent({ id: event.event.extendedProps.id })}
+            />
+          }
+        />
       </Form.Item>
 
       <Form.Item name='dateRange' className={styles.formItem}>
