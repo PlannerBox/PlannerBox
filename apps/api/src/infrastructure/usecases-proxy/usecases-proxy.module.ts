@@ -52,6 +52,7 @@ import { PlanCourseUseCase } from '../../usecases/event/planCourse.usecase';
 import { DeleteEventUseCase } from '../../usecases/event/deleteEvent.usecase';
 import { UpdateEventUseCase } from '../../usecases/event/updateEvent.usecase';
 import { FindEventsUseCase } from '../../usecases/event/findEvents.usecase';
+import { CourseTeachersRepository } from '../repositories/courseTeachers.repository';
 
 @Module({
   imports: [
@@ -185,18 +186,27 @@ export class UsecasesProxyModule {
           inject: [
             AccountRepository,
             RolePermissionsRepository,
+            TeacherSkillsRepository,
+            CourseTeachersRepository,
+            TeacherRepository,
             LoggerService
           ],
           provide: UsecasesProxyModule.ACCOUNT_MANAGEMENT_USECASES_PROXY,
           useFactory: (
             accountRepository: AccountRepository,
             rolePermissionsRepository: RolePermissionsRepository,
+            teacherSkillsRepository: TeacherSkillsRepository,
+            courseTeachersRepository: CourseTeachersRepository,
+            teacherRepository: TeacherRepository,
             logger: LoggerService
           ) => 
             new UseCaseProxy(
               new AccountManagementUseCases(
                 accountRepository,
                 rolePermissionsRepository,
+                teacherSkillsRepository,
+                courseTeachersRepository,
+                teacherRepository,
                 logger
               )
             ),

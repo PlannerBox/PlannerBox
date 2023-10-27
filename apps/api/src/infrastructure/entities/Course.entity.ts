@@ -39,7 +39,7 @@ export class Course {
     @JoinColumn([{ name: 'roomId', referencedColumnName: 'id' }])
     room: Room;
 
-    @ManyToMany(() => Teacher, (teacher) => teacher.courses, { cascade: true })
+    @ManyToMany(() => Teacher, (teacher) => teacher.courses)
     @JoinTable({ name: 'CourseTeachers' })
     teachers: Teacher[];
 

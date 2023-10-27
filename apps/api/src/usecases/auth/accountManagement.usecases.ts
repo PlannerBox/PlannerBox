@@ -5,11 +5,17 @@ import Permission from '../../domain/models/enums/permission.type';
 import Role from '../../domain/models/enums/role.enum';
 import { IAccountRepository } from '../../domain/repositories/accountRepository.interface';
 import { IRolePermissionsRepository } from '../../domain/repositories/rolePermissionsRepository.interface';
+import { ITeacherSkillsRepository } from '../../domain/repositories/teacherSkillsRepository.interface';
+import { ITeacherRepository } from '../../domain/repositories/teacherRepository.interface';
+import { ICourseTeachersRepository } from '../../domain/repositories/courseTeachersRepository.interface';
 
 export class AccountManagementUseCases {
   constructor(
     private readonly accountRepository: IAccountRepository,
     private readonly rolePermissionsRepository: IRolePermissionsRepository,
+    private readonly teacherSkillsRepository: ITeacherSkillsRepository,
+    private readonly courseTeachersRepository: ICourseTeachersRepository,
+    private readonly teacherRepository: ITeacherRepository,
     private readonly logger: ILogger,
   ) {}
 
@@ -97,6 +103,11 @@ export class AccountManagementUseCases {
       throw new BadRequestException('account is active and cannot be deleted');
     }
     const role = account.rolePermissions.role;
+    if (role === Role.ExternTeacher || role === Role.InternTeacher) {
+      let teacher = await this.teacherRepository.findTeacherByAccountId(id);
+      await this.teacherSkillsRepository.deleteTeacherSkills(teacher.teacherId);
+      await this.courseTeachersRepository.deleteCourseTeachers(teacher.teacherId);
+    }
     return await this.accountRepository.deleteAccount(id);
   }
 

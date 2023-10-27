@@ -1,0 +1,6 @@
+.formItem {
+  div:global(.ant-form-item-control-input-content) {
+    display: flex;
+    gap: var(--spacing-12);
+  }
+}

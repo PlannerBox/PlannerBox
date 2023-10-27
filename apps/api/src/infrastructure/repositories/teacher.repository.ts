@@ -50,4 +50,9 @@ export class TeacherRepository implements ITeacherRepository {
         await this.teacherRepository.save(teacherEntity);
         return teacher;
     }
+
+    async deleteTeacher(accountId: string): Promise<any> {
+        await this.teacherRepository.delete({ account: { id: accountId }});
+        return;
+    }
 }
